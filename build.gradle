@@ -1,0 +1,56 @@
+plugins {
+    id 'org.springframework.boot' version '3.5.6'
+    id 'io.spring.dependency-management' version '1.1.7'
+    id 'java'
+    id 'com.github.node-gradle.node' version '7.1.0'
+}
+
+group = 'org.lobid'
+version = '0.0.1-SNAPSHOT'
+
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(21)
+    }
+}
+
+bootRun {
+    environment SPRING_PROFILES_ACTIVE: environment.SPRING_PROFILES_ACTIVE ?: 'local'
+}
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    implementation('org.springframework.boot:spring-boot-starter-web')
+    implementation('org.springframework.boot:spring-boot-starter-validation')
+    implementation('org.springframework.boot:spring-boot-starter-thymeleaf')
+    implementation('nz.net.ultraq.thymeleaf:thymeleaf-layout-dialect')
+    developmentOnly('org.springframework.boot:spring-boot-docker-compose')
+    testImplementation('org.springframework.boot:spring-boot-starter-test')
+}
+
+node {
+    download.set(true)
+    version.set('22.19.0')
+}
+
+tasks.register('npmRunBuild', NpmTask) {
+    args = ['run', 'build']
+    dependsOn npmInstall
+
+    inputs.files(fileTree('node_modules'))
+    inputs.files(fileTree('src/main/resources'))
+    inputs.file('package.json')
+    inputs.file('webpack.config.js')
+    outputs.dir(layout.buildDirectory.dir('resources/main/static'))
+}
+
+processResources {
+    dependsOn npmRunBuild
+}
+
+tasks.withType(Test) {
+    useJUnitPlatform()
+}
