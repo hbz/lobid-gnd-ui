@@ -1,0 +1,13 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+        layout:decorate="~{layout}">
+    <head>
+        <title th:text="${gndIdentifier}">Title...</title>
+    </head>
+    <body>
+        <div layout:fragment="content">
+            <h1 class="mb-4" th:text="${preferredName}">Header...</h1>
+            <p th:text="${id}">Details...</p>
+        </div>
+    </body>
+</html>
