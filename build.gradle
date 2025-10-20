@@ -29,6 +29,7 @@ dependencies {
     implementation('nz.net.ultraq.thymeleaf:thymeleaf-layout-dialect')
     developmentOnly("org.springframework.boot:spring-boot-devtools")
     testImplementation('org.springframework.boot:spring-boot-starter-test')
+    testImplementation('org.htmlunit:htmlunit')
 }
 
 node {
@@ -53,4 +54,8 @@ processResources {
 
 tasks.withType(Test) {
     useJUnitPlatform()
+    testLogging {
+        events 'passed', 'skipped', 'failed'
+        exceptionFormat = 'full'
+    }
 }

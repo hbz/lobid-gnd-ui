@@ -4,6 +4,12 @@ This app was created with Bootify.io, see https://bootify.io/app/ZEPRF7AQQFJF, -
 
 ## Development
 
+Run the tests:
+
+```
+./gradlew test
+```
+
 ### Webpack DevServer
 
 In addition to the Spring Boot application, the DevServer must also be started - for this [Node.js](https://nodejs.org/) version 22 is required. On first usage and after updates the dependencies have to be installed:
