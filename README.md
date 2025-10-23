@@ -7,7 +7,7 @@ This app was created with Bootify.io, see https://bootify.io/app/ZEPRF7AQQFJF, -
 Run the tests:
 
 ```
-./gradlew test
+./gradlew test --info
 ```
 
 ### Webpack DevServer
