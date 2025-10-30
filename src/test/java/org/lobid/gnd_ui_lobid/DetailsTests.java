@@ -1,6 +1,7 @@
 package org.lobid.gnd_ui_lobid;
 
 import static org.assertj.core.api.Assertions.assertThat;
+
 import java.io.IOException;
 import org.htmlunit.WebClient;
 import org.htmlunit.html.HtmlPage;
@@ -22,11 +23,9 @@ public class DetailsTests {
     // Test rendered templates, using HtmlUnit:
     // https://www.htmlunit.org/gettingStarted.html
 
-    @Autowired
-    private WebClient webClient;
+    @Autowired private WebClient webClient;
 
-    @LocalServerPort
-    private int port;
+    @LocalServerPort private int port;
 
     HtmlPage detailsPage;
 
@@ -38,14 +37,12 @@ public class DetailsTests {
     @Test
     public void testDetailsRoute() throws IOException {
         assertThat(detailsPage.getWebResponse().isSuccess());
-        assertThat(detailsPage.getContentType())
-                .isEqualTo(MediaType.TEXT_HTML_VALUE);
+        assertThat(detailsPage.getContentType()).isEqualTo(MediaType.TEXT_HTML_VALUE);
     }
 
     @Test
     public void testDetailsView() throws Exception {
-        assertThat(detailsPage.getTitleText())
-                .isEqualTo("4031483-2 - gnd-ui-lobid");
+        assertThat(detailsPage.getTitleText()).isEqualTo("4031483-2 - gnd-ui-lobid");
         assertThat(detailsPage.asNormalizedText())
                 .contains("https://d-nb.info/gnd/4031483-2")
                 .contains("Köln");

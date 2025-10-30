@@ -1,31 +1,31 @@
 {
-  "name": "gnd-ui-lobid-frontend",
-  "author": "Bootify.io",
-  "scripts": {
-    "devserver": "webpack serve --open --mode development",
-    "build": "webpack --mode production"
-  },
-  "dependencies": {
-    "@popperjs/core": "2.11.8",
-    "bootstrap": "5.3.8"
-  },
-  "devDependencies": {
-    "@babel/core": "7.28.4",
-    "@babel/preset-env": "7.28.3",
-    "autoprefixer": "10.4.21",
-    "babel-loader": "10.0.0",
-    "css-loader": "7.1.2",
-    "css-minimizer-webpack-plugin": "7.0.2",
-    "mini-css-extract-plugin": "2.9.4",
-    "postcss-loader": "8.2.0",
-    "postcss-preset-env": "10.3.1",
-    "sass": "1.77.6",
-    "sass-loader": "14.2.1",
-    "style-loader": "4.0.0",
-    "warnings-to-errors-webpack-plugin": "2.3.0",
-    "webpack": "5.101.3",
-    "webpack-cli": "6.0.1",
-    "webpack-dev-server": "5.2.2"
-  },
-  "private": true
+    "name": "gnd-ui-lobid-frontend",
+    "author": "Bootify.io",
+    "scripts": {
+        "devserver": "webpack serve --open --mode development",
+        "build": "webpack --mode production"
+    },
+    "dependencies": {
+        "@popperjs/core": "2.11.8",
+        "bootstrap": "5.3.8"
+    },
+    "devDependencies": {
+        "@babel/core": "7.28.4",
+        "@babel/preset-env": "7.28.3",
+        "autoprefixer": "10.4.21",
+        "babel-loader": "10.0.0",
+        "css-loader": "7.1.2",
+        "css-minimizer-webpack-plugin": "7.0.2",
+        "mini-css-extract-plugin": "2.9.4",
+        "postcss-loader": "8.2.0",
+        "postcss-preset-env": "10.3.1",
+        "sass": "1.77.6",
+        "sass-loader": "14.2.1",
+        "style-loader": "4.0.0",
+        "warnings-to-errors-webpack-plugin": "2.3.0",
+        "webpack": "5.101.3",
+        "webpack-cli": "6.0.1",
+        "webpack-dev-server": "5.2.2"
+    },
+    "private": true
 }

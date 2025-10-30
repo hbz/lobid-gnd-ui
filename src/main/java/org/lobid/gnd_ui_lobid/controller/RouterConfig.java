@@ -22,9 +22,12 @@ public class RouterConfig {
     }
 
     private HandlerFilterFunction<ServerResponse, ServerResponse> addIsDevserver() {
-        return (request, next) -> next.handle(ServerRequest.from(request)
-                .attribute("isDevserver", "1".equals(request.headers().firstHeader("X-Devserver")))
-                .build());
+        return (request, next) ->
+                next.handle(
+                        ServerRequest.from(request)
+                                .attribute(
+                                        "isDevserver",
+                                        "1".equals(request.headers().firstHeader("X-Devserver")))
+                                .build());
     }
-
 }

@@ -72,10 +72,10 @@ gradlew bootBuildImage --imageName=org.lobid/gnd-ui-lobid
 
 ## Further readings
 
-* [Gradle user manual](https://docs.gradle.org/)  
-* [Spring Boot reference](https://docs.spring.io/spring-boot/docs/current/reference/htmlsingle/)  
-* [Thymeleaf docs](https://www.thymeleaf.org/documentation.html)  
-* [Webpack concepts](https://webpack.js.org/concepts/)  
-* [npm docs](https://docs.npmjs.com/)  
-* [Bootstrap docs](https://getbootstrap.com/docs/5.3/getting-started/introduction/)  
-* [Learn Spring Boot with Thymeleaf](https://www.wimdeblauwe.com/books/taming-thymeleaf/)  
+* [Gradle user manual](https://docs.gradle.org/)
+* [Spring Boot reference](https://docs.spring.io/spring-boot/docs/current/reference/htmlsingle/)
+* [Thymeleaf docs](https://www.thymeleaf.org/documentation.html)
+* [Webpack concepts](https://webpack.js.org/concepts/)
+* [npm docs](https://docs.npmjs.com/)
+* [Bootstrap docs](https://getbootstrap.com/docs/5.3/getting-started/introduction/)
+* [Learn Spring Boot with Thymeleaf](https://www.wimdeblauwe.com/books/taming-thymeleaf/)
