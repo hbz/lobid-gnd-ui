@@ -4,10 +4,10 @@ This app was created with Bootify.io, see https://bootify.io/app/ZEPRF7AQQFJF, -
 
 ## Development
 
-Run the tests:
+Run all checks:
 
 ```
-./gradlew test --info
+./gradlew check --info
 ```
 
 ### Webpack DevServer
