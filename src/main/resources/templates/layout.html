@@ -12,7 +12,7 @@
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="icon" type="image/x-icon" href="/favicon.ico" />
         <link
-            th:if="${!isDevserver}"
+            th:if="${!request.isDevserver}"
             th:href="@{/css/bundle.css}"
             rel="stylesheet"
         />

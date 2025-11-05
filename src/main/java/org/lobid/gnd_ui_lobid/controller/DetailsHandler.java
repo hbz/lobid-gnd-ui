@@ -4,8 +4,6 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.util.Map;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.WebClient;
@@ -17,7 +15,7 @@ import reactor.core.publisher.Mono;
 public class DetailsHandler {
 
     public Mono<ServerResponse> index(ServerRequest request) {
-        return ServerResponse.ok().render("home/index", request.attributes());
+        return ServerResponse.ok().render("home/index", Map.of("request", request.attributes()));
     }
 
     public Mono<ServerResponse> byId(ServerRequest request) {
@@ -38,13 +36,10 @@ public class DetailsHandler {
 
         // Render Thymeleaf template details.html (in src/main/resources/templates):
         return mapMono.flatMap(
-                javaMap ->
-                        ServerResponse.ok()
-                                .render("details", model(javaMap, request.attributes())));
-    }
-
-    private Map<String, Object> model(Map<String, Object> m1, Map<String, Object> m2) {
-        return Stream.concat(m1.entrySet().stream(), m2.entrySet().stream())
-                .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+                javaMap -> {
+                    Map<String, Map<String, Object>> model =
+                            Map.of("entity", javaMap, "request", request.attributes());
+                    return ServerResponse.ok().render("details", model);
+                });
     }
 }

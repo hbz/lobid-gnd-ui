@@ -45,6 +45,10 @@ public class DetailsTests {
         assertThat(detailsPage.getTitleText()).isEqualTo("4031483-2 - gnd-ui-lobid");
         assertThat(detailsPage.asNormalizedText())
                 .contains("https://d-nb.info/gnd/4031483-2")
-                .contains("Köln");
+                .contains("Köln")
+                .contains("CCAA")
+                .contains("Kolonie")
+                .contains("Kūlūniyā")
+                .contains("Nordrhein-Westfalen");
     }
 }

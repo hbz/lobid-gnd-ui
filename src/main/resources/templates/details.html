@@ -5,12 +5,18 @@
     layout:decorate="~{layout}"
 >
     <head>
-        <title th:text="${gndIdentifier}">Title...</title>
+        <title th:text="${entity.gndIdentifier}">Title...</title>
     </head>
     <body>
         <div layout:fragment="content">
-            <h1 class="mb-4" th:text="${preferredName}">Header...</h1>
-            <p th:text="${id}">Details...</p>
+            <h1 class="mb-4" th:text="${entity.preferredName}">Header...</h1>
+            <p th:text="${entity.id}">Details...</p>
+            <table class="table table-striped table-condensed">
+                <tr th:each="field : ${entity}">
+                    <td th:text="${field.key}">Key...</td>
+                    <td th:text="${field.value}">Value...</td>
+                </tr>
+            </table>
         </div>
     </body>
 </html>

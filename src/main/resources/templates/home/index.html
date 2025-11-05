@@ -5,13 +5,29 @@
     layout:decorate="~{layout}"
 >
     <head>
-        <title>[[#{home.index.headline}]]</title>
+        <title>[[#{app.title}]]</title>
     </head>
     <body>
         <div layout:fragment="content">
-            <h1 class="mb-4">[[#{home.index.headline}]]</h1>
-            <p class="mb-5">[(#{home.index.text})]</p>
-            <a href="/4031483-2">Köln</a>
+            <h1>
+                [[#{app.title}]]
+                <small
+                    >&mdash; [[#{home.index.headline}]]&nbsp;<span
+                        class="badge text-bg-light"
+                        >prototype</span
+                    ></small
+                >
+            </h1>
+            <p>[(#{home.index.text})]</p>
+            <p>
+                Current state: render all JSON fields for a GND entity in an
+                HTML table, e.g.:
+            </p>
+            <p>
+                <a href="/7749153-1">GND</a>, <a href="/2047974-8">hbz</a>,
+                <a href="/4031483-2">Köln</a>, <a href="/118512676">Böll</a>,
+                ...
+            </p>
         </div>
     </body>
 </html>
