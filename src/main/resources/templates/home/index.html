@@ -2,8 +2,7 @@
 <html
     xmlns:th="http://www.thymeleaf.org"
     xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-    layout:decorate="~{layout}"
->
+    layout:decorate="~{layout}">
     <head>
         <title>[[#{app.title}]]</title>
     </head>
@@ -11,22 +10,16 @@
         <div layout:fragment="content">
             <h1>
                 [[#{app.title}]]
-                <small
-                    >&mdash; [[#{home.index.headline}]]&nbsp;<span
-                        class="badge text-bg-light"
-                        >prototype</span
-                    ></small
-                >
+                <small>
+                    &mdash; [[#{home.index.headline}]]&nbsp;
+                    <span class="badge text-bg-light">prototype</span>
+                </small>
             </h1>
             <p>[(#{home.index.text})]</p>
-            <p>
-                Current state: render all JSON fields for a GND entity in an
-                HTML table, e.g.:
-            </p>
+            <p>Current state: render all JSON fields for a GND entity in an HTML table, e.g.:</p>
             <p>
                 <a href="/7749153-1">GND</a>, <a href="/2047974-8">hbz</a>,
-                <a href="/4031483-2">Köln</a>, <a href="/118512676">Böll</a>,
-                ...
+                <a href="/4031483-2">Köln</a>, <a href="/118512676">Böll</a>, ...
             </p>
         </div>
     </body>

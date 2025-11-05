@@ -78,7 +78,7 @@ spotless {
 
     format 'prettier', {
         target 'src/**/*.js', 'webpack.config.js', 'src/**/*.json', 'package.json', 'src/**/*.css', 'src/**/*.scss', 'src/**/*.html'
-        prettier().config(['tabWidth': 4])
+        prettier().config(['tabWidth': 4, 'printWidth': 100, 'bracketSameLine': true])
     }
 
     format 'misc', {

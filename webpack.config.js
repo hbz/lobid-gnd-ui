@@ -41,9 +41,7 @@ module.exports = (env, argv) => ({
             {
                 test: /\.scss$/,
                 use: [
-                    argv.mode === "production"
-                        ? MiniCssExtractPlugin.loader
-                        : "style-loader",
+                    argv.mode === "production" ? MiniCssExtractPlugin.loader : "style-loader",
                     {
                         loader: "css-loader",
                         options: {
@@ -69,10 +67,7 @@ module.exports = (env, argv) => ({
         ],
     },
     resolve: {
-        modules: [
-            path.resolve(__dirname, "./src/main/resources"),
-            "node_modules",
-        ],
+        modules: [path.resolve(__dirname, "./src/main/resources"), "node_modules"],
     },
     devServer: {
         port: 8081,
