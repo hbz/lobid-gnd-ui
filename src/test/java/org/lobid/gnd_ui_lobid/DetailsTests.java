@@ -42,7 +42,7 @@ public class DetailsTests {
 
     @Test
     public void testDetailsView() throws Exception {
-        assertThat(detailsPage.getTitleText()).isEqualTo("4031483-2 - gnd-ui-lobid");
+        assertThat(detailsPage.getTitleText()).isEqualTo("4031483-2 - lobid-gnd");
         assertThat(detailsPage.asNormalizedText())
                 .contains("https://d-nb.info/gnd/4031483-2")
                 .contains("Köln")
