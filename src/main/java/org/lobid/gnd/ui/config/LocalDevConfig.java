@@ -1,4 +1,4 @@
-package org.lobid.gnd_ui_lobid.config;
+package org.lobid.gnd.ui.config;
 
 import java.io.File;
 import java.io.IOException;

@@ -1,4 +1,4 @@
-package org.lobid.gnd_ui_lobid.controller;
+package org.lobid.gnd.ui.controller;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -15,7 +15,7 @@ import reactor.core.publisher.Mono;
 public class DetailsHandler {
 
     public Mono<ServerResponse> index(ServerRequest request) {
-        return ServerResponse.ok().render("home/index", Map.of("request", request.attributes()));
+        return ServerResponse.ok().render("index", Map.of("request", request.attributes()));
     }
 
     public Mono<ServerResponse> byId(ServerRequest request) {

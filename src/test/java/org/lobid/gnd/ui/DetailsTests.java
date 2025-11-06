@@ -1,4 +1,4 @@
-package org.lobid.gnd_ui_lobid;
+package org.lobid.gnd.ui;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -7,7 +7,7 @@ import org.htmlunit.WebClient;
 import org.htmlunit.html.HtmlPage;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.lobid.gnd_ui_lobid.config.HtmlUnitConfig;
+import org.lobid.gnd.ui.config.HtmlUnitConfig;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.reactive.AutoConfigureWebTestClient;
 import org.springframework.boot.test.context.SpringBootTest;

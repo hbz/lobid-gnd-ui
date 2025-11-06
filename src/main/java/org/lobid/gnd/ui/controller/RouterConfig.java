@@ -1,4 +1,4 @@
-package org.lobid.gnd_ui_lobid.controller;
+package org.lobid.gnd.ui.controller;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

@@ -1,4 +1,4 @@
-# Gnd Ui Lobid
+# lobid-gnd-ui
 
 This app was created with Bootify.io, see https://bootify.io/app/ZEPRF7AQQFJF, - tips on working with the code [can be found here](https://bootify.io/next-steps/).
 

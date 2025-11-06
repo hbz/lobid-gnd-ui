@@ -1,4 +1,4 @@
-package org.lobid.gnd_ui_lobid.config;
+package org.lobid.gnd.ui.config;
 
 import org.springframework.beans.propertyeditors.StringTrimmerEditor;
 import org.springframework.web.bind.WebDataBinder;
