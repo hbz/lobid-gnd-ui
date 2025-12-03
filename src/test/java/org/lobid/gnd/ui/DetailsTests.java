@@ -1,10 +1,14 @@
 package org.lobid.gnd.ui;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.io.IOException;
 import java.util.List;
+import org.htmlunit.ElementNotFoundException;
 import org.htmlunit.html.DomElement;
+import org.htmlunit.html.HtmlAnchor;
+import org.htmlunit.html.HtmlDivision;
 import org.htmlunit.html.HtmlPage;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
@@ -76,5 +80,35 @@ public class DetailsTests extends HtmlPageTests {
         assertThat(detailsPage.getElementsByTagName("a").toString())
                 .contains("https://commons.wikimedia.org")
                 .contains("https://creativecommons.org");
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {PRODUCTION /*, DEVELOPMENT*/})
+    public void testDetailsViewPersonHistorical(String baseUrl) throws IOException {
+        HtmlPage detailsPage = pageFor(baseUrl, PERSON_HISTORICAL);
+        assertThat(detailsPage.asNormalizedText())
+                .contains("Beruf oder Beschäftigung")
+                .contains("Adelstitel")
+                .contains("Geburtsdatum")
+                .contains("Sterbedatum")
+                .contains("Beziehung, Bekanntschaft, Freundschaft")
+                .contains("Titelangabe");
+        assertThrows(
+                ElementNotFoundException.class,
+                () -> detailsPage.getHtmlElementById("meta-person"));
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {PRODUCTION /*, DEVELOPMENT*/})
+    public void testDetailsViewPersonAlive(String baseUrl) throws IOException {
+        HtmlPage detailsPage = pageFor(baseUrl, PERSON_ALIVE);
+        HtmlDivision personBox = detailsPage.getHtmlElementById("meta-person");
+        assertThat(personBox).isNotNull();
+        HtmlAnchor link = (HtmlAnchor) personBox.getByXPath("//a[@data-toggle='collapse']").get(0);
+        assertThat(link).isNotNull();
+        assertThat(link.getTextContent()).contains("Sind Sie").contains("Klicken Sie hier");
+        String text = "Diese Seite zeigt einen Datensatz aus der Gemeinsamen Normdatei";
+        assertThat(detailsPage.asNormalizedText()).doesNotContain(text);
+        assertThat(((HtmlPage) link.click()).asNormalizedText()).contains(text);
     }
 }

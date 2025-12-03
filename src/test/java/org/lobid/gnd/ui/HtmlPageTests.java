@@ -27,6 +27,8 @@ public abstract class HtmlPageTests {
     protected static final String PRODUCTION = "https://lobid.org/gnd";
     protected static final String DEVELOPMENT = "http://localhost";
     protected static final String COLOGNE = "4031483-2";
+    protected static final String PERSON_HISTORICAL = "118637649";
+    protected static final String PERSON_ALIVE = "122729501";
 
     @Autowired private WebClient webClient;
 
