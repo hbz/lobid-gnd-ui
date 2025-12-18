@@ -29,6 +29,7 @@ public abstract class HtmlPageTests {
     protected static final String COLOGNE = "4031483-2";
     protected static final String PERSON_HISTORICAL = "118637649";
     protected static final String PERSON_ALIVE = "122729501";
+    protected static final String PERSON_WITH_RELATIONSHIPS = "118548018";
 
     @Autowired private WebClient webClient;
 

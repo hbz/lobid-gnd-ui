@@ -8,6 +8,7 @@ import java.util.List;
 import org.htmlunit.ElementNotFoundException;
 import org.htmlunit.html.DomElement;
 import org.htmlunit.html.HtmlAnchor;
+import org.htmlunit.html.HtmlCanvas;
 import org.htmlunit.html.HtmlDivision;
 import org.htmlunit.html.HtmlPage;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -110,5 +111,52 @@ public class DetailsTests extends HtmlPageTests {
         String text = "Diese Seite zeigt einen Datensatz aus der Gemeinsamen Normdatei";
         assertThat(detailsPage.asNormalizedText()).doesNotContain(text);
         assertThat(((HtmlPage) link.click()).asNormalizedText()).contains(text);
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {PRODUCTION /*, DEVELOPMENT*/})
+    public void testDetailsViewRelationshipsGraphExists(String baseUrl) throws IOException {
+        HtmlPage detailsPage = pageFor(baseUrl, PERSON_WITH_RELATIONSHIPS);
+        HtmlDivision networkDiv = detailsPage.getHtmlElementById("gnd-network");
+        assertThat(networkDiv.getFirstChild().getFirstChild()).isInstanceOf(HtmlCanvas.class);
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {PRODUCTION /*, DEVELOPMENT*/})
+    public void testDetailsViewRelationshipsGraphData(String baseUrl) throws IOException {
+        HtmlPage detailsPage = pageFor(baseUrl, PERSON_WITH_RELATIONSHIPS);
+        var nodesResult = detailsPage.executeJavaScript("window.network.body.data.nodes.length");
+        var edgesResult = detailsPage.executeJavaScript("window.network.body.data.edges.length");
+        assertThat(((Number) nodesResult.getJavaScriptResult()).intValue()).isGreaterThan(30);
+        assertThat(((Number) edgesResult.getJavaScriptResult()).intValue()).isGreaterThan(35);
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {PRODUCTION /*, DEVELOPMENT*/})
+    public void testDetailsViewRelationshipsNodeLabels(String baseUrl) throws IOException {
+        HtmlPage detailsPage = pageFor(baseUrl, PERSON_WITH_RELATIONSHIPS);
+        assertThat(getString(detailsPage, "nodes", PERSON_WITH_RELATIONSHIPS, "label"))
+                .isEqualTo("Heine,\nHeinrich");
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {PRODUCTION /*, DEVELOPMENT*/})
+    public void testDetailsViewRelationshipsEdgeLabels(String baseUrl) throws IOException {
+        HtmlPage detailsPage = pageFor(baseUrl, PERSON_WITH_RELATIONSHIPS);
+        assertThat(getString(detailsPage, "edges", "pseudonym_1287690238", "label"))
+                .isEqualTo("Pseudonym");
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {PRODUCTION /*, DEVELOPMENT*/})
+    public void testDetailsViewRelationshipsEdgeTitles(String baseUrl) throws IOException {
+        HtmlPage detailsPage = pageFor(baseUrl, PERSON_WITH_RELATIONSHIPS);
+        assertThat(getString(detailsPage, "edges", "pseudonym_1287690238", "title"))
+                .isEqualTo("Einträge mit Pseudonym 'Riesenharf, Sy. Freudhold' suchen");
+    }
+
+    private String getString(HtmlPage detailsPage, String kind, String id, String field) {
+        var script = String.format("window.network.body.data.%s._data['%s'].%s", kind, id, field);
+        return (String) detailsPage.executeJavaScript(script).getJavaScriptResult();
     }
 }
