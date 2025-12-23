@@ -24,7 +24,7 @@ public abstract class HtmlPageTests {
     // Test rendered templates, using HtmlUnit:
     // https://www.htmlunit.org/gettingStarted.html
 
-    protected static final String PRODUCTION = "https://lobid.org/gnd";
+    protected static final String PRODUCTION = "https://lobid.org";
     protected static final String DEVELOPMENT = "http://localhost";
     protected static final String COLOGNE = "4031483-2";
     protected static final String PERSON_HISTORICAL = "118637649";
@@ -45,6 +45,6 @@ public abstract class HtmlPageTests {
 
     protected HtmlPage pageFor(String baseUrl, String gndId) throws IOException {
         String baseUrlWithPort = baseUrl + (baseUrl.contains("localhost") ? ":" + port : "");
-        return webClient.getPage(baseUrlWithPort + "/" + gndId);
+        return webClient.getPage(baseUrlWithPort + "/gnd/" + gndId);
     }
 }

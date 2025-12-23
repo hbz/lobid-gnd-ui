@@ -14,9 +14,9 @@ public class RouterConfig {
     @Bean
     public RouterFunction<ServerResponse> detailsRoutes(DetailsHandler handler) {
         return RouterFunctions.route()
-                .GET("/", handler::index)
-                // Define URL route for GND entry with ID, e.g. `/4031483-2`:
-                .GET("/{id}", handler::byId)
+                .GET("/gnd", handler::index)
+                // Define URL route for GND entry with ID, e.g. `/gnd/4031483-2`:
+                .GET("/gnd/{id}", handler::byId)
                 .filter(addIsDevserver())
                 .build();
     }
