@@ -20,9 +20,12 @@ public class LayoutTests extends HtmlPageTests {
                 .contains("gnd")
                 .contains("Erkunden")
                 .contains("API")
+                .contains("hbz")
                 .contains("Gewährleistung")
                 .contains("Impressum")
-                .contains("Datenschutz");
+                .contains("Datenschutz")
+                .contains("GitHub")
+                .contains("Blog");
     }
 
     @ParameterizedTest

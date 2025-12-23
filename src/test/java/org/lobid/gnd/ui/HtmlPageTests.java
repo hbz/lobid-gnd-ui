@@ -2,7 +2,16 @@ package org.lobid.gnd.ui;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.IOException;
+import java.net.URI;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
+import org.assertj.core.api.Condition;
 import org.htmlunit.WebClient;
 import org.htmlunit.html.HtmlPage;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -46,5 +55,29 @@ public abstract class HtmlPageTests {
     protected HtmlPage pageFor(String baseUrl, String gndId) throws IOException {
         String baseUrlWithPort = baseUrl + (baseUrl.contains("localhost") ? ":" + port : "");
         return webClient.getPage(baseUrlWithPort + "/gnd/" + gndId);
+    }
+
+    protected String fetchHttpResponse(String url) throws IOException, InterruptedException {
+        HttpRequest request = HttpRequest.newBuilder().uri(URI.create(url)).build();
+        HttpResponse<String> response =
+                HttpClient.newHttpClient().send(request, HttpResponse.BodyHandlers.ofString());
+        assertThat(response.statusCode()).as("HTTP response for " + url).isEqualTo(200);
+        return response.body();
+    }
+
+    protected Condition<String> validJson() {
+        return new Condition<>(string -> assertValidJson(string), "valid JSON");
+    }
+
+    private boolean assertValidJson(String string) {
+        ObjectMapper mapper =
+                new ObjectMapper().enable(DeserializationFeature.FAIL_ON_TRAILING_TOKENS);
+        try {
+            JsonNode json = mapper.readTree(string);
+            return json != null && !json.isEmpty();
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
+            return false;
+        }
     }
 }
