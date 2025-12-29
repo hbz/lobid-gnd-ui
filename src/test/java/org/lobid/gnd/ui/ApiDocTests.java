@@ -3,6 +3,10 @@ package org.lobid.gnd.ui;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import java.io.IOException;
+import org.htmlunit.html.HtmlButton;
+import org.htmlunit.html.HtmlInput;
+import org.htmlunit.html.HtmlListItem;
+import org.htmlunit.html.HtmlPage;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 
@@ -231,6 +235,37 @@ public class ApiDocTests extends HtmlPageTests {
             throws IOException, InterruptedException {
         assertThat(fetchHttpResponse(baseUrl + "/gnd/search?q=Twain&format=json:suggest"))
                 .is(validJson())
+                .contains("Twain, Mark");
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {PRODUCTION /*, DEVELOPMENT*/})
+    public void testAutocompleteSuggestExample(String baseUrl) throws IOException {
+        HtmlPage apiPage = pageFor(baseUrl, API_DOC);
+
+        HtmlInput labelInput = apiPage.getFirstByXPath("//input[@id='label']");
+        assertThat(labelInput).as("form input for label should exist").isNotNull();
+        HtmlInput idInput = apiPage.getFirstByXPath("//input[@id='id']");
+        assertThat(idInput).as("form input for ID should exist").isNotNull();
+        HtmlButton searchButton = apiPage.getFirstByXPath("//button[contains(text(), 'Suchen')]");
+        assertThat(searchButton).as("search button should exist").isNotNull();
+
+        labelInput.type("Make-Tuwen");
+        webClient.waitForBackgroundJavaScript(1000);
+        HtmlListItem suggestion =
+                apiPage.getFirstByXPath("//ul[contains(@class, 'ui-autocomplete')]/li");
+        suggestion.click();
+        webClient.waitForBackgroundJavaScript(10);
+
+        assertThat(labelInput.getValue())
+                .as("form should be filled with details for selected suggestion")
+                .contains("Twain, Mark | Schriftsteller; Journalist; Drucker; Lotse; Soldat");
+        assertThat(idInput.getValue())
+                .as("form should be filled with ID search for selected suggestion")
+                .contains("id:\"https://d-nb.info/gnd/118624822\"");
+        HtmlPage searchResults = searchButton.click();
+        assertThat(searchResults.asNormalizedText())
+                .as("search results should contain the label for the searched ID")
                 .contains("Twain, Mark");
     }
 
