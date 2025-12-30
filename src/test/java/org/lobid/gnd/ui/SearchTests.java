@@ -143,6 +143,21 @@ public class SearchTests extends HtmlPageTests {
 
     @ParameterizedTest
     @ValueSource(strings = {PRODUCTION /*, DEVELOPMENT*/})
+    public void testFacetFilter(String baseUrl) throws IOException {
+        HtmlPage searchPage = search("Make-Tuwen", baseUrl);
+        assertThat(searchPage.getByXPath(linksToRemoveFilter()))
+                .as("no filter should be set by default")
+                .isEmpty();
+        searchPage = addAndAssertFilters(searchPage, "Person", 1);
+        searchPage = addAndAssertFilters(searchPage, "Literaturgeschichte", 2);
+        searchPage = addAndAssertFilters(searchPage, "USA", 3);
+        searchPage = addAndAssertFilters(searchPage, "Lotse", 4);
+        searchPage = addAndAssertFilters(searchPage, "Drucker", 5);
+        clickAndAssertFilters(searchPage, linksToRemoveFilter(), "remove", 4);
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {PRODUCTION /*, DEVELOPMENT*/})
     public void testAutocomplete(String baseUrl) throws IOException {
         HtmlPage searchPage = pageFor(baseUrl, SEARCH);
 
@@ -216,5 +231,26 @@ public class SearchTests extends HtmlPageTests {
             e.printStackTrace();
         }
         return false;
+    }
+
+    private HtmlPage addAndAssertFilters(HtmlPage searchPage, String linkText, int expectedFilters)
+            throws IOException {
+        String linkPath = String.format("//a[contains(text(), '%s')]", linkText);
+        return clickAndAssertFilters(searchPage, linkPath, "add", expectedFilters);
+    }
+
+    private String linksToRemoveFilter() {
+        return "//span[contains(text(), 'Filter entfernen')]/parent::*";
+    }
+
+    private HtmlPage clickAndAssertFilters(
+            HtmlPage searchPage, String linkPath, String details, int expectedFilters)
+            throws IOException {
+        HtmlAnchor link = searchPage.getFirstByXPath(linkPath);
+        HtmlPage newPage = link.click();
+        assertThat(newPage.getByXPath(linksToRemoveFilter()).size())
+                .as("click on %s should %s filter", linkPath, details)
+                .isEqualTo(expectedFilters);
+        return newPage;
     }
 }
