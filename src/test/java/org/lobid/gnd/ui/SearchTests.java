@@ -7,6 +7,7 @@ import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import org.assertj.core.api.Condition;
 import org.htmlunit.html.DomAttr;
+import org.htmlunit.html.HtmlAnchor;
 import org.htmlunit.html.HtmlButton;
 import org.htmlunit.html.HtmlInput;
 import org.htmlunit.html.HtmlListItem;
@@ -40,6 +41,34 @@ public class SearchTests extends HtmlPageTests {
                 searchPage.getFirstByXPath("//button[@class='ui-autocomplete-clear']");
         clearButton.click();
         assertThat(searchBox.getValue()).as("search box should be empty after clearing").isEmpty();
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {PRODUCTION /*, DEVELOPMENT*/})
+    public void testPageSize(String baseUrl) throws IOException {
+        assertThat(search("Test", baseUrl))
+                .as("page size can be switched, default is 10")
+                .is(linkActive("10"))
+                .is(linkActiveAfterClick("30"))
+                .is(linkActiveAfterClick("50"))
+                .is(linkActiveAfterClick("100"));
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {PRODUCTION /*, DEVELOPMENT*/})
+    public void testPageLinks(String baseUrl) throws IOException {
+        assertThat(search("Test", baseUrl))
+                .as("specific page can be selected, default is 1")
+                .is(linkActive("1"))
+                .is(linkActiveAfterClick("2"))
+                .is(linkActiveAfterClick("3"))
+                .is(linkActiveAfterClick("4"))
+                .is(linkActiveAfterClick("5"))
+                .is(linkActiveAfterClick("6"))
+                .is(linkActiveAfterClick("7"))
+                .is(linkActiveAfterClick("8"))
+                .is(linkActiveAfterClick("9"))
+                .is(linkActiveAfterClick("10"));
     }
 
     @ParameterizedTest
@@ -154,5 +183,38 @@ public class SearchTests extends HtmlPageTests {
         String filter = URLEncoder.encode(String.format("+(%s)", url), StandardCharsets.UTF_8);
         assertThat(link.getValue()).contains(String.format("filter=%s", filter));
         return true;
+    }
+
+    private Condition<HtmlPage> linkActive(String linkText) {
+        return new Condition<>(
+                page -> isActive(linkPath(linkText), page),
+                "parent of '%s' should be active",
+                linkText);
+    }
+
+    private Condition<HtmlPage> linkActiveAfterClick(String linkText) {
+        return new Condition<>(
+                page -> isActiveAfterClick(linkPath(linkText), page),
+                "parent of '%s' should be active after click",
+                linkText);
+    }
+
+    private String linkPath(String linkText) {
+        return String.format("//a[text()='%s']", linkText);
+    }
+
+    private boolean isActive(String linkPath, HtmlPage page) {
+        return page.getFirstByXPath(linkPath + "/parent::*[@class='active']") != null;
+    }
+
+    private boolean isActiveAfterClick(String linkPath, HtmlPage page) {
+        HtmlAnchor link = page.getFirstByXPath(linkPath);
+        try {
+            HtmlPage clickedPage = link.click();
+            return isActive(linkPath, clickedPage);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return false;
     }
 }
