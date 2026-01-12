@@ -88,3 +88,4 @@ The server should be running at http://localhost:8080/.
 - [Webpack](https://webpack.js.org/concepts/)
 - [HtmlUnit](https://www.htmlunit.org/gettingStarted.html)
 - [Spotless](https://github.com/diffplug/spotless/tree/main/plugin-gradle)
+
