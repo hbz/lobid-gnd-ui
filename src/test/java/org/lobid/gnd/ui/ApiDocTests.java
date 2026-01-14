@@ -47,7 +47,7 @@ public class ApiDocTests extends HtmlPageTests {
     @ParameterizedTest
     @ValueSource(strings = {PRODUCTION /*, DEVELOPMENT*/})
     public void testSearchAllJsonEndpoint(String baseUrl) throws IOException, InterruptedException {
-        assertThat(fetchHttpResponse(baseUrl + "/gnd/search?q=*&format=json"))
+        assertThat(fetchHttpResponse(baseUrl, "search?q=*&format=json"))
                 .is(validJson())
                 .contains("\"totalItems\"")
                 .contains("\"member\"");
@@ -65,7 +65,7 @@ public class ApiDocTests extends HtmlPageTests {
     @ValueSource(strings = {PRODUCTION /*, DEVELOPMENT*/})
     public void testSearchAllFieldsJsonEndpoint(String baseUrl)
             throws IOException, InterruptedException {
-        assertThat(fetchHttpResponse(baseUrl + "/gnd/search?q=london&format=json"))
+        assertThat(fetchHttpResponse(baseUrl, "search?q=london&format=json"))
                 .is(validJson())
                 .contains("\"totalItems\"")
                 .contains("London");
@@ -130,7 +130,7 @@ public class ApiDocTests extends HtmlPageTests {
     @ValueSource(strings = {PRODUCTION /*, DEVELOPMENT*/})
     public void testDirectAccessLondonJsonEndpoint(String baseUrl)
             throws IOException, InterruptedException {
-        assertThat(fetchHttpResponse(baseUrl + "/gnd/4074335-4.json"))
+        assertThat(fetchHttpResponse(baseUrl, "4074335-4.json"))
                 .is(validJson())
                 .contains("\"id\"")
                 .contains("4074335-4");
@@ -163,7 +163,7 @@ public class ApiDocTests extends HtmlPageTests {
     @ParameterizedTest
     @ValueSource(strings = {PRODUCTION /*, DEVELOPMENT*/})
     public void testRdfXmlFormatEndpoint(String baseUrl) throws IOException, InterruptedException {
-        assertThat(fetchHttpResponse(baseUrl + "/gnd/4074335-4.rdf"))
+        assertThat(fetchHttpResponse(baseUrl, "4074335-4.rdf"))
                 .contains("rdf:RDF")
                 .contains("4074335-4");
     }
@@ -171,7 +171,7 @@ public class ApiDocTests extends HtmlPageTests {
     @ParameterizedTest
     @ValueSource(strings = {PRODUCTION /*, DEVELOPMENT*/})
     public void testTurtleFormatEndpoint(String baseUrl) throws IOException, InterruptedException {
-        assertThat(fetchHttpResponse(baseUrl + "/gnd/4074335-4.ttl"))
+        assertThat(fetchHttpResponse(baseUrl, "4074335-4.ttl"))
                 .contains("@prefix")
                 .contains("4074335-4");
     }
@@ -180,7 +180,7 @@ public class ApiDocTests extends HtmlPageTests {
     @ValueSource(strings = {PRODUCTION /*, DEVELOPMENT*/})
     public void testNTriplesFormatEndpoint(String baseUrl)
             throws IOException, InterruptedException {
-        String response = fetchHttpResponse(baseUrl + "/gnd/4074335-4.nt");
+        String response = fetchHttpResponse(baseUrl, "4074335-4.nt");
         assertThat(response).contains("4074335-4");
         assertThat(response.split("\n").length).isGreaterThan(0);
     }
@@ -202,7 +202,7 @@ public class ApiDocTests extends HtmlPageTests {
     public void testBulkDownloadJsonLinesEndpoint(String baseUrl)
             throws IOException, InterruptedException {
         String[] lines =
-                fetchHttpResponse(baseUrl + "/gnd/search?q=type:Country&format=jsonl").split("\n");
+                fetchHttpResponse(baseUrl, "search?q=type:Country&format=jsonl").split("\n");
         assertThat(lines.length).isGreaterThan(0);
         assertThat(lines[0]).is(validJson());
     }
@@ -233,7 +233,7 @@ public class ApiDocTests extends HtmlPageTests {
     @ValueSource(strings = {PRODUCTION /*, DEVELOPMENT*/})
     public void testAutocompleteSuggestEndpoint(String baseUrl)
             throws IOException, InterruptedException {
-        assertThat(fetchHttpResponse(baseUrl + "/gnd/search?q=Twain&format=json:suggest"))
+        assertThat(fetchHttpResponse(baseUrl, "search?q=Twain&format=json:suggest"))
                 .is(validJson())
                 .contains("Twain, Mark");
     }
@@ -285,7 +285,7 @@ public class ApiDocTests extends HtmlPageTests {
     @ParameterizedTest
     @ValueSource(strings = {PRODUCTION /*, DEVELOPMENT*/})
     public void testJsonLdContextEndpoint(String baseUrl) throws IOException, InterruptedException {
-        assertThat(fetchHttpResponse(baseUrl + "/gnd/context.jsonld"))
+        assertThat(fetchHttpResponse(baseUrl, "context.jsonld"))
                 .is(validJson())
                 .contains("\"@context\"");
     }

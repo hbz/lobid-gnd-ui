@@ -53,16 +53,21 @@ public abstract class HtmlPageTests {
     }
 
     protected HtmlPage pageFor(String baseUrl, String gndId) throws IOException {
-        String baseUrlWithPort = baseUrl + (baseUrl.contains("localhost") ? ":" + port : "");
-        return webClient.getPage(baseUrlWithPort + "/gnd/" + gndId);
+        return webClient.getPage(urlWithPort(baseUrl, gndId));
     }
 
-    protected String fetchHttpResponse(String url) throws IOException, InterruptedException {
+    protected String fetchHttpResponse(String baseUrl, String path)
+            throws IOException, InterruptedException {
+        String url = urlWithPort(baseUrl, path);
         HttpRequest request = HttpRequest.newBuilder().uri(URI.create(url)).build();
         HttpResponse<String> response =
                 HttpClient.newHttpClient().send(request, HttpResponse.BodyHandlers.ofString());
         assertThat(response.statusCode()).as("HTTP response for " + url).isEqualTo(200);
         return response.body();
+    }
+
+    private String urlWithPort(String baseUrl, String path) {
+        return baseUrl + (baseUrl.contains("localhost") ? ":" + port : "") + "/gnd/" + path;
     }
 
     protected Condition<String> validJson() {
