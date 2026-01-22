@@ -80,13 +80,18 @@ spotless {
         jackson()
     }
 
+    flexmark {
+        target '*.md', 'src/**/*.md'
+        flexmark()
+    }
+
     format 'prettier', {
         target 'src/**/*.js', 'webpack.config.js', 'src/**/*.json', 'package.json', 'src/**/*.css', 'src/**/*.scss', 'src/**/*.html'
         prettier().config(['tabWidth': 4, 'printWidth': 100, 'bracketSameLine': true])
     }
 
     format 'misc', {
-        target '*.gradle', '*.md', '.gitignore'
+        target '*.gradle', '.gitignore'
         trimTrailingWhitespace()
         leadingTabsToSpaces()
         endWithNewline()
