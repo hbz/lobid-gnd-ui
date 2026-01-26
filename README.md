@@ -62,7 +62,7 @@ Start the DevServer:
 npm run devserver
 ```
 
-The application with live reloadiBoot: Reactive Web Applicationsng is now accessible at http://localhost:8081/.
+The application with live reloading is now accessible at http://localhost:8081/.
 
 ## Production deployment
 
