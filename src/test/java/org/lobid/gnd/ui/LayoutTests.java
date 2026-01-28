@@ -13,7 +13,7 @@ import org.junit.jupiter.params.provider.ValueSource;
 public class LayoutTests extends HtmlPageTests {
 
     @ParameterizedTest
-    @ValueSource(strings = {PRODUCTION /*, DEVELOPMENT */})
+    @ValueSource(strings = {PRODUCTION, DEVELOPMENT})
     public void testLayoutContent(String baseUrl) throws IOException {
         HtmlPage testPage = pageFor(baseUrl, COLOGNE);
         assertThat(testPage.asNormalizedText())
@@ -37,7 +37,7 @@ public class LayoutTests extends HtmlPageTests {
     }
 
     @ParameterizedTest
-    @ValueSource(strings = {PRODUCTION /*, DEVELOPMENT*/})
+    @ValueSource(strings = {PRODUCTION, DEVELOPMENT})
     public void testLayoutLinks(String baseUrl) throws IOException {
         assertThat(pageFor(baseUrl, COLOGNE).getElementsByTagName("a").toString())
                 .contains("/gnd")

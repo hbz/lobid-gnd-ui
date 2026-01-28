@@ -28,6 +28,7 @@ public class RouterConfig {
                                 .attribute(
                                         "isDevserver",
                                         "1".equals(request.headers().firstHeader("X-Devserver")))
+                                .attribute("path", request.path())
                                 .build());
     }
 }

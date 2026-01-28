@@ -15,7 +15,7 @@
         <header class="bg-light">
             <div class="container">
                 <nav class="navbar navbar-light navbar-expand-md">
-                    <a th:href="@{/}" class="navbar-brand">
+                    <a th:href="@{/gnd}" class="navbar-brand">
                         <img
                             th:src="@{/images/logo.png}"
                             th:alt="#{app.title}"
@@ -38,11 +38,91 @@
                         <span class="navbar-toggler-icon"></span>
                     </button>
                     <div class="collapse navbar-collapse" id="navbarToggle">
-                        <ul class="navbar-nav ms-auto">
+                        <ul class="nav navbar-nav">
                             <li class="navbar-item">
-                                <a th:href="@{/}" class="nav-link">[[#{navigation.home}]]</a>
+                                <a
+                                    th:href="@{/gnd}"
+                                    class="nav-link"
+                                    title="Einfache Suchoberfläche"
+                                    th:classappend="${request.path == '/gnd' ? 'active' : ''}"
+                                    >gnd</a
+                                >
+                            </li>
+                            <li class="navbar-item">
+                                <a
+                                    th:href="@{/search}"
+                                    class="nav-link"
+                                    title="Die gesamte GND erkunden"
+                                    th:classappend="${request.path == '/search'} ? 'active' : ''"
+                                    >Erkunden</a
+                                >
+                            </li>
+                            <li class="navbar-item">
+                                <a
+                                    th:href="@{/api}"
+                                    class="nav-link"
+                                    title="Programmierschnittstelle"
+                                    th:classappend="${request.path == '/api'} ? 'active' : ''"
+                                    >API</a
+                                >
                             </li>
                         </ul>
+                        <div class="dropdown ms-auto">
+                            <a
+                                class="btn dropdown-toggle"
+                                href="#"
+                                role="button"
+                                id="dropdownMenuLink"
+                                data-bs-toggle="dropdown"
+                                aria-expanded="false"
+                                th:classappend="${request.path == '/dataset'} ? 'active' : ''">
+                                <i class="bi bi-info-circle"></i>
+                            </a>
+
+                            <ul class="dropdown-menu" aria-labelledby="dropdownMenuLink">
+                                <li class="dropdown-header">Dokumentation</li>
+                                <li>
+                                    <a
+                                        th:href="@{/dataset}"
+                                        class="nav-link"
+                                        th:classappend="${request.path == '/dataset'} ? 'active' : ''"
+                                        >Datenbeschreibung</a
+                                    >
+                                </li>
+                                <li>
+                                    <a
+                                        th:href="@{http://blog.lobid.org/2018/07/04/lobid-gnd-suche.html}"
+                                        target="_blank"
+                                        >Suche und Navigation</a
+                                    >
+                                </li>
+                                <li>
+                                    <a
+                                        th:href="@{http://blog.lobid.org/2018/07/06/lobid-gnd-queries.html}"
+                                        target="_blank"
+                                        >Formulierung komplexer Suchanfragen</a
+                                    >
+                                </li>
+                                <li>
+                                    <a th:href="@{/reconcile}" class="nav-link" target="_blank"
+                                        >Integration in OpenRefine</a
+                                    >
+                                </li>
+                                <li>
+                                    <a th:href="@{http://lobid.org/usage-policy}" target="_blank"
+                                        >Richtlinien API-Nutzung</a
+                                    >
+                                </li>
+                                <li class="divider"></li>
+                                <li class="dropdown-header">Kontakt</li>
+                                <li>
+                                    <a
+                                        th:href="@{'mailto:lobid-admin@hbz-nrw.de?subject=Feedback%20zu%20lobid-gnd,%20aktuelle%20Seite%20' + ${request.path}}"
+                                        >Feedback zur aktuellen Seite</a
+                                    >
+                                </li>
+                            </ul>
+                        </div>
                     </div>
                 </nav>
             </div>
@@ -59,6 +139,34 @@
                     [[${MSG_ERROR}]]
                 </p>
                 <div layout:fragment="content" />
+                <div class="panel panel-default footer">
+                    <div class="panel-body">
+                        <span class="pull-left">
+                            <img th:src="@{/images/wappen.png}" alt="NRW-Wappen" /> &nbsp; lobid-gnd
+                            | ein Dienst des
+                            <a th:href="@{https://www.hbz-nrw.de/produkte/linked-open-data}">hbz</a>
+                        </span>
+                        <span class="pull-right">
+                            <a th:href="@{http://lobid.org/warranty}">Gewährleistung</a> |
+                            <a th:href="@{http://www.hbz-nrw.de/impressum}">Impressum</a> |
+                            <a
+                                th:href="@{https://github.com/hbz/lobid/blob/master/conf/Datenschutzerklaerung_lobid.textile}"
+                                >Datenschutz</a
+                            >
+                            |
+                            <a th:href="@{https://openbiblio.social/@lobid}"
+                                ><i class="fa-brands fa-mastodon" aria-hidden="true"></i>
+                                Mastodon</a
+                            >&nbsp;
+                            <a th:href="@{http://github.com/hbz/lobid-gnd-ui}"
+                                ><i class="fa-brands fa-github" aria-hidden="true"></i> GitHub</a
+                            >&nbsp;
+                            <a th:href="@{http://blog.lobid.org}"
+                                ><i class="fa fa-pencil" aria-hidden="true"></i> Blog</a
+                            >
+                        </span>
+                    </div>
+                </div>
             </div>
         </main>
     </body>
