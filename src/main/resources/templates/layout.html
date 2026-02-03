@@ -13,30 +13,32 @@
     </head>
     <body>
         <div class="container">
-            <nav class="navbar navbar-light navbar-expand-md">
-                <div id="header" class="container-fluid">
-                    <a th:href="@{/gnd}" class="navbar-brand">
-                        <img
-                            th:src="@{/images/logo.png}"
-                            th:alt="#{app.title}"
-                            width="30"
-                            height="30"
-                            class="d-inline-block align-top" />
-                        <span class="ps-1">[[#{app.title}]]</span>
-                        <sup>
-                            <span class="badge text-bg-primary">prototype</span>
-                        </sup>
-                    </a>
-                    <button
-                        type="button"
-                        class="navbar-toggler"
-                        data-bs-toggle="collapse"
-                        data-bs-target="#navbarToggle"
-                        th:aria-label="#{navigation.toggle}"
-                        aria-controls="navbarToggle"
-                        aria-expanded="false">
-                        <span class="navbar-toggler-icon"></span>
-                    </button>
+            <nav class="navbar navbar-expand-md">
+                <div class="container-fluid" id="header">
+                    <div class="navbar-header">
+                        <a th:href="@{/gnd}" class="navbar-brand">
+                            <img
+                                th:src="@{/images/logo.png}"
+                                th:alt="#{app.title}"
+                                width="30"
+                                height="30"
+                                class="d-inline-block align-top" />
+                            <span class="ps-1">lobid</span>
+                            <sup>
+                                <span class="badge text-bg-primary">prototype</span>
+                            </sup>
+                        </a>
+                        <button
+                            type="button"
+                            class="navbar-toggler"
+                            data-bs-toggle="collapse"
+                            data-bs-target="#navbarToggle"
+                            th:aria-label="#{navigation.toggle}"
+                            aria-controls="navbarToggle"
+                            aria-expanded="false">
+                            <span class="navbar-toggler-icon"></span>
+                        </button>
+                    </div>
                     <div class="collapse navbar-collapse" id="navbarToggle">
                         <ul class="nav navbar-nav">
                             <li class="navbar-item">
@@ -79,9 +81,11 @@
                                 <i class="bi bi-info-circle"></i>
                             </a>
 
-                            <ul class="dropdown-menu" aria-labelledby="dropdownMenuLink">
+                            <ul
+                                class="dropdown-menu dropdown-menu-end"
+                                aria-labelledby="dropdownMenuLink">
                                 <li class="dropdown-header">Dokumentation</li>
-                                <li>
+                                <li class="dropdown-item">
                                     <a
                                         th:href="@{/dataset}"
                                         class="nav-link"
@@ -89,33 +93,33 @@
                                         >Datenbeschreibung</a
                                     >
                                 </li>
-                                <li>
+                                <li class="dropdown-item">
                                     <a
                                         th:href="@{http://blog.lobid.org/2018/07/04/lobid-gnd-suche.html}"
                                         target="_blank"
                                         >Suche und Navigation</a
                                     >
                                 </li>
-                                <li>
+                                <li class="dropdown-item">
                                     <a
                                         th:href="@{http://blog.lobid.org/2018/07/06/lobid-gnd-queries.html}"
                                         target="_blank"
                                         >Formulierung komplexer Suchanfragen</a
                                     >
                                 </li>
-                                <li>
+                                <li class="dropdown-item">
                                     <a th:href="@{/reconcile}" class="nav-link" target="_blank"
                                         >Integration in OpenRefine</a
                                     >
                                 </li>
-                                <li>
+                                <li class="dropdown-item">
                                     <a th:href="@{http://lobid.org/usage-policy}" target="_blank"
                                         >Richtlinien API-Nutzung</a
                                     >
                                 </li>
-                                <li class="divider"></li>
+                                <li class="dropdown-divider"></li>
                                 <li class="dropdown-header">Kontakt</li>
-                                <li>
+                                <li class="dropdown-item">
                                     <a
                                         th:href="@{'mailto:lobid-admin@hbz-nrw.de?subject=Feedback%20zu%20lobid-gnd,%20aktuelle%20Seite%20' + ${request.path}}"
                                         >Feedback zur aktuellen Seite</a

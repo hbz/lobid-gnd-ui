@@ -6,7 +6,6 @@ dd {
     width: 100%;
     background-image: url("../static/images/clouds.jpg");
     background-repeat: repeat-x;
-    padding-bottom: 5px;
 }
 
 #header-gnd {
@@ -160,6 +159,10 @@ a.active {
 
 .nrw-logo {
     height: 50px;
+}
+
+.footer {
+    padding: 8px;
 }
 
 .footer img {

@@ -1,5 +1,8 @@
 // override built-in custom variables
 $primary: #004678;
 $body-color: #343d42;
-$link-color: $body-color;
+$link-color: $primary;
+$link-hover-color: darken($link-color, 15%);
+$link-decoration: none;
+$link-hover-decoration: underline;
 $input-btn-focus-width: 0.1rem;
