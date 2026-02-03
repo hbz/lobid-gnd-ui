@@ -130,6 +130,27 @@
                     </div>
                 </div>
             </nav>
+            <form action="#" th:action="@{/gnd/search}" method="GET" id="search-form">
+                <div class="input-group" id="search-simple">
+                    <input
+                        autofocus=""
+                        type="text"
+                        name="q"
+                        id="gnd-query"
+                        value=""
+                        class="form-control"
+                        autocomplete="off"
+                        placeholder='Suchoptionen: AND, OR, AND NOT, ""-Phrasensuche, *-Trunkierung'
+                        title="Suchanfrage" /><span
+                        role="status"
+                        aria-live="polite"
+                        class="ui-helper-hidden-accessible"></span>
+                    <span class="input-group-btn"
+                        ><button class="btn btn-default" type="submit" title="Suchen">
+                            <i class="bi bi-search"></i></button
+                    ></span>
+                </div>
+            </form>
         </div>
 
         <main class="my-5">

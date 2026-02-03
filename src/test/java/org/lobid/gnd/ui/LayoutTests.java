@@ -29,7 +29,7 @@ public class LayoutTests extends HtmlPageTests {
     }
 
     @ParameterizedTest
-    @ValueSource(strings = {PRODUCTION /*, DEVELOPMENT*/})
+    @ValueSource(strings = {PRODUCTION, DEVELOPMENT})
     public void testLayoutForm(String baseUrl) throws IOException {
         List<HtmlForm> forms = pageFor(baseUrl, COLOGNE).getForms();
         assertThat(forms).isNotEmpty();

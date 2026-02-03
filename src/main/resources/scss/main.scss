@@ -344,3 +344,12 @@ figcaption {
     float: left;
     margin: 5px 10px 0px 0px;
 }
+
+.btn-default {
+    --bs-btn-bg: #fff;
+    --bs-btn-border-color: #dee2e6;
+    --bs-btn-hover-bg: #e6e6e6;
+    --bs-btn-hover-border-color: #adadad;
+    --bs-btn-active-bg: var(--bs-btn-hover-bg);
+    --bs-btn-active-border-color: var(--bs-btn-hover-border-color);
+}
