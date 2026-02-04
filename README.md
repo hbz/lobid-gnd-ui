@@ -20,7 +20,7 @@ To start the local server, run:
 ./gradlew bootRun
 ```
 
-The server should be running at http://localhost:8080/.
+The server should be running at http://localhost:8080/gnd.
 
 ## Run checks
 
@@ -44,7 +44,7 @@ For backend hot-deployment, in a separate terminal, run:
 ./gradlew --continuous bootJar
 ```
 
-With this, changes to the Java backend code are visible at http://localhost:8080/ *after* a browser reload.
+With this, changes to the Java backend code are visible at http://localhost:8080/gnd *after* a browser reload.
 
 ## Frontend development
 
@@ -62,7 +62,7 @@ Start the DevServer:
 npm run devserver
 ```
 
-The application with live reloading is now accessible at http://localhost:8081/.
+The application with live reloading is now accessible at http://localhost:8081/gnd.
 
 ## Production deployment
 
@@ -78,7 +78,7 @@ Start the application with the `production` profile:
 java -Dspring.profiles.active=production -jar ./build/libs/lobid-gnd-ui-0.0.1-SNAPSHOT.jar
 ```
 
-The server should be running at http://localhost:8080/.
+The server should be running at http://localhost:8080/gnd.
 
 ## Reference manuals
 
