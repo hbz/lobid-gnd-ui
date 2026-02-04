@@ -41,8 +41,10 @@ public class LayoutTests extends HtmlPageTests {
     public void testLayoutLinks(String baseUrl) throws IOException {
         assertThat(pageFor(baseUrl, COLOGNE).getElementsByTagName("a").toString())
                 .contains("/gnd")
-                .contains("/search")
-                .contains("/api")
+                .contains("/gnd/search")
+                .contains("/gnd/api")
+                .contains("/gnd/dataset")
+                .contains("/gnd/reconcile")
                 .contains("https://www.hbz-nrw.de/produkte/linked-open-data")
                 .contains("http://lobid.org/warranty")
                 .contains("http://www.hbz-nrw.de/impressum")

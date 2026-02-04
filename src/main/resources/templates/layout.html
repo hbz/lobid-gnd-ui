@@ -52,7 +52,7 @@
                             </li>
                             <li class="navbar-item">
                                 <a
-                                    th:href="@{/search}"
+                                    th:href="@{/gnd/search}"
                                     class="nav-link"
                                     title="Die gesamte GND erkunden"
                                     th:classappend="${request.path == '/search'} ? 'active' : ''"
@@ -61,7 +61,7 @@
                             </li>
                             <li class="navbar-item">
                                 <a
-                                    th:href="@{/api}"
+                                    th:href="@{/gnd/api}"
                                     class="nav-link"
                                     title="Programmierschnittstelle"
                                     th:classappend="${request.path == '/api'} ? 'active' : ''"
@@ -87,7 +87,7 @@
                                 <li class="dropdown-header">Dokumentation</li>
                                 <li class="dropdown-item">
                                     <a
-                                        th:href="@{/dataset}"
+                                        th:href="@{/gnd/dataset}"
                                         class="nav-link"
                                         th:classappend="${request.path == '/dataset'} ? 'active' : ''"
                                         >Datenbeschreibung</a
@@ -108,7 +108,7 @@
                                     >
                                 </li>
                                 <li class="dropdown-item">
-                                    <a th:href="@{/reconcile}" class="nav-link" target="_blank"
+                                    <a th:href="@{/gnd/reconcile}" class="nav-link" target="_blank"
                                         >Integration in OpenRefine</a
                                     >
                                 </li>

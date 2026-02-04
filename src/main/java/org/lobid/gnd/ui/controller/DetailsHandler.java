@@ -42,4 +42,12 @@ public class DetailsHandler {
                     return ServerResponse.ok().render("details", model);
                 });
     }
+
+    public Mono<ServerResponse> notImplemented(ServerRequest request) {
+        int statusCode = 501;
+        String statusText = "Not Implemented";
+        Map<String, Object> model =
+                Map.of("request", request.attributes(), "status", statusCode, "error", statusText);
+        return ServerResponse.status(statusCode).render("error", model);
+    }
 }

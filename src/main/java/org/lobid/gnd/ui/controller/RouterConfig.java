@@ -15,6 +15,10 @@ public class RouterConfig {
     public RouterFunction<ServerResponse> detailsRoutes(DetailsHandler handler) {
         return RouterFunctions.route()
                 .GET("/gnd", handler::index)
+                .GET("/gnd/search", handler::notImplemented)
+                .GET("/gnd/api", handler::notImplemented)
+                .GET("/gnd/dataset", handler::notImplemented)
+                .GET("/gnd/reconcile", handler::notImplemented)
                 // Define URL route for GND entry with ID, e.g. `/gnd/4031483-2`:
                 .GET("/gnd/{id}", handler::byId)
                 .filter(addIsDevserver())
