@@ -141,14 +141,14 @@
                         class="form-control"
                         autocomplete="off"
                         placeholder='Suchoptionen: AND, OR, AND NOT, ""-Phrasensuche, *-Trunkierung'
-                        title="Suchanfrage" /><span
+                        title="Suchanfrage" />
+                    <span
                         role="status"
                         aria-live="polite"
                         class="ui-helper-hidden-accessible"></span>
-                    <span class="input-group-btn"
-                        ><button class="btn btn-default" type="submit" title="Suchen">
-                            <i class="bi bi-search"></i></button
-                    ></span>
+                    <button class="btn btn-default" type="submit" title="Suchen">
+                        <i class="bi bi-search"></i>
+                    </button>
                 </div>
             </form>
         </div>
@@ -165,7 +165,7 @@
                     [[${MSG_ERROR}]]
                 </p>
                 <div layout:fragment="content" />
-                <div class="card">
+                <div class="card my-5">
                     <div class="card-body footer">
                         <span class="float-start">
                             <img th:src="@{/images/wappen.png}" alt="NRW-Wappen" /> &nbsp; lobid-gnd
