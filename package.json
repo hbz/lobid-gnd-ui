@@ -2,12 +2,13 @@
     "name": "gnd-ui-lobid-frontend",
     "author": "Bootify.io",
     "scripts": {
-        "devserver": "webpack serve --open --mode development",
+        "devserver": "webpack serve --open /gnd --mode development",
         "build": "webpack --mode production"
     },
     "dependencies": {
         "@popperjs/core": "2.11.8",
-        "bootstrap": "5.3.8"
+        "bootstrap": "5.3.8",
+        "bootstrap-icons": "1.13.1"
     },
     "devDependencies": {
         "@babel/core": "7.28.4",

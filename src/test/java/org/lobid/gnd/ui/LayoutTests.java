@@ -13,7 +13,7 @@ import org.junit.jupiter.params.provider.ValueSource;
 public class LayoutTests extends HtmlPageTests {
 
     @ParameterizedTest
-    @ValueSource(strings = {PRODUCTION /*, DEVELOPMENT */})
+    @ValueSource(strings = {PRODUCTION, DEVELOPMENT})
     public void testLayoutContent(String baseUrl) throws IOException {
         HtmlPage testPage = pageFor(baseUrl, COLOGNE);
         assertThat(testPage.asNormalizedText())
@@ -29,7 +29,7 @@ public class LayoutTests extends HtmlPageTests {
     }
 
     @ParameterizedTest
-    @ValueSource(strings = {PRODUCTION /*, DEVELOPMENT*/})
+    @ValueSource(strings = {PRODUCTION, DEVELOPMENT})
     public void testLayoutForm(String baseUrl) throws IOException {
         List<HtmlForm> forms = pageFor(baseUrl, COLOGNE).getForms();
         assertThat(forms).isNotEmpty();
@@ -37,12 +37,14 @@ public class LayoutTests extends HtmlPageTests {
     }
 
     @ParameterizedTest
-    @ValueSource(strings = {PRODUCTION /*, DEVELOPMENT*/})
+    @ValueSource(strings = {PRODUCTION, DEVELOPMENT})
     public void testLayoutLinks(String baseUrl) throws IOException {
         assertThat(pageFor(baseUrl, COLOGNE).getElementsByTagName("a").toString())
                 .contains("/gnd")
-                .contains("/search")
-                .contains("/api")
+                .contains("/gnd/search")
+                .contains("/gnd/api")
+                .contains("/gnd/dataset")
+                .contains("/gnd/reconcile")
                 .contains("https://www.hbz-nrw.de/produkte/linked-open-data")
                 .contains("http://lobid.org/warranty")
                 .contains("http://www.hbz-nrw.de/impressum")
