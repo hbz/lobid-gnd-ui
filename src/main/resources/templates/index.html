@@ -12,12 +12,8 @@
                 [[#{app.title}]]
                 <small class="text-body-secondary"> &mdash; [[#{home.index.headline}]]</small>
             </h1>
-            <p>[(#{home.index.text})]</p>
-            <p>Current state: render all JSON fields for a GND entity in an HTML table, e.g.:</p>
-            <p>
-                <a href="/gnd/7749153-1">GND</a>, <a href="/gnd/2047974-8">hbz</a>,
-                <a href="/gnd/4031483-2">Köln</a>, <a href="/gnd/118512676">Böll</a>, ...
-            </p>
+            <hr />
+            <div th:utext="${dataset.description.de}"></div>
         </div>
     </body>
 </html>

@@ -13,7 +13,7 @@ import org.junit.jupiter.params.provider.ValueSource;
 public class IndexTests extends HtmlPageTests {
 
     @ParameterizedTest
-    @ValueSource(strings = {PRODUCTION /*, DEVELOPMENT*/})
+    @ValueSource(strings = {PRODUCTION, DEVELOPMENT})
     public void testIndexContent(String baseUrl) throws IOException {
         assertThat(pageFor(baseUrl, "").asNormalizedText())
                 .contains("Rechercheoberfläche & LOD-API für die GND")
@@ -23,7 +23,7 @@ public class IndexTests extends HtmlPageTests {
     }
 
     @ParameterizedTest
-    @ValueSource(strings = {PRODUCTION /*, DEVELOPMENT*/})
+    @ValueSource(strings = {PRODUCTION, DEVELOPMENT})
     public void testIndexLinks(String baseUrl) throws IOException {
         assertThat(pageFor(baseUrl, "").getElementsByTagName("a").toString())
                 .contains("https://www.dnb.de/lds#doc58246bodyText1")
