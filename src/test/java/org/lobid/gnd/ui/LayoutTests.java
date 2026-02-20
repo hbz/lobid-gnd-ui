@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.util.List;
 import org.htmlunit.html.HtmlForm;
 import org.htmlunit.html.HtmlPage;
+import org.htmlunit.html.HtmlScript;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 
@@ -15,7 +16,7 @@ public class LayoutTests extends HtmlPageTests {
     @ParameterizedTest
     @ValueSource(strings = {PRODUCTION, DEVELOPMENT})
     public void testLayoutContent(String baseUrl) throws IOException {
-        HtmlPage testPage = pageFor(baseUrl, COLOGNE);
+        HtmlPage testPage = pageFor(baseUrl, "");
         assertThat(testPage.asNormalizedText())
                 .contains("gnd")
                 .contains("Erkunden")
@@ -31,7 +32,7 @@ public class LayoutTests extends HtmlPageTests {
     @ParameterizedTest
     @ValueSource(strings = {PRODUCTION, DEVELOPMENT})
     public void testLayoutForm(String baseUrl) throws IOException {
-        List<HtmlForm> forms = pageFor(baseUrl, COLOGNE).getForms();
+        List<HtmlForm> forms = pageFor(baseUrl, "").getForms();
         assertThat(forms).isNotEmpty();
         assertThat(forms.getFirst().getInputsByName("q")).isNotEmpty();
     }
@@ -39,7 +40,7 @@ public class LayoutTests extends HtmlPageTests {
     @ParameterizedTest
     @ValueSource(strings = {PRODUCTION, DEVELOPMENT})
     public void testLayoutLinks(String baseUrl) throws IOException {
-        assertThat(pageFor(baseUrl, COLOGNE).getElementsByTagName("a").toString())
+        assertThat(pageFor(baseUrl, "").getElementsByTagName("a").toString())
                 .contains("/gnd")
                 .contains("/gnd/search")
                 .contains("/gnd/api")
@@ -52,5 +53,26 @@ public class LayoutTests extends HtmlPageTests {
                 .contains("https://openbiblio.social/@lobid")
                 .contains("http://github.com/hbz/lobid-gnd")
                 .contains("http://blog.lobid.org/");
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {PRODUCTION, DEVELOPMENT})
+    public void testJsonLdScript(String baseUrl) throws IOException {
+        HtmlScript jsonLdScript =
+                pageFor(baseUrl, "").getFirstByXPath("//script[@type='application/ld+json']");
+        assertThat(jsonLdScript.getTextContent())
+                .isEqualToIgnoringWhitespace(
+"""
+{
+    "@context": "http://schema.org",
+    "@type": "WebSite",
+    "url": "https://lobid.org/gnd",
+    "potentialAction": {
+        "@type": "SearchAction",
+        "target": "https://lobid.org/gnd/search?q={search_term_string}",
+        "query-input": "required name=search_term_string"
+    }
+}
+""");
     }
 }

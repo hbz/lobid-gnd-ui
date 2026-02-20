@@ -10,6 +10,18 @@
         <link rel="icon" type="image/x-icon" href="/favicon.ico" />
         <link th:if="${!request.isDevserver}" th:href="@{/css/bundle.css}" rel="stylesheet" />
         <script th:src="@{/js/bundle.js}" defer></script>
+        <script type="application/ld+json">
+            {
+                "@context": "http://schema.org",
+                "@type": "WebSite",
+                "url": "https://lobid.org/gnd",
+                "potentialAction": {
+                    "@type": "SearchAction",
+                    "target": "https://lobid.org/gnd/search?q={search_term_string}",
+                    "query-input": "required name=search_term_string"
+                }
+            }
+        </script>
     </head>
     <body>
         <div class="container">

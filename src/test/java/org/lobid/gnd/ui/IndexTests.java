@@ -5,7 +5,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 import java.io.IOException;
 import org.htmlunit.html.HtmlFigureCaption;
 import org.htmlunit.html.HtmlPage;
-import org.htmlunit.html.HtmlScript;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 
@@ -41,26 +40,5 @@ public class IndexTests extends HtmlPageTests {
         assertThat(figcaption.getTextContent())
                 .contains("Bildquelle")
                 .contains("Wikimedia Commons");
-    }
-
-    @ParameterizedTest
-    @ValueSource(strings = {PRODUCTION /*, DEVELOPMENT*/})
-    public void testJsonLdScript(String baseUrl) throws IOException {
-        HtmlScript jsonLdScript =
-                pageFor(baseUrl, "").getFirstByXPath("//script[@type='application/ld+json']");
-        assertThat(jsonLdScript.getTextContent())
-                .isEqualToIgnoringWhitespace(
-"""
-{
-    "@context": "http://schema.org",
-    "@type": "WebSite",
-    "url": "https://lobid.org/gnd",
-    "potentialAction": {
-        "@type": "SearchAction",
-        "target": "https://lobid.org/gnd/search?q={search_term_string}",
-        "query-input": "required name=search_term_string"
-    }
-}
-""");
     }
 }
