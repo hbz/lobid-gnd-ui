@@ -31,7 +31,7 @@ public class IndexTests extends HtmlPageTests {
     }
 
     @ParameterizedTest
-    @ValueSource(strings = {PRODUCTION /*, DEVELOPMENT*/})
+    @ValueSource(strings = {PRODUCTION, DEVELOPMENT})
     public void testIndexImages(String baseUrl) throws IOException {
         HtmlPage indexPage = pageFor(baseUrl, "");
         assertThat(indexPage.getElementsByTagName("img").toString())

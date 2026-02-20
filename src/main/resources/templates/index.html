@@ -8,12 +8,38 @@
     </head>
     <body>
         <div layout:fragment="content">
+            <span class="float-end">
+                <img class="media-object hbz-logo" th:src="@{/images/hbz.png}" alt="hbz" />
+            </span>
             <h1>
                 [[#{app.title}]]
                 <small class="text-body-secondary"> &mdash; [[#{home.index.headline}]]</small>
             </h1>
             <hr />
-            <div th:utext="${dataset.description.de}"></div>
+            <div class="row">
+                <div class="col-9">
+                    <div th:utext="${dataset.description.de}"></div>
+                </div>
+                <div class="col-3">
+                    <figure>
+                        <a th:href="@{'/gnd/' + ${entity.gndIdentifier}}">
+                            <img
+                                id="index-image"
+                                th:src="@{${entity.imageUrl}}"
+                                th:alt="${entity.preferredName}" />
+                        </a>
+                        <figcaption>
+                            <a
+                                th:href="@{'/gnd/' + ${entity.gndIdentifier}}"
+                                th:text="${entity.preferredName}">
+                                An entity
+                            </a>
+                            <br />
+                            <small th:utext="${entity.imageAttribution}">An attribution</small>
+                        </figcaption>
+                    </figure>
+                </div>
+            </div>
         </div>
     </body>
 </html>
