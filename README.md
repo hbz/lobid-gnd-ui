@@ -69,10 +69,26 @@ The application with live reloading is now accessible at http://localhost:8081/g
 Build the application:
 
 ```
-./gradlew clean build
+./gradlew clean bootJar
 ```
 
-Start the application with the `production` profile:
+Start, stop, restart, or check status of the service:
+
+```
+sudo systemctl start|stop|restart|status lobid-gnd-ui
+```
+
+## Production setup
+
+Initial service setup (required only once):
+
+```
+sudo ln -sr build/libs/lobid-gnd-ui-0.0.1-SNAPSHOT.jar /opt/lobid-gnd-ui.jar
+sudo ln -sr lobid-gnd-ui.service /etc/systemd/system/lobid-gnd-ui.service
+sudo systemctl daemon-reload
+```
+
+For debugging etc. start the application manually:
 
 ```
 java -Dspring.profiles.active=production -jar ./build/libs/lobid-gnd-ui-0.0.1-SNAPSHOT.jar
