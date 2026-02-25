@@ -2,6 +2,7 @@ package org.lobid.gnd.ui.controller;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.web.reactive.function.server.HandlerFilterFunction;
 import org.springframework.web.reactive.function.server.RouterFunction;
 import org.springframework.web.reactive.function.server.RouterFunctions;
@@ -21,6 +22,7 @@ public class RouterConfig {
                 .GET("/gnd/reconcile", handler::notImplemented)
                 // Define URL route for GND entry with ID, e.g. `/gnd/4031483-2`:
                 .GET("/gnd/{id}", handler::byId)
+                .resources("/gnd/assets/**", new ClassPathResource("static/"))
                 .filter(addIsDevserver())
                 .build();
     }
