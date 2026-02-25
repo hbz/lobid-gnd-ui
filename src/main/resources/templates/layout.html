@@ -7,9 +7,24 @@
         <title layout:title-pattern="$CONTENT_TITLE">[[#{app.title}]]</title>
         <meta charset="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <link rel="icon" type="image/x-icon" href="/favicon.ico" />
-        <link th:if="${!request.isDevserver}" th:href="@{/css/bundle.css}" rel="stylesheet" />
-        <script th:src="@{/js/bundle.js}" defer></script>
+        <link rel="icon" type="image/x-icon" href="/gnd/assets/favicon.ico" />
+        <link
+            th:if="${!request.isDevserver}"
+            th:href="@{/gnd/assets/css/bundle.css}"
+            rel="stylesheet" />
+        <script th:src="@{/gnd/assets/js/bundle.js}" defer></script>
+        <script type="application/ld+json">
+            {
+                "@context": "http://schema.org",
+                "@type": "WebSite",
+                "url": "https://lobid.org/gnd",
+                "potentialAction": {
+                    "@type": "SearchAction",
+                    "target": "https://lobid.org/gnd/search?q={search_term_string}",
+                    "query-input": "required name=search_term_string"
+                }
+            }
+        </script>
     </head>
     <body>
         <div class="container">
@@ -18,7 +33,7 @@
                     <div class="navbar-header">
                         <a th:href="@{/gnd}" class="navbar-brand">
                             <img
-                                th:src="@{/images/logo.png}"
+                                th:src="@{/gnd/assets/images/logo.png}"
                                 th:alt="#{app.title}"
                                 width="30"
                                 height="30"
@@ -165,11 +180,19 @@
                     [[${MSG_ERROR}]]
                 </p>
                 <div layout:fragment="content" />
+                <div class="card">
+                    <div class="card-body">
+                        Prototype, current state: render all JSON fields for a GND entity in an HTML
+                        table, e.g.:
+                        <a href="/gnd/7749153-1">GND</a>, <a href="/gnd/2047974-8">hbz</a>,
+                        <a href="/gnd/4031483-2">Köln</a>, <a href="/gnd/118512676">Böll</a>, ...
+                    </div>
+                </div>
                 <div class="card my-5">
                     <div class="card-body footer">
                         <span class="float-start">
-                            <img th:src="@{/images/wappen.png}" alt="NRW-Wappen" /> &nbsp; lobid-gnd
-                            | ein Dienst des
+                            <img th:src="@{/gnd/assets/images/wappen.png}" alt="NRW-Wappen" />
+                            &nbsp; lobid-gnd | ein Dienst des
                             <a th:href="@{https://www.hbz-nrw.de/produkte/linked-open-data}">hbz</a>
                         </span>
                         <span class="float-end">

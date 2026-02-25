@@ -67,7 +67,8 @@ public abstract class HtmlPageTests {
     }
 
     private String urlWithPort(String baseUrl, String path) {
-        return baseUrl + (baseUrl.contains("localhost") ? ":" + port : "") + "/gnd/" + path;
+        String baseUrlWithPort = baseUrl + (baseUrl.contains("localhost") ? ":" + port : "");
+        return baseUrlWithPort + "/gnd" + (path.isEmpty() ? "" : "/" + path);
     }
 
     protected Condition<String> validJson() {

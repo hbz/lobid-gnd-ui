@@ -8,16 +8,41 @@
     </head>
     <body>
         <div layout:fragment="content">
+            <span class="float-end">
+                <img
+                    class="media-object hbz-logo"
+                    th:src="@{/gnd/assets/images/hbz.png}"
+                    alt="hbz" />
+            </span>
             <h1>
                 [[#{app.title}]]
                 <small class="text-body-secondary"> &mdash; [[#{home.index.headline}]]</small>
             </h1>
-            <p>[(#{home.index.text})]</p>
-            <p>Current state: render all JSON fields for a GND entity in an HTML table, e.g.:</p>
-            <p>
-                <a href="/gnd/7749153-1">GND</a>, <a href="/gnd/2047974-8">hbz</a>,
-                <a href="/gnd/4031483-2">Köln</a>, <a href="/gnd/118512676">Böll</a>, ...
-            </p>
+            <hr />
+            <div class="row">
+                <div class="col-9">
+                    <div th:utext="${dataset.description.de}"></div>
+                </div>
+                <div class="col-3">
+                    <figure>
+                        <a th:href="@{'/gnd/' + ${entity.gndIdentifier}}">
+                            <img
+                                id="index-image"
+                                th:src="@{${entity.imageUrl}}"
+                                th:alt="${entity.preferredName}" />
+                        </a>
+                        <figcaption>
+                            <a
+                                th:href="@{'/gnd/' + ${entity.gndIdentifier}}"
+                                th:text="${entity.preferredName}">
+                                An entity
+                            </a>
+                            <br />
+                            <small th:utext="${entity.imageAttribution}">An attribution</small>
+                        </figcaption>
+                    </figure>
+                </div>
+            </div>
         </div>
     </body>
 </html>
