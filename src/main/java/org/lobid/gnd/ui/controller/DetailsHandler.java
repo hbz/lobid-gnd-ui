@@ -87,7 +87,8 @@ public class DetailsHandler {
         @SuppressWarnings("unchecked")
         List<Map<String, Object>> depictions = (List<Map<String, Object>>) javaMap.get("depiction");
         String imageAttribution = createAttribution(depictions.getFirst());
-        javaMap.put("imageUrl", depictions.getFirst().get("thumbnail"));
+        String proxyPrefix = "https://lobid.org/imagesproxy?url=";
+        javaMap.put("imageUrl", proxyPrefix + depictions.getFirst().get("thumbnail"));
         javaMap.put("imageAttribution", String.format("Bildquelle: %s", imageAttribution));
         return javaMap;
     }
