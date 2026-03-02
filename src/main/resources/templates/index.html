@@ -11,16 +11,15 @@
             <span class="float-end">
                 <img
                     class="media-object hbz-logo"
-                    th:src="@{/gnd/assets/images/hbz.png}"
+                    th:src="@{/gnd/assets/images/hbz.svg}"
                     alt="hbz" />
             </span>
-            <h1>
+            <h1 class="page-header">
                 [[#{app.title}]]
-                <small class="text-body-secondary"> &mdash; [[#{home.index.headline}]]</small>
+                <small> &mdash; [[#{home.index.headline}]]</small>
             </h1>
-            <hr />
             <div class="row">
-                <div class="col-9">
+                <div class="col-9 intro">
                     <div th:utext="${dataset.description.de}"></div>
                 </div>
                 <div class="col-3">

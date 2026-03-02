@@ -34,7 +34,7 @@ public class IndexTests extends HtmlPageTests {
     public void testIndexImages(String baseUrl) throws IOException {
         HtmlPage indexPage = pageFor(baseUrl, "");
         assertThat(indexPage.getElementsByTagName("img").toString())
-                .contains("hbz.png")
+                .containsAnyOf("hbz.png", "hbz.svg")
                 .contains("https://commons.wikimedia.org/wiki/Special:FilePath");
         HtmlFigureCaption figcaption = indexPage.getFirstByXPath("//figcaption");
         assertThat(figcaption.getTextContent())

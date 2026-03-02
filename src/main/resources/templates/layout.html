@@ -38,7 +38,7 @@
                                 width="30"
                                 height="30"
                                 class="d-inline-block align-top" />
-                            <span class="ps-1">lobid</span>
+                            <span class="ps-1 text-secondary"><strong>lobid</strong></span>
                             <sup>
                                 <span class="badge text-bg-primary">prototype</span>
                             </sup>
@@ -55,7 +55,7 @@
                         </button>
                     </div>
                     <div class="collapse navbar-collapse" id="navbarToggle">
-                        <ul class="nav navbar-nav">
+                        <ul class="nav navbar-nav" id="main-links">
                             <li class="navbar-item">
                                 <a
                                     th:href="@{/gnd}"
@@ -146,7 +146,7 @@
                 </div>
             </nav>
             <form action="#" th:action="@{/gnd/search}" method="GET" id="search-form">
-                <div class="input-group" id="search-simple">
+                <div class="input-group my-2" id="search-simple">
                     <input
                         autofocus=""
                         type="text"
@@ -180,7 +180,7 @@
                     [[${MSG_ERROR}]]
                 </p>
                 <div layout:fragment="content" />
-                <div class="card">
+                <div class="card my-3">
                     <div class="card-body">
                         Prototype, current state: render all JSON fields for a GND entity in an HTML
                         table, e.g.:
@@ -188,7 +188,7 @@
                         <a href="/gnd/4031483-2">Köln</a>, <a href="/gnd/118512676">Böll</a>, ...
                     </div>
                 </div>
-                <div class="card my-5">
+                <div class="card my-3">
                     <div class="card-body footer">
                         <span class="float-start">
                             <img th:src="@{/gnd/assets/images/wappen.png}" alt="NRW-Wappen" />

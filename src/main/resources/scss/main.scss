@@ -6,6 +6,11 @@ dd {
     width: 100%;
     background-image: url("../static/images/clouds.jpg");
     background-repeat: repeat-x;
+    padding-left: 12px;
+}
+
+#header #main-links .nav-link {
+    padding: 12px;
 }
 
 #header-gnd {
@@ -352,4 +357,19 @@ figcaption {
     --bs-btn-hover-border-color: #adadad;
     --bs-btn-active-bg: var(--bs-btn-hover-bg);
     --bs-btn-active-border-color: var(--bs-btn-hover-border-color);
+}
+
+.page-header {
+    padding-bottom: 9px;
+    margin: 40px 0 20px;
+    border-bottom: 1px solid #eee;
+}
+
+h1 small {
+    font-size: 60%;
+    color: #777777;
+}
+
+:root {
+    --bs-body-font-family: "Noto Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
 }
