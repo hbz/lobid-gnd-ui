@@ -84,12 +84,14 @@ public class DetailsHandler {
     }
 
     private Map<String, Object> withImageUrlAndAttribution(Map<String, Object> javaMap) {
-        @SuppressWarnings("unchecked")
-        List<Map<String, Object>> depictions = (List<Map<String, Object>>) javaMap.get("depiction");
-        String imageAttribution = createAttribution(depictions.getFirst());
-        String proxyPrefix = "https://lobid.org/imagesproxy?url=";
-        javaMap.put("imageUrl", proxyPrefix + depictions.getFirst().get("thumbnail"));
-        javaMap.put("imageAttribution", String.format("Bildquelle: %s", imageAttribution));
+        if (javaMap.containsKey("depiction")) {
+            @SuppressWarnings("unchecked")
+            var depictions = (List<Map<String, Object>>) javaMap.get("depiction");
+            String imageAttribution = createAttribution(depictions.getFirst());
+            String proxyPrefix = "https://lobid.org/imagesproxy?url=";
+            javaMap.put("imageUrl", proxyPrefix + depictions.getFirst().get("thumbnail"));
+            javaMap.put("imageAttribution", String.format("Bildquelle: %s", imageAttribution));
+        }
         return javaMap;
     }
 
