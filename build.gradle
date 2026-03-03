@@ -76,8 +76,8 @@ spotless {
     }
 
     yaml {
-        target 'src/**/*.yaml'
-        jackson()
+        target 'src/**/*.yaml', 'src/**/*.yml'
+        prettier()
     }
 
     flexmark {

@@ -1,0 +1,14 @@
+[Unit]
+Description=lobid-gnd-ui
+After=syslog.target
+After=network.target
+
+[Service]
+ExecStart=/usr/lib/jvm/java-21-openjdk-amd64/bin/java -Dspring.profiles.active=production -jar /opt/lobid-gnd-ui.jar
+Restart=always
+StandardOutput=journal
+StandardError=journal+console
+SyslogIdentifier=lobid-gnd-ui
+
+[Install]
+WantedBy=multi-user.target
