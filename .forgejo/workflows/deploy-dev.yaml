@@ -1,0 +1,23 @@
+name: Deploy Dev
+
+enable-email-notifications: true
+
+on:
+  push:
+    branches:
+      - dev
+
+jobs:
+  deploy:
+    runs-on: linux
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Deploy to Dev Server
+        run: |
+          ssh sol@quaoar13.hbz-nrw.de "
+            cd git/lobid-gnd-ui &&
+            ./gradlew clean bootJar
+          "
