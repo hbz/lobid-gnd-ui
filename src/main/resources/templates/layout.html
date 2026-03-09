@@ -157,10 +157,13 @@
                         autocomplete="off"
                         placeholder='Suchoptionen: AND, OR, AND NOT, ""-Phrasensuche, *-Trunkierung'
                         title="Suchanfrage" />
-                    <span
-                        role="status"
-                        aria-live="polite"
-                        class="ui-helper-hidden-accessible"></span>
+                    <button
+                        type="button"
+                        class="btn btn-default ui-autocomplete-clear"
+                        title="Suchtext löschen"
+                        style="display: none; margin-left: -1px">
+                        <i class="bi bi-x-circle"></i>
+                    </button>
                     <button class="btn btn-default" type="submit" title="Suchen">
                         <i class="bi bi-search"></i>
                     </button>

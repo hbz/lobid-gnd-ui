@@ -21,7 +21,7 @@ public class SearchTests extends HtmlPageTests {
     private static final String SEARCH = "/search";
 
     @ParameterizedTest
-    @ValueSource(strings = {PRODUCTION /*, DEVELOPMENT*/})
+    @ValueSource(strings = {PRODUCTION, DEVELOPMENT})
     public void testSearchForm(String baseUrl) throws IOException {
         HtmlPage searchPage = pageFor(baseUrl, SEARCH);
         HtmlInput searchBox = searchPage.getFirstByXPath("//input[@id='gnd-query']");
@@ -31,14 +31,14 @@ public class SearchTests extends HtmlPageTests {
     }
 
     @ParameterizedTest
-    @ValueSource(strings = {PRODUCTION /*, DEVELOPMENT*/})
+    @ValueSource(strings = {PRODUCTION, DEVELOPMENT})
     public void testSearchFormClear(String baseUrl) throws IOException {
         HtmlPage searchPage = pageFor(baseUrl, SEARCH);
         HtmlInput searchBox = searchPage.getFirstByXPath("//input[@id='gnd-query']");
         searchBox.type("Test");
         assertThat(searchBox.getValue()).isEqualTo("Test");
         HtmlButton clearButton =
-                searchPage.getFirstByXPath("//button[@class='ui-autocomplete-clear']");
+                searchPage.getFirstByXPath("//button[contains(@class, 'ui-autocomplete-clear')]");
         clearButton.click();
         assertThat(searchBox.getValue()).as("search box should be empty after clearing").isEmpty();
     }
