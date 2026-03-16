@@ -107,12 +107,20 @@ a.active {
     z-index: 100 !important;
 }
 
-.ui-autocomplete-category {
-    color: #333;
-    font-weight: bold;
+.ui-autocomplete .ui-menu-item a {
+    color: #004678;
+    display: block;
+    padding: 4px 10px;
+    text-decoration: none;
 }
 
-.ui-autocomplete li a {
+// Hover and keyboard focus/active states
+.ui-autocomplete .ui-menu-item:hover .ui-menu-item-wrapper,
+.ui-autocomplete .ui-menu-item.ui-state-focus .ui-menu-item-wrapper,
+.ui-autocomplete .ui-menu-item-wrapper.ui-state-focus,
+.ui-autocomplete .ui-menu-item-wrapper.ui-state-active {
+    background-color: #e6e6e6;
+    border-color: #ccc;
     color: #004678;
 }
 

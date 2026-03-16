@@ -157,9 +157,10 @@ public class SearchTests extends HtmlPageTests {
     }
 
     @ParameterizedTest
-    @ValueSource(strings = {PRODUCTION /*, DEVELOPMENT*/})
+    @ValueSource(strings = {PRODUCTION, DEVELOPMENT})
     public void testAutocomplete(String baseUrl) throws IOException {
         HtmlPage searchPage = pageFor(baseUrl, SEARCH);
+        webClient.getOptions().setCssEnabled(false);
 
         HtmlInput searchBox = searchPage.getFirstByXPath("//input[@id='gnd-query']");
         searchBox.type("Make-Tuwen");
@@ -174,7 +175,7 @@ public class SearchTests extends HtmlPageTests {
         HtmlPage detailsPage = suggestion.click();
         webClient.waitForBackgroundJavaScript(10);
         assertThat(detailsPage.asNormalizedText())
-                .as("details page for selected suggestion should be open")
+                .as("details page for selected suggestion should be open: " + detailsPage.getUrl())
                 .contains("https://d-nb.info/gnd/118624822")
                 .contains("Snodgrass, Quintus Curtius");
     }

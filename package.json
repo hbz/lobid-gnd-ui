@@ -8,7 +8,9 @@
     "dependencies": {
         "@popperjs/core": "2.11.8",
         "bootstrap": "5.3.8",
-        "bootstrap-icons": "1.13.1"
+        "bootstrap-icons": "1.13.1",
+        "jquery": "3.7.1",
+        "jquery-ui": "1.14.0"
     },
     "devDependencies": {
         "@babel/core": "7.28.4",
