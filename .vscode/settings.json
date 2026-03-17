@@ -5,5 +5,14 @@
   "files.trimTrailingWhitespace": false,
   "spotlessGradle.diagnostics.enable": true,
   "spotlessGradle.format.enable": true,
-  "editor.defaultFormatter": "richardwillis.vscode-spotless-gradle"
+  "editor.defaultFormatter": "richardwillis.vscode-spotless-gradle",
+  "java.gradle.buildServer.enabled": "on",
+  "java.test.config": [
+    {
+      "name": "Default Test Profile",
+      "workingDirectory": "${workspaceFolder}",
+      "delegateBuildRun": true
+    }
+  ],
+  "java.import.gradle.enabled": true
 }

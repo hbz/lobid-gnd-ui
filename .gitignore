@@ -19,8 +19,9 @@ out/
 !**/src/test/**/out/
 
 ## VS Code
-.vscode/
+.vscode/*
 !.vscode/settings.json
+!.vscode/extensions.json
 
 ## STS
 .apt_generated
