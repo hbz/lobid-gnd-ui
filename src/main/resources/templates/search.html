@@ -11,7 +11,7 @@
             <h1 class="mb-4" th:text="${search.id}">Search ID...</h1>
             <p th:text="${'totalItems: ' + search.totalItems}">Total items...</p>
             <table class="table table-striped table-condensed">
-                <tr th:each="member : ${search.member}">
+                <tr th:each="member,meta : ${search.member}">
                     <td>
                         <a
                             th:text="${member.preferredName}"
@@ -19,7 +19,10 @@
                             Name...
                         </a>
                     </td>
-                    <td th:text="${member.type}">Type...</td>
+                    <td th:text="${suggest.array[meta.index].category}">Type...</td>
+                    <td th:text="${#strings.substringAfter(suggest.array[meta.index].label,'| ')}">
+                        Details...
+                    </td>
                     <td th:text="${member.gndIdentifier}">ID...</td>
                 </tr>
             </table>
