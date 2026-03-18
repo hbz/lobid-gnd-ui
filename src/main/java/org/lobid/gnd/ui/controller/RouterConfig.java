@@ -13,15 +13,16 @@ import org.springframework.web.reactive.function.server.ServerResponse;
 public class RouterConfig {
 
     @Bean
-    public RouterFunction<ServerResponse> detailsRoutes(DetailsHandler handler) {
+    public RouterFunction<ServerResponse> detailsRoutes(
+            DetailsHandler details, SearchHandler search, ErrorHandler error) {
         return RouterFunctions.route()
-                .GET("/gnd", handler::index)
-                .GET("/gnd/search", handler::notImplemented)
-                .GET("/gnd/api", handler::notImplemented)
-                .GET("/gnd/dataset", handler::notImplemented)
-                .GET("/gnd/reconcile", handler::notImplemented)
+                .GET("/gnd", details::index)
+                .GET("/gnd/search", search::byQ)
+                .GET("/gnd/api", error::notImplemented)
+                .GET("/gnd/dataset", error::notImplemented)
+                .GET("/gnd/reconcile", error::notImplemented)
                 // Define URL route for GND entry with ID, e.g. `/gnd/4031483-2`:
-                .GET("/gnd/{id}", handler::byId)
+                .GET("/gnd/{id}", details::byId)
                 .resources("/gnd/assets/**", new ClassPathResource("static/"))
                 .filter(addIsDevserver())
                 .build();

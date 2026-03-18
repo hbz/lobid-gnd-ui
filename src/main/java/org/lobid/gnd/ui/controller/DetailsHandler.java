@@ -1,5 +1,7 @@
 package org.lobid.gnd.ui.controller;
 
+import static org.lobid.gnd.ui.controller.ErrorHandler.errorResponse;
+
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -40,10 +42,6 @@ public class DetailsHandler {
         }
     }
 
-    public Mono<ServerResponse> notImplemented(ServerRequest request) {
-        return errorResponse(request, 501, "Not Implemented");
-    }
-
     private Mono<Map<String, Object>> gndEntity(String gndId) {
         // Get JSON data from lobid-gnd, convert JSON data to Java Map (to be passed to template):
         return WebClient.create()
@@ -75,12 +73,6 @@ public class DetailsHandler {
     private Map<String, Object> dataset() throws IOException {
         InputStream dataset = new ClassPathResource("static/dataset.jsonld").getInputStream();
         return new ObjectMapper().readValue(dataset, new TypeReference<>() {});
-    }
-
-    private Mono<ServerResponse> errorResponse(ServerRequest request, int status, String message) {
-        Map<String, Object> model =
-                Map.of("request", request.attributes(), "status", status, "error", message);
-        return ServerResponse.status(status).render("error", model);
     }
 
     private Map<String, Object> withImageUrlAndAttribution(Map<String, Object> javaMap) {
