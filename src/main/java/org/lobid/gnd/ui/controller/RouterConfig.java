@@ -14,9 +14,9 @@ public class RouterConfig {
 
     @Bean
     public RouterFunction<ServerResponse> detailsRoutes(
-            DetailsHandler details, SearchHandler search, ErrorHandler error) {
+            IndexHandler index, DetailsHandler details, SearchHandler search, ErrorHandler error) {
         return RouterFunctions.route()
-                .GET("/gnd", details::index)
+                .GET("/gnd", index::page)
                 .GET("/gnd/search", search::byQ)
                 .GET("/gnd/api", error::notImplemented)
                 .GET("/gnd/dataset", error::notImplemented)
