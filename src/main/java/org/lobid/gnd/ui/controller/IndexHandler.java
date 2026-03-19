@@ -10,6 +10,7 @@ import java.io.InputStream;
 import java.util.Map;
 import java.util.Random;
 import java.util.function.Function;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
@@ -21,6 +22,9 @@ import reactor.core.publisher.Mono;
 @Component
 public class IndexHandler {
 
+    @Value("${api}")
+    private String apiBaseUrl;
+
     public Mono<ServerResponse> page(ServerRequest request) {
         try {
             return randomGndEntity().flatMap(toResponse("index", request, dataset()));
@@ -31,8 +35,7 @@ public class IndexHandler {
 
     private Mono<Map<String, Object>> randomGndEntity() {
         String randomRequestUrl =
-                "https://lobid.org/gnd/search?q=depiction:*&size=1&from="
-                        + new Random().nextInt(25000);
+                apiBaseUrl + "/search?q=depiction:*&size=1&from=" + new Random().nextInt(25000);
         return WebClient.create()
                 .get()
                 .uri(randomRequestUrl)

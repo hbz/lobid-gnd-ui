@@ -1,3 +1,4 @@
+api: https://lobid.org/gnd
 spring:
   web:
     resources:

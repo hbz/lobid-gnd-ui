@@ -7,6 +7,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.util.Map;
 import java.util.function.Function;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.WebClient;
@@ -18,12 +19,15 @@ import reactor.util.function.Tuple2;
 @Component
 public class SearchHandler {
 
+    @Value("${api}")
+    private String apiBaseUrl;
+
     public Mono<ServerResponse> byQ(ServerRequest request) {
         try {
             String q = request.queryParam("q").orElse("");
             return Mono.zip(
-                            call("https://lobid.org/gnd/search?q=" + q),
-                            call("https://lobid.org/gnd/search?format=json:suggest&q=" + q))
+                            call(apiBaseUrl + "/search?q=" + q),
+                            call(apiBaseUrl + "/search?format=json:suggest&q=" + q))
                     .flatMap(toResponse("search", request));
         } catch (Exception e) {
             return errorResponse(request, 500, "Search failed: " + e.getMessage());

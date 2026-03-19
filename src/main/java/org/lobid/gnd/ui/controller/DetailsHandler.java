@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.function.Function;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.WebClient;
@@ -19,6 +20,9 @@ import reactor.core.publisher.Mono;
 
 @Component
 public class DetailsHandler {
+
+    @Value("${api}")
+    private String apiBaseUrl;
 
     public Mono<ServerResponse> byId(ServerRequest request) {
         try {
@@ -32,7 +36,7 @@ public class DetailsHandler {
         // Get JSON data from lobid-gnd, convert JSON data to Java Map (to be passed to template):
         return WebClient.create()
                 .get()
-                .uri("https://lobid.org/gnd/{id}", gndId)
+                .uri(apiBaseUrl + "/" + gndId)
                 .accept(MediaType.APPLICATION_JSON)
                 .retrieve()
                 .bodyToMono(JsonNode.class)
