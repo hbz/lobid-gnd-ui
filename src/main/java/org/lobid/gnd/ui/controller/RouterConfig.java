@@ -36,6 +36,7 @@ public class RouterConfig {
                                         "isDevserver",
                                         "1".equals(request.headers().firstHeader("X-Devserver")))
                                 .attribute("path", request.path())
+                                .attribute("q", request.queryParam("q").orElse(""))
                                 .build());
     }
 }
