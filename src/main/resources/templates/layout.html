@@ -160,6 +160,8 @@
                         autocomplete="off"
                         placeholder='Suchoptionen: AND, OR, AND NOT, ""-Phrasensuche, *-Trunkierung'
                         title="Suchanfrage" />
+                    <input type="hidden" name="from" th:value="${request.from}" />
+                    <input type="hidden" name="size" th:value="${request.size}" />
                     <button
                         type="button"
                         class="btn btn-default ui-autocomplete-clear"

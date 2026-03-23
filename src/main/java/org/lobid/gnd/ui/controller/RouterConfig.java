@@ -37,6 +37,8 @@ public class RouterConfig {
                                         "1".equals(request.headers().firstHeader("X-Devserver")))
                                 .attribute("path", request.path())
                                 .attribute("q", request.queryParam("q").orElse(""))
+                                .attribute("size", request.queryParam("size").orElse("10"))
+                                .attribute("from", request.queryParam("from").orElse("0"))
                                 .build());
     }
 }

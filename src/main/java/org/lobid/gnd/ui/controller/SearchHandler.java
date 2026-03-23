@@ -6,10 +6,13 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.util.Map;
+import java.util.function.Consumer;
 import java.util.function.Function;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
 import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.reactive.function.server.ServerRequest;
 import org.springframework.web.reactive.function.server.ServerResponse;
@@ -22,22 +25,38 @@ public class SearchHandler {
     @Value("${api}")
     private String apiBaseUrl;
 
+    @Component("pagination")
+    class PaginationHelper {
+        public int prevFrom(String from, String size) {
+            int prev = Integer.parseInt(from) - Integer.parseInt(size);
+            return Math.max(0, prev);
+        }
+
+        public int nextFrom(String total, String from, String size) {
+            int next = Integer.parseInt(from) + Integer.parseInt(size);
+            return Math.min(Integer.parseInt(total), next);
+        }
+    }
+
     public Mono<ServerResponse> byQ(ServerRequest request) {
         try {
-            String q = request.queryParam("q").orElse("");
+            MultiValueMap<String, String> params = request.queryParams();
             return Mono.zip(
-                            call(apiBaseUrl + "/search?q=" + q),
-                            call(apiBaseUrl + "/search?format=json:suggest&q=" + q))
+                            searchWith(params),
+                            searchWith(add(params, p -> p.add("format", "json:suggest"))))
                     .flatMap(toResponse("search", request));
         } catch (Exception e) {
             return errorResponse(request, 500, "Search failed: " + e.getMessage());
         }
     }
 
-    private Mono<Map<String, Object>> call(String uri) {
-        return WebClient.create()
+    private Mono<Map<String, Object>> searchWith(MultiValueMap<String, String> params) {
+        return WebClient.builder()
+                .codecs(conf -> conf.defaultCodecs().maxInMemorySize(512 * 1024))
+                .baseUrl(apiBaseUrl)
+                .build()
                 .get()
-                .uri(uri)
+                .uri(builder -> builder.path("/search").queryParams(params).build())
                 .accept(MediaType.APPLICATION_JSON)
                 .retrieve()
                 .bodyToMono(JsonNode.class)
@@ -64,5 +83,13 @@ public class SearchHandler {
                             request.attributes());
             return ServerResponse.ok().render(template, model);
         };
+    }
+
+    private MultiValueMap<String, String> add(
+            MultiValueMap<String, String> queryParams,
+            Consumer<MultiValueMap<String, String>> object) {
+        MultiValueMap<String, String> suggestQueryParams = new LinkedMultiValueMap<>(queryParams);
+        object.accept(suggestQueryParams);
+        return suggestQueryParams;
     }
 }
