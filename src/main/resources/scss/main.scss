@@ -164,6 +164,11 @@ a.active {
     color: white;
 }
 
+.pagination-panel {
+    padding-top: 5px;
+    padding-bottom: 25px;
+}
+
 .pagination {
     margin-top: 0px !important;
     margin-bottom: 0px !important;
@@ -205,9 +210,8 @@ a.active {
     overflow-x: hidden;
 }
 
-.nav li a {
-    padding-left: 10px !important;
-    padding-right: 10px !important;
+a.disabled {
+    padding-left: 0px !important;
 }
 
 li .dropdown-header {

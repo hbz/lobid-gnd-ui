@@ -5,9 +5,14 @@ import static org.lobid.gnd.ui.controller.ErrorHandler.errorResponse;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import java.text.DecimalFormat;
+import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.function.Consumer;
 import java.util.function.Function;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
@@ -24,19 +29,6 @@ public class SearchHandler {
 
     @Value("${api}")
     private String apiBaseUrl;
-
-    @Component("pagination")
-    class PaginationHelper {
-        public int prevFrom(String from, String size) {
-            int prev = Integer.parseInt(from) - Integer.parseInt(size);
-            return Math.max(0, prev);
-        }
-
-        public int nextFrom(String total, String from, String size) {
-            int next = Integer.parseInt(from) + Integer.parseInt(size);
-            return Math.min(Integer.parseInt(total), next);
-        }
-    }
 
     public Mono<ServerResponse> byQ(ServerRequest request) {
         try {
@@ -91,5 +83,64 @@ public class SearchHandler {
         MultiValueMap<String, String> suggestQueryParams = new LinkedMultiValueMap<>(queryParams);
         object.accept(suggestQueryParams);
         return suggestQueryParams;
+    }
+
+    @Component("pagination")
+    static class PaginationHelper {
+
+        public int prevFrom(String from, String size) {
+            return Math.max(0, num(from) - num(size));
+        }
+
+        public int nextFrom(String total, String from, String size) {
+            return Math.min(num(total), num(from) + num(size));
+        }
+
+        public String hitsFrom(String from) {
+            return formatCount(num(from) + 1);
+        }
+
+        public String hitsTo(String total, String from, String size) {
+            return formatCount(Math.min(num(from) + num(size), num(from) + num(total)));
+        }
+
+        public boolean disablePrev(String from) {
+            return num(from) == 0;
+        }
+
+        public boolean disableNext(String total, String from, String size) {
+            return num(from) + num(size) >= num(total);
+        }
+
+        public int currentPage(String from, String size) {
+            return ((num(from) + 1) / num(size)) + 1;
+        }
+
+        public int lastPage(String total, String size) {
+            return (num(total) % num(size) == 0)
+                    ? num(total) / num(size)
+                    : num(total) / num(size) + 1;
+        }
+
+        public int toPage(String currentPage, String lastPage) {
+            return Math.min(Math.max(1, num(currentPage) - 4) + 9, num(lastPage));
+        }
+
+        public List<Integer> pages(String toPage) {
+            int to = num(toPage);
+            return IntStream.range(Math.max(1, to - 9), to).boxed().collect(Collectors.toList());
+        }
+
+        public int pageFrom(String i, String size) {
+            return (num(i) * num(size)) - num(size);
+        }
+
+        public static String formatCount(int count) {
+            return DecimalFormat.getInstance(Locale.GERMAN).format(count);
+        }
+
+        private int num(String value) {
+            return Integer.parseInt(value);
+        }
     }
 }

@@ -44,7 +44,7 @@ public class SearchTests extends HtmlPageTests {
     }
 
     @ParameterizedTest
-    @ValueSource(strings = {PRODUCTION /*, DEVELOPMENT*/})
+    @ValueSource(strings = {PRODUCTION, DEVELOPMENT})
     public void testPageSize(String baseUrl) throws IOException {
         assertThat(search("Test", baseUrl))
                 .as("page size can be switched, default is 10")
@@ -55,7 +55,7 @@ public class SearchTests extends HtmlPageTests {
     }
 
     @ParameterizedTest
-    @ValueSource(strings = {PRODUCTION /*, DEVELOPMENT*/})
+    @ValueSource(strings = {PRODUCTION, DEVELOPMENT})
     public void testPageLinks(String baseUrl) throws IOException {
         assertThat(search("Test", baseUrl))
                 .as("specific page can be selected, default is 1")
@@ -204,14 +204,14 @@ public class SearchTests extends HtmlPageTests {
     private Condition<HtmlPage> linkActive(String linkText) {
         return new Condition<>(
                 page -> isActive(linkPath(linkText), page),
-                "parent of '%s' should be active",
+                "parent of or '%s' should be active",
                 linkText);
     }
 
     private Condition<HtmlPage> linkActiveAfterClick(String linkText) {
         return new Condition<>(
                 page -> isActiveAfterClick(linkPath(linkText), page),
-                "parent of '%s' should be active after click",
+                "parent of or '%s' should be active after click",
                 linkText);
     }
 
@@ -220,7 +220,9 @@ public class SearchTests extends HtmlPageTests {
     }
 
     private boolean isActive(String linkPath, HtmlPage page) {
-        return page.getFirstByXPath(linkPath + "/parent::*[@class='active']") != null;
+        return (page.getFirstByXPath(linkPath + "[contains(@class,'active')]") != null)
+                || (page.getFirstByXPath(linkPath + "/parent::*[contains(@class,'active')]")
+                        != null);
     }
 
     private boolean isActiveAfterClick(String linkPath, HtmlPage page) {
