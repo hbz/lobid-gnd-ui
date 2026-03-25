@@ -46,12 +46,16 @@
                 </div>
                 <table class="table table-striped table-condensed">
                     <tr>
+                        <th />
                         <th style="min-width: 25%" />
                         <th />
                         <th />
                         <th style="min-width: 10%" />
                     </tr>
                     <tr th:each="member,meta : ${search.member}">
+                        <td>
+                            <i th:class="${@icons.iconClass(member.type)}" />
+                        </td>
                         <td>
                             <a
                                 th:text="${member.preferredName}"

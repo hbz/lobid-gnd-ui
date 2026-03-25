@@ -14,6 +14,7 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
 import org.springframework.util.LinkedMultiValueMap;
@@ -83,6 +84,25 @@ public class SearchHandler {
         MultiValueMap<String, String> suggestQueryParams = new LinkedMultiValueMap<>(queryParams);
         object.accept(suggestQueryParams);
         return suggestQueryParams;
+    }
+
+    @Component("icons")
+    @ConfigurationProperties
+    public static class IconHelper {
+
+        private Map<String, String> icons;
+
+        public void setIcons(Map<String, String> icons) {
+            this.icons = icons;
+        }
+
+        public String iconClass(List<String> types) {
+            return types.stream()
+                    .filter(t -> icons.containsKey(t))
+                    .map(t -> icons.get(t))
+                    .findFirst()
+                    .orElse("bi bi-question-circle-fill");
+        }
     }
 
     @Component("pagination")

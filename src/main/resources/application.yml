@@ -1,4 +1,12 @@
 api: https://lobid.org/gnd
+icons:
+  CorporateBody: "bi bi-house-gear-fill"
+  ConferenceOrEvent: "bi bi-chat-dots-fill"
+  SubjectHeading: "bi bi-asterisk"
+  Work: "bi bi-journals"
+  PlaceOrGeographicName: "bi bi-geo-fill"
+  Person: "bi bi-person-fill"
+  Family: "bi bi-people-fill"
 spring:
   web:
     resources:
