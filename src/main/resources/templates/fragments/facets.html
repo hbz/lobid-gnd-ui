@@ -1,0 +1,17 @@
+<div th:fragment="facetsArea" th:if="${total > 0}" class="col-md-4" id="facets">
+    <h5>Ergebnisse eingrenzen:</h5>
+    <p />
+    <div th:each="facet : ${search.aggregation}">
+        <h6 th:text="${facet.key}">Feld</h6>
+        <div th:each="val,metaVal : ${search.aggregation[facet.key]}">
+            <a
+                th:if="${metaVal.index < 5}"
+                th:href="@{/gnd/search(q=${q}, size=${size}, from=${0}, 
+                    filter=${@facets.filter(filter, facet.key, val.key)})}"
+                th:text="${@facets.label(val.key, val.doc_count)}"
+                >Feld (1)</a
+            >
+        </div>
+        <p />
+    </div>
+</div>

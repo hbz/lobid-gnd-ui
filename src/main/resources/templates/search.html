@@ -9,39 +9,49 @@
     <body>
         <div
             layout:fragment="content"
-            th:with="q=${request.q}, total=${search.totalItems}, from=${request.from}, size=${request.size}">
-            <h1 class="mb-4" th:text="${search.id}">Search ID...</h1>
-            <div th:replace="~{fragments/pagination::pageSizeLinks}" />
-            <div class="card my-3">
-                <div th:replace="~{fragments/pagination::paginationInfo}" />
-                <table class="table table-striped table-condensed">
-                    <tr>
-                        <th />
-                        <th style="min-width: 25%" />
-                        <th />
-                        <th />
-                        <th style="min-width: 10%" />
-                    </tr>
-                    <tr th:each="member,meta : ${search.member}">
-                        <td>
-                            <i th:class="${@icons.iconClass(member.type)}" />
-                        </td>
-                        <td>
-                            <a
-                                th:text="${member.preferredName}"
-                                th:href="@{'/gnd/' + ${member.gndIdentifier}}">
-                                Name...
-                            </a>
-                        </td>
-                        <td th:text="${suggest.array[meta.index].category}">Type...</td>
-                        <td
-                            th:text="${#strings.substringAfter(suggest.array[meta.index].label,'| ')}">
-                            Details...
-                        </td>
-                        <td th:text="${member.gndIdentifier}">ID...</td>
-                    </tr>
-                </table>
-                <div th:replace="~{fragments/pagination::pageLinks}" />
+            th:with="
+                q=${request.q},
+                total=${search.totalItems},
+                from=${request.from},
+                size=${request.size},
+                filter=${request.filter}">
+            <div class="row" id="search-results">
+                <h4 class="mb-4" th:text="${request.filter}">Filter...</h4>
+                <div th:class="${search.totalItems > 0 ? 'col-md-8' : 'col-md-12'}">
+                    <div th:replace="~{fragments/pagination::pageSizeLinks}" />
+                    <div class="card my-3">
+                        <div th:replace="~{fragments/pagination::paginationInfo}" />
+                        <table class="table table-striped table-condensed">
+                            <tr>
+                                <th />
+                                <th style="min-width: 25%" />
+                                <th />
+                                <th />
+                                <th style="min-width: 10%" />
+                            </tr>
+                            <tr th:each="member,meta : ${search.member}">
+                                <td>
+                                    <i th:class="${@icons.iconClass(member.type)}" />
+                                </td>
+                                <td>
+                                    <a
+                                        th:text="${member.preferredName}"
+                                        th:href="@{'/gnd/' + ${member.gndIdentifier}}">
+                                        Name...
+                                    </a>
+                                </td>
+                                <td th:text="${suggest.array[meta.index].category}">Type...</td>
+                                <td
+                                    th:text="${#strings.substringAfter(suggest.array[meta.index].label,'| ')}">
+                                    Details...
+                                </td>
+                                <td th:text="${member.gndIdentifier}">ID...</td>
+                            </tr>
+                        </table>
+                        <div th:replace="~{fragments/pagination::pageLinks}" />
+                    </div>
+                </div>
+                <div th:replace="~{fragments/facets::facetsArea}" />
             </div>
         </div>
     </body>

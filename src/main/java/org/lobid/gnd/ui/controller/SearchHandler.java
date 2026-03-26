@@ -86,6 +86,19 @@ public class SearchHandler {
         return suggestQueryParams;
     }
 
+    @Component("facets")
+    public static class FacetsHelper {
+
+        public String filter(String filter, String field, String value) {
+            return String.format("%s +(%s:\"%s\")", filter, field, value);
+        }
+
+        public String label(String uri, int count) {
+            return String.format(
+                    "%s (%s)", uri.replaceAll("http.+/", ""), PaginationHelper.formatCount(count));
+        }
+    }
+
     @Component("icons")
     @ConfigurationProperties
     public static class IconHelper {

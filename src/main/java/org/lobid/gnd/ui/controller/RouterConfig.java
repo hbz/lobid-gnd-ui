@@ -39,6 +39,7 @@ public class RouterConfig {
                                 .attribute("q", request.queryParam("q").orElse(""))
                                 .attribute("size", request.queryParam("size").orElse("10"))
                                 .attribute("from", request.queryParam("from").orElse("0"))
+                                .attribute("filter", request.queryParam("filter").orElse(""))
                                 .build());
     }
 }
