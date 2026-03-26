@@ -25,6 +25,9 @@ public class IndexHandler {
     @Value("${api}")
     private String apiBaseUrl;
 
+    @Value("${dontShowOnMainPage}")
+    private String[] dontShowOnMainPage;
+
     public Mono<ServerResponse> page(ServerRequest request) {
         try {
             return randomGndEntity().flatMap(toResponse("index", request, dataset()));
@@ -35,7 +38,7 @@ public class IndexHandler {
 
     private Mono<Map<String, Object>> randomGndEntity() {
         String randomRequestUrl =
-                apiBaseUrl + "/search?q=depiction:*&size=1&from=" + new Random().nextInt(25000);
+                apiBaseUrl + "/search?q=" + q() + "&size=1&from=" + new Random().nextInt(25000);
         return WebClient.create()
                 .get()
                 .uri(randomRequestUrl)
@@ -43,6 +46,14 @@ public class IndexHandler {
                 .retrieve()
                 .bodyToMono(JsonNode.class)
                 .map(json -> firstMemberAsMap(json));
+    }
+
+    private String q() {
+        String qParam = "depiction:*";
+        for (String dont : dontShowOnMainPage) {
+            qParam += " AND NOT gndIdentifier:" + dont;
+        }
+        return qParam;
     }
 
     private Map<String, Object> firstMemberAsMap(JsonNode json) {
