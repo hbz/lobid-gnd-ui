@@ -21,33 +21,7 @@
                     <div th:replace="~{fragments/pagination::pageSizeLinks}" />
                     <div class="card my-3">
                         <div th:replace="~{fragments/pagination::paginationInfo}" />
-                        <table class="table table-striped table-condensed">
-                            <tr>
-                                <th />
-                                <th style="min-width: 25%" />
-                                <th />
-                                <th />
-                                <th style="min-width: 10%" />
-                            </tr>
-                            <tr th:each="member,meta : ${search.member}">
-                                <td>
-                                    <i th:class="${@icons.iconClass(member.type)}" />
-                                </td>
-                                <td>
-                                    <a
-                                        th:text="${member.preferredName}"
-                                        th:href="@{'/gnd/' + ${member.gndIdentifier}}">
-                                        Name...
-                                    </a>
-                                </td>
-                                <td th:text="${suggest.array[meta.index].category}">Type...</td>
-                                <td
-                                    th:text="${#strings.substringAfter(suggest.array[meta.index].label,'| ')}">
-                                    Details...
-                                </td>
-                                <td th:text="${member.gndIdentifier}">ID...</td>
-                            </tr>
-                        </table>
+                        <table th:replace="~{fragments/results::resultsTable}" />
                         <div th:replace="~{fragments/pagination::pageLinks}" />
                     </div>
                 </div>
