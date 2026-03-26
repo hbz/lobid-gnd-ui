@@ -7,43 +7,13 @@
         <title>[[#{app.title}]] - search</title>
     </head>
     <body>
-        <th:block th:fragment="pageLink(size)">
-            <div th:with="pageSize=${#strings.toString(size)}">
-                <li class="nav-item" role="tab">
-                    <a
-                        class="nav-link"
-                        th:classappend="${request.size == pageSize ? 'active' : ''}"
-                        th:aria-current="${request.size == pageSize ? 'page' : 'false'}"
-                        th:href="@{/gnd/search(q=${q}, from=${from}, size=${size})}"
-                        th:text="${size}"
-                        >10</a
-                    >
-                </li>
-            </div>
-        </th:block>
         <div
             layout:fragment="content"
             th:with="q=${request.q}, total=${search.totalItems}, from=${request.from}, size=${request.size}">
             <h1 class="mb-4" th:text="${search.id}">Search ID...</h1>
-            <div class="row hide-in-print">
-                <div class="col-md-12">
-                    <ul class="nav nav-pills" role="tablist" id="page-size">
-                        <li>
-                            <a class="nav-link disabled" href="#">Treffer pro Seite:</a>
-                        </li>
-                        <th:block th:replace="~{::pageLink(10)}" />
-                        <th:block th:replace="~{::pageLink(30)}" />
-                        <th:block th:replace="~{::pageLink(50)}" />
-                        <th:block th:replace="~{::pageLink(100)}" />
-                    </ul>
-                </div>
-            </div>
+            <div th:replace="~{fragments/pagination::pageSizeLinks}" />
             <div class="card my-3">
-                <div class="card-body text-center">
-                    <span th:text="${@pagination.formatCount(total)}" />
-                    Treffer, zeige <span th:text="${@pagination.hitsFrom(from)}" /> bis
-                    <span th:text="${@pagination.hitsTo(total, from, size)}" />:
-                </div>
+                <div th:replace="~{fragments/pagination::paginationInfo}" />
                 <table class="table table-striped table-condensed">
                     <tr>
                         <th />
@@ -71,48 +41,7 @@
                         <td th:text="${member.gndIdentifier}">ID...</td>
                     </tr>
                 </table>
-                <div
-                    class="card-body hide-in-print text-center pagination-panel"
-                    th:with="
-                        currentPage=${@pagination.currentPage(from, size)}, 
-                        lastPage=${@pagination.lastPage(total, size)},
-                        disablePrev=${@pagination.disablePrev(from)},
-                        prevFrom=${@pagination.prevFrom(from, size)},
-                        toPage=${@pagination.toPage(currentPage, lastPage)},
-                        pages=${@pagination.pages(toPage)},
-                        disableNext=${@pagination.disableNext(total, from, size)},
-                        nextFrom=${@pagination.nextFrom(total, from, size)}">
-                    <nav>
-                        <ul class="pagination justify-content-center">
-                            <li class="page-item" th:classappend="${disablePrev ? 'disabled' : ''}">
-                                <a
-                                    class="page-link"
-                                    th:href="@{/gnd/search(q=${q}, size=${size}, from=${prevFrom})}"
-                                    >&larr;</a
-                                >
-                            </li>
-                            <li
-                                class="page-item"
-                                th:each="page : ${pages}"
-                                th:with="pageFrom=${@pagination.pageFrom(page, size)}"
-                                th:classappend="${currentPage == page ? 'active' : ''}">
-                                <a
-                                    class="page-link"
-                                    th:href="@{/gnd/search(q=${q}, size=${size}, from=${pageFrom})}"
-                                    th:text="${page}"
-                                    >1</a
-                                >
-                            </li>
-                            <li class="page-item" th:classappend="${disableNext ? 'disabled' : ''}">
-                                <a
-                                    class="page-link"
-                                    th:href="@{/gnd/search(q=${q}, size=${size}, from=${nextFrom})}"
-                                    >&rarr;</a
-                                >
-                            </li>
-                        </ul>
-                    </nav>
-                </div>
+                <div th:replace="~{fragments/pagination::pageLinks}" />
             </div>
         </div>
     </body>

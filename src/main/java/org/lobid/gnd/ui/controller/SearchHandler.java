@@ -121,7 +121,7 @@ public class SearchHandler {
         }
 
         public String hitsTo(String total, String from, String size) {
-            return formatCount(Math.min(num(from) + num(size), num(from) + num(total)));
+            return formatCount(Math.min(num(from) + num(size), num(total)));
         }
 
         public boolean disablePrev(String from) {
@@ -148,7 +148,9 @@ public class SearchHandler {
 
         public List<Integer> pages(String toPage) {
             int to = num(toPage);
-            return IntStream.range(Math.max(1, to - 9), to).boxed().collect(Collectors.toList());
+            return IntStream.range(Math.max(1, to - 9), to + 1)
+                    .boxed()
+                    .collect(Collectors.toList());
         }
 
         public int pageFrom(String i, String size) {

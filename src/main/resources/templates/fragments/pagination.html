@@ -1,0 +1,78 @@
+<div th:fragment="pageSizeLinks" class="row hide-in-print">
+    <div class="col-md-12">
+        <ul class="nav nav-pills" role="tablist" id="page-size">
+            <li>
+                <a class="nav-link disabled" href="#">Treffer pro Seite:</a>
+            </li>
+            <li th:replace="~{this::pageLink(10)}" />
+            <li th:replace="~{this::pageLink(30)}" />
+            <li th:replace="~{this::pageLink(50)}" />
+            <li th:replace="~{this::pageLink(100)}" />
+        </ul>
+    </div>
+</div>
+<li
+    th:fragment="pageLink(size)"
+    th:with="pageSize=${#strings.toString(size)}"
+    class="nav-item"
+    role="tab">
+    <a
+        class="nav-link"
+        th:classappend="${request.size == pageSize ? 'active' : ''}"
+        th:aria-current="${request.size == pageSize ? 'page' : 'false'}"
+        th:href="@{/gnd/search(q=${q}, from=${from}, size=${size})}"
+        th:text="${size}"
+        >10</a
+    >
+</li>
+<div th:fragment="paginationInfo" class="card-body text-center">
+    <span th:if="${total == 0}">Keine Treffer</span>
+    <span th:if="${total > 0}">
+        <span th:text="${@pagination.formatCount(total)}" /> Treffer, zeige
+        <span th:text="${@pagination.hitsFrom(from)}" /> bis
+        <span th:text="${@pagination.hitsTo(total, from, size)}" />:
+    </span>
+</div>
+<div
+    th:fragment="pageLinks"
+    class="card-body hide-in-print text-center pagination-panel"
+    th:with="
+        currentPage=${@pagination.currentPage(from, size)},
+        lastPage=${@pagination.lastPage(total, size)},
+        disablePrev=${@pagination.disablePrev(from)},
+        prevFrom=${@pagination.prevFrom(from, size)},
+        toPage=${@pagination.toPage(currentPage, lastPage)},
+        pages=${@pagination.pages(toPage)},
+        disableNext=${@pagination.disableNext(total, from, size)},
+        nextFrom=${@pagination.nextFrom(total, from, size)}">
+    <nav th:if="${pages.size > 0}">
+        <ul class="pagination justify-content-center">
+            <li class="page-item" th:classappend="${disablePrev ? 'disabled' : ''}">
+                <a
+                    class="page-link"
+                    th:href="@{/gnd/search(q=${q}, size=${size}, from=${prevFrom})}"
+                    >&larr;</a
+                >
+            </li>
+            <li
+                class="page-item"
+                th:each="page : ${pages}"
+                th:with="pageFrom=${@pagination.pageFrom(page, size)}"
+                th:classappend="${currentPage == page ? 'active' : ''}">
+                <a
+                    class="page-link"
+                    th:href="@{/gnd/search(q=${q}, size=${size}, from=${pageFrom})}"
+                    th:text="${page}"
+                    >1</a
+                >
+            </li>
+            <li class="page-item" th:classappend="${disableNext ? 'disabled' : ''}">
+                <a
+                    class="page-link"
+                    th:href="@{/gnd/search(q=${q}, size=${size}, from=${nextFrom})}"
+                    >&rarr;</a
+                >
+            </li>
+        </ul>
+    </nav>
+</div>
