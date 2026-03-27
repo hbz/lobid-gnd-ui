@@ -65,4 +65,19 @@ document.addEventListener("DOMContentLoaded", function () {
             event.preventDefault();
         },
     });
+
+    $(document).on("click", ".facets-toggle", function (event) {
+        event.preventDefault();
+        const facetKey = $(this).data("facet-key");
+        const showMore = $(this).attr("id").includes("more-link");
+        if (showMore) {
+            $("." + facetKey + "-more-item").show();
+            $("#" + facetKey + "-more-link").hide();
+            $("#" + facetKey + "-less-link").show();
+        } else {
+            $("." + facetKey + "-more-item").hide();
+            $("#" + facetKey + "-more-link").show();
+            $("#" + facetKey + "-less-link").hide();
+        }
+    });
 });

@@ -1,16 +1,42 @@
 <div th:fragment="facetsArea" th:if="${total > 0}" class="col-md-4" id="facets">
     <h5>Ergebnisse eingrenzen:</h5>
     <p />
-    <div th:each="facet : ${search.aggregation}">
-        <h6 th:text="${facet.key}">Feld</h6>
-        <div th:each="val,metaVal : ${search.aggregation[facet.key]}">
+    <div
+        th:each="facet : ${search.aggregation}"
+        th:with="simpleKey=${#strings.replace(facet.key, '.id', '')}">
+        <h6 style="display: inline-block" th:text="${facet.key}">Feld</h6>
+        <div style="display: inline-block" th:if="${search.aggregation[facet.key].size > 5}">
             <a
-                th:if="${metaVal.index < 5}"
-                th:href="@{/gnd/search(q=${q}, size=${size}, from=${0}, 
+                th:id="${simpleKey + '-more-link'}"
+                href="javascript:void(0)"
+                title="Mehr Werte anzeigen"
+                class="facets-toggle"
+                th:data-facet-key="${simpleKey}">
+                <span class="bi bi-plus-square" aria-hidden="true" />
+            </a>
+            <a
+                th:id="${simpleKey + '-less-link'}"
+                href="javascript:void(0)"
+                style="display: none"
+                title="Weniger Werte anzeigen"
+                class="facets-toggle"
+                th:data-facet-key="${simpleKey}">
+                <span class="bi bi-dash-square" aria-hidden="true" />
+            </a>
+        </div>
+        <div
+            th:each="val,metaVal : ${search.aggregation[facet.key]}"
+            th:with="isMoreItem=${metaVal.index > 4}">
+            <span
+                th:classappend="${isMoreItem ? (simpleKey + '-more-item') : ''}"
+                th:style="${isMoreItem ? 'display:none' : ''}">
+                <a
+                    th:href="@{/gnd/search(q=${q}, size=${size}, from=${0}, 
                     filter=${@facets.filter(filter, facet.key, val.key)})}"
-                th:text="${@facets.label(val.key, val.doc_count)}"
-                >Feld (1)</a
-            >
+                    th:text="${@facets.label(val.key, val.doc_count)}"
+                    >Feld (1)</a
+                >
+            </span>
         </div>
         <p />
     </div>
