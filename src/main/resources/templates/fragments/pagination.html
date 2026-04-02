@@ -20,7 +20,7 @@
         class="nav-link"
         th:classappend="${request.size == pageSize ? 'active' : ''}"
         th:aria-current="${request.size == pageSize ? 'page' : 'false'}"
-        th:href="@{/gnd/search(q=${q}, from=${from}, size=${size})}"
+        th:href="@{/gnd/search(q=${q}, from=${from}, size=${size}, filter=${filter})}"
         th:text="${size}"
         >10</a
     >

@@ -30,12 +30,25 @@
             <span
                 th:classappend="${isMoreItem ? (simpleKey + '-more-item') : ''}"
                 th:style="${isMoreItem ? 'display:none' : ''}">
-                <a
-                    th:href="@{/gnd/search(q=${q}, size=${size}, from=${0}, 
-                    filter=${@facets.filter(filter, facet.key, val.key)})}"
-                    th:text="${@facets.label(val.key, val.doc_count)}"
-                    >Feld (1)</a
-                >
+                <div th:switch="${@facets.isActive(filter, facet.key, val.key)}">
+                    <div th:case="true">
+                        <span th:text="${@facets.label(val.key)}">Aktiver Filter</span>
+                        <a
+                            th:href="@{/gnd/search(q=${q}, size=${size}, from=${0}, 
+                                filter=${@facets.without(filter, facet.key, val.key)})}">
+                            <span class="badge bg-primary">
+                                Filter entfernen <span class="bi bi-x-lg" />
+                            </span>
+                        </a>
+                    </div>
+                    <a
+                        th:case="false"
+                        th:href="@{/gnd/search(q=${q}, size=${size}, from=${0}, 
+                            filter=${@facets.filter(filter, facet.key, val.key)})}"
+                        th:text="${@facets.label(val.key, val.doc_count)}">
+                        Feld (1)
+                    </a>
+                </div>
             </span>
         </div>
         <p />

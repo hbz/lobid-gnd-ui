@@ -45,7 +45,7 @@ public class SearchHandler {
 
     private Mono<Map<String, Object>> searchWith(MultiValueMap<String, String> params) {
         return WebClient.builder()
-                .codecs(conf -> conf.defaultCodecs().maxInMemorySize(512 * 1024))
+                .codecs(conf -> conf.defaultCodecs().maxInMemorySize(2 * 1024 * 1024))
                 .baseUrl(apiBaseUrl)
                 .build()
                 .get()
@@ -90,12 +90,27 @@ public class SearchHandler {
     public static class FacetsHelper {
 
         public String filter(String filter, String field, String value) {
-            return String.format("%s +(%s:\"%s\")", filter, field, value);
+            return String.format("%s %s", filter, filterString(field, value));
+        }
+
+        public boolean isActive(String filter, String field, String value) {
+            return filter.contains(filterString(field, value));
+        }
+
+        public String without(String filter, String field, String value) {
+            return filter.replace(filterString(field, value), "").trim();
         }
 
         public String label(String uri, int count) {
-            return String.format(
-                    "%s (%s)", uri.replaceAll("http.+/", ""), PaginationHelper.formatCount(count));
+            return String.format("%s (%s)", label(uri), PaginationHelper.formatCount(count));
+        }
+
+        public String label(String uri) {
+            return uri.replaceAll("http.+/", "");
+        }
+
+        private String filterString(String field, String value) {
+            return String.format("+(%s:\"%s\")", field, value);
         }
     }
 

@@ -16,7 +16,6 @@
                 size=${request.size},
                 filter=${request.filter}">
             <div class="row" id="search-results">
-                <h4 class="mb-4" th:text="${request.filter}">Filter...</h4>
                 <div th:class="${search.totalItems > 0 ? 'col-md-8' : 'col-md-12'}">
                     <div th:replace="~{fragments/pagination::pageSizeLinks}" />
                     <div class="card my-3">
