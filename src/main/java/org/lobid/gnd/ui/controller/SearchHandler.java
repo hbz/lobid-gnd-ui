@@ -90,7 +90,7 @@ public class SearchHandler {
     public static class FacetsHelper {
 
         public String filter(String filter, String field, String value) {
-            return String.format("%s %s", filter, filterString(field, value));
+            return String.format("%s%s", filter, filterString(field, value));
         }
 
         public boolean isActive(String filter, String field, String value) {
@@ -99,14 +99,6 @@ public class SearchHandler {
 
         public String without(String filter, String field, String value) {
             return filter.replace(filterString(field, value), "").trim();
-        }
-
-        public String label(String uri, int count) {
-            return String.format("%s (%s)", label(uri), PaginationHelper.formatCount(count));
-        }
-
-        public String label(String uri) {
-            return uri.replaceAll("http.+/", "");
         }
 
         private String filterString(String field, String value) {

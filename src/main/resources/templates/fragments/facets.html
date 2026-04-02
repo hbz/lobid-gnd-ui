@@ -1,56 +1,58 @@
 <div th:fragment="facetsArea" th:if="${total > 0}" class="col-md-4" id="facets">
     <h5>Ergebnisse eingrenzen:</h5>
     <p />
+    <div th:replace="~{this::facet('type', 'Entitätstyp')}" />
+    <div th:replace="~{this::facet('gndSubjectCategory.id', 'GND-Sachgruppe')}" />
+    <div th:replace="~{this::facet('geographicAreaCode.id', 'Ländercode')}" />
+    <div th:replace="~{this::facet('professionOrOccupation.id', 'Beruf oder Beschäftigung')}" />
+</div>
+<div th:fragment="facet(key, label)" th:with="simpleKey=${#strings.replace(key, '.id', '')}">
+    <h6 style="display: inline-block" th:text="${label}">Feld</h6>
+    <div style="display: inline-block" th:if="${search.aggregation.get(key).size > 5}">
+        <a
+            th:id="${simpleKey + '-more-link'}"
+            href="javascript:void(0)"
+            title="Mehr Werte anzeigen"
+            class="facets-toggle"
+            th:data-facet-key="${simpleKey}">
+            <span class="bi bi-plus-square" aria-hidden="true" />
+        </a>
+        <a
+            th:id="${simpleKey + '-less-link'}"
+            href="javascript:void(0)"
+            style="display: none"
+            title="Weniger Werte anzeigen"
+            class="facets-toggle"
+            th:data-facet-key="${simpleKey}">
+            <span class="bi bi-dash-square" aria-hidden="true" />
+        </a>
+    </div>
     <div
-        th:each="facet : ${search.aggregation}"
-        th:with="simpleKey=${#strings.replace(facet.key, '.id', '')}">
-        <h6 style="display: inline-block" th:text="${facet.key}">Feld</h6>
-        <div style="display: inline-block" th:if="${search.aggregation[facet.key].size > 5}">
-            <a
-                th:id="${simpleKey + '-more-link'}"
-                href="javascript:void(0)"
-                title="Mehr Werte anzeigen"
-                class="facets-toggle"
-                th:data-facet-key="${simpleKey}">
-                <span class="bi bi-plus-square" aria-hidden="true" />
-            </a>
-            <a
-                th:id="${simpleKey + '-less-link'}"
-                href="javascript:void(0)"
-                style="display: none"
-                title="Weniger Werte anzeigen"
-                class="facets-toggle"
-                th:data-facet-key="${simpleKey}">
-                <span class="bi bi-dash-square" aria-hidden="true" />
-            </a>
-        </div>
-        <div
-            th:each="val,metaVal : ${search.aggregation[facet.key]}"
-            th:with="isMoreItem=${metaVal.index > 4}">
-            <span
-                th:classappend="${isMoreItem ? (simpleKey + '-more-item') : ''}"
-                th:style="${isMoreItem ? 'display:none' : ''}">
-                <div th:switch="${@facets.isActive(filter, facet.key, val.key)}">
-                    <div th:case="true">
-                        <span th:text="${@facets.label(val.key)}">Aktiver Filter</span>
-                        <a
-                            th:href="@{/gnd/search(q=${q}, size=${size}, from=${0}, 
-                                filter=${@facets.without(filter, facet.key, val.key)})}">
-                            <span class="badge bg-primary">
-                                Filter entfernen <span class="bi bi-x-lg" />
-                            </span>
-                        </a>
-                    </div>
+        th:each="val,metaVal : ${search.aggregation.get(key)}"
+        th:with="isMoreItem=${metaVal.index > 4}">
+        <span
+            th:classappend="${isMoreItem ? (simpleKey + '-more-item') : ''}"
+            th:style="${isMoreItem ? 'display:none' : ''}">
+            <div th:switch="${@facets.isActive(filter, key, val.key)}">
+                <div th:case="true">
+                    <span th:text="${val.label}">Aktiver Filter</span>
                     <a
-                        th:case="false"
                         th:href="@{/gnd/search(q=${q}, size=${size}, from=${0}, 
-                            filter=${@facets.filter(filter, facet.key, val.key)})}"
-                        th:text="${@facets.label(val.key, val.doc_count)}">
-                        Feld (1)
+                                filter=${@facets.without(filter, key, val.key)})}">
+                        <span class="badge bg-primary">
+                            Filter entfernen <span class="bi bi-x-lg" />
+                        </span>
                     </a>
                 </div>
-            </span>
-        </div>
-        <p />
+                <a
+                    th:case="false"
+                    th:href="@{/gnd/search(q=${q}, size=${size}, from=${0}, 
+                            filter=${@facets.filter(filter, key, val.key)})}"
+                    th:text="${val.label + ' (' + @pagination.formatCount(val.doc_count) + ')'}">
+                    Feld (1)
+                </a>
+            </div>
+        </span>
     </div>
+    <p />
 </div>

@@ -39,7 +39,9 @@ public class IndexHandler {
     private Mono<Map<String, Object>> randomGndEntity() {
         String randomRequestUrl =
                 apiBaseUrl + "/search?q=" + q() + "&size=1&from=" + new Random().nextInt(25000);
-        return WebClient.create()
+        return WebClient.builder()
+                .codecs(conf -> conf.defaultCodecs().maxInMemorySize(2 * 1024 * 1024))
+                .build()
                 .get()
                 .uri(randomRequestUrl)
                 .accept(MediaType.APPLICATION_JSON)

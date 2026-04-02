@@ -72,7 +72,7 @@ public class SearchTests extends HtmlPageTests {
     }
 
     @ParameterizedTest
-    @ValueSource(strings = {PRODUCTION /*, DEVELOPMENT*/})
+    @ValueSource(strings = {PRODUCTION, DEVELOPMENT})
     public void testSearchResults(String baseUrl) throws IOException {
         HtmlPage searchPage = search("Make-Tuwen", baseUrl);
         DomAttr detailsLink = searchPage.getFirstByXPath("//a[text()='Twain, Mark']/@href");
@@ -89,7 +89,7 @@ public class SearchTests extends HtmlPageTests {
                 .as("the results contains details for each entity")
                 .contains("Twain, Mark")
                 .contains("Individualisierte Person")
-                .contains("Schriftsteller, Journalist, Drucker, Lotse, Soldat")
+                .contains("Schriftsteller", "Journalist", "Drucker", "Lotse", "Soldat")
                 .contains("1835–1910")
                 .contains("118624822");
         assertThat(searchResults)
@@ -142,7 +142,7 @@ public class SearchTests extends HtmlPageTests {
     }
 
     @ParameterizedTest
-    @ValueSource(strings = {PRODUCTION /*, DEVELOPMENT*/})
+    @ValueSource(strings = {PRODUCTION, DEVELOPMENT})
     public void testFacetFilter(String baseUrl) throws IOException {
         HtmlPage searchPage = search("Make-Tuwen", baseUrl);
         assertThat(searchPage.getByXPath(linksToRemoveFilter()))

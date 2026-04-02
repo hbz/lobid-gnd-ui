@@ -1,4 +1,4 @@
-api: https://lobid.org/gnd
+api: https://test.lobid.org/gnd
 icons:
   CorporateBody: "bi bi-house-gear-fill"
   ConferenceOrEvent: "bi bi-chat-dots-fill"
