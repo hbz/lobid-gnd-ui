@@ -28,7 +28,7 @@ import reactor.util.function.Tuple2;
 @Component
 public class SearchHandler {
 
-    @Value("${api}")
+    @Value("${app.api}")
     private String apiBaseUrl;
 
     public Mono<ServerResponse> byQ(ServerRequest request) {
@@ -107,7 +107,7 @@ public class SearchHandler {
     }
 
     @Component("icons")
-    @ConfigurationProperties
+    @ConfigurationProperties(prefix = "app")
     public static class IconHelper {
 
         private Map<String, String> icons;

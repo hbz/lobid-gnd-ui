@@ -22,10 +22,10 @@ import reactor.core.publisher.Mono;
 @Component
 public class IndexHandler {
 
-    @Value("${api}")
+    @Value("${app.api}")
     private String apiBaseUrl;
 
-    @Value("${dontShowOnMainPage}")
+    @Value("${app.dontShowOnMainPage}")
     private String[] dontShowOnMainPage;
 
     public Mono<ServerResponse> page(ServerRequest request) {

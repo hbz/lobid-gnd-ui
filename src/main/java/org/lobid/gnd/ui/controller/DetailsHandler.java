@@ -21,7 +21,7 @@ import reactor.core.publisher.Mono;
 @Component
 public class DetailsHandler {
 
-    @Value("${api}")
+    @Value("${app.api}")
     private String apiBaseUrl;
 
     public Mono<ServerResponse> byId(ServerRequest request) {

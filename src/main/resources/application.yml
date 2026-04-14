@@ -1,14 +1,15 @@
-api: https://test.lobid.org/gnd
-icons:
-  CorporateBody: "bi bi-house-gear-fill"
-  ConferenceOrEvent: "bi bi-chat-dots-fill"
-  SubjectHeading: "bi bi-asterisk"
-  Work: "bi bi-journals"
-  PlaceOrGeographicName: "bi bi-geo-fill"
-  Person: "bi bi-person-fill"
-  Family: "bi bi-people-fill"
-dontShowOnMainPage: 1012979-0, 118551655
 spring:
   web:
     resources:
       static-locations: [] # use custom RouterConfig only
+app:
+  api: https://test.lobid.org/gnd
+  dontShowOnMainPage: 1012979-0, 118551655
+  icons:
+    CorporateBody: "bi bi-house-gear-fill"
+    ConferenceOrEvent: "bi bi-chat-dots-fill"
+    SubjectHeading: "bi bi-asterisk"
+    Work: "bi bi-journals"
+    PlaceOrGeographicName: "bi bi-geo-fill"
+    Person: "bi bi-person-fill"
+    Family: "bi bi-people-fill"

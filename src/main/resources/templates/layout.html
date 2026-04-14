@@ -14,7 +14,7 @@
             rel="stylesheet" />
         <script th:src="@{/gnd/assets/js/bundle.js}" defer></script>
         <script th:inline="javascript">
-            const API_BASE_URL = /*[[${@environment.getProperty('api')}]]*/ "";
+            const API_BASE_URL = /*[[${@environment.getProperty('app.api')}]]*/ "";
         </script>
         <script type="application/ld+json">
             {
