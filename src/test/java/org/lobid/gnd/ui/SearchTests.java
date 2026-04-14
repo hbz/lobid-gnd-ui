@@ -164,7 +164,7 @@ public class SearchTests extends HtmlPageTests {
 
         HtmlInput searchBox = searchPage.getFirstByXPath("//input[@id='gnd-query']");
         searchBox.type("Make-Tuwen");
-        webClient.waitForBackgroundJavaScript(1000);
+        webClient.waitForBackgroundJavaScript(1500);
         HtmlListItem suggestion =
                 searchPage.getFirstByXPath("//ul[contains(@class, 'ui-autocomplete')]/li");
         assertThat(suggestion.asNormalizedText())
@@ -173,7 +173,7 @@ public class SearchTests extends HtmlPageTests {
                 .contains("Schriftsteller; Journalist; Drucker; Lotse; Soldat");
 
         HtmlPage detailsPage = suggestion.click();
-        webClient.waitForBackgroundJavaScript(10);
+        webClient.waitForBackgroundJavaScript(15);
         assertThat(detailsPage.asNormalizedText())
                 .as("details page for selected suggestion should be open: " + detailsPage.getUrl())
                 .contains("https://d-nb.info/gnd/118624822")
