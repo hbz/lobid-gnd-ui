@@ -34,7 +34,10 @@
     </div>
     <p />
 </div>
-<div th:fragment="facet(key, label)" th:with="simpleKey=${#strings.replace(key, '.id', '')}">
+<div
+    th:fragment="facet(key, label)"
+    th:with="simpleKey=${#strings.replace(key, '.id', '')}"
+    th:unless="${search.aggregation.get(key).isEmpty()}">
     <h5 style="display: inline-block" th:text="${label}">Feld</h5>
     <div style="display: inline-block" th:if="${search.aggregation.get(key).size > 5}">
         <div
