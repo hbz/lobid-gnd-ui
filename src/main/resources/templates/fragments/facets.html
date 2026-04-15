@@ -1,58 +1,94 @@
 <div th:fragment="facetsArea" th:if="${total > 0}" class="col-md-4" id="facets">
     <h5>Ergebnisse eingrenzen:</h5>
     <p />
-    <div th:replace="~{this::facet('type', 'Entitätstyp')}" />
+    <div th:replace="~{this::typeFacet}" />
     <div th:replace="~{this::facet('gndSubjectCategory.id', 'GND-Sachgruppe')}" />
     <div th:replace="~{this::facet('geographicAreaCode.id', 'Ländercode')}" />
     <div th:replace="~{this::facet('professionOrOccupation.id', 'Beruf oder Beschäftigung')}" />
 </div>
+<div th:fragment="typeFacet" th:with="key='type', label='Entitätstyp'">
+    <h6 style="display: inline-block" th:text="${label}">Type...</h6>
+    <div
+        th:each="bucketGroup, meta : ${@facets.grouped(search.aggregation.get(key))}"
+        th:with="supertype=${bucketGroup.key}, buckets=${bucketGroup.value}, 
+            supertypeBucket=${@facets.findBucket(supertype, buckets)},
+            supertypeIcon=${@icons.iconClass(supertype)}">
+        <div style="display: inline-block" th:if="${buckets.size > 0}">
+            <div
+                th:replace="~{this::facetLink(
+                    ${false}, ${meta.index}, ${supertypeBucket}, ${supertypeIcon}
+                )}" />
+        </div>
+        <div style="display: inline-block" th:if="${filter.isEmpty && buckets.size > 1}">
+            <div
+                th:replace="~{this::facetToggle(
+                    ${meta.index}, 'Untertypen einblenden', 'Untertypen ausblenden'
+                )}" />
+        </div>
+        <div th:each="sub : ${buckets}" th:unless="${#strings.equals(supertype, sub.key)}">
+            <div
+                th:replace="~{this::facetLink(
+                    ${filter.isEmpty}, ${meta.index}, ${sub}, 'bi bi-arrow-return-right'
+                )}" />
+        </div>
+    </div>
+    <p />
+</div>
 <div th:fragment="facet(key, label)" th:with="simpleKey=${#strings.replace(key, '.id', '')}">
     <h6 style="display: inline-block" th:text="${label}">Feld</h6>
     <div style="display: inline-block" th:if="${search.aggregation.get(key).size > 5}">
-        <a
-            th:id="${simpleKey + '-more-link'}"
-            href="javascript:void(0)"
-            title="Mehr Werte anzeigen"
-            class="facets-toggle"
-            th:data-facet-key="${simpleKey}">
-            <span class="bi bi-plus-square" aria-hidden="true" />
-        </a>
-        <a
-            th:id="${simpleKey + '-less-link'}"
-            href="javascript:void(0)"
-            style="display: none"
-            title="Weniger Werte anzeigen"
-            class="facets-toggle"
-            th:data-facet-key="${simpleKey}">
-            <span class="bi bi-dash-square" aria-hidden="true" />
-        </a>
+        <div
+            th:replace="~{this::facetToggle(
+                ${simpleKey}, 'Mehr Werte anzeigen', 'Weniger Werte anzeigen'
+            )}" />
     </div>
-    <div
-        th:each="val,metaVal : ${search.aggregation.get(key)}"
-        th:with="isMoreItem=${metaVal.index > 4}">
-        <span
-            th:classappend="${isMoreItem ? (simpleKey + '-more-item') : ''}"
-            th:style="${isMoreItem ? 'display:none' : ''}">
-            <div th:switch="${@facets.isActive(filter, key, val.key)}">
-                <div th:case="true">
-                    <span th:text="${val.label}">Aktiver Filter</span>
-                    <a
-                        th:href="@{/gnd/search(q=${q}, size=${size}, from=${0}, 
-                                filter=${@facets.without(filter, key, val.key)})}">
-                        <span class="badge bg-primary">
-                            Filter entfernen <span class="bi bi-x-lg" />
-                        </span>
-                    </a>
-                </div>
-                <a
-                    th:case="false"
-                    th:href="@{/gnd/search(q=${q}, size=${size}, from=${0}, 
-                            filter=${@facets.filter(filter, key, val.key)})}"
-                    th:text="${val.label + ' (' + @pagination.formatCount(val.doc_count) + ')'}">
-                    Feld (1)
-                </a>
-            </div>
-        </span>
+    <div th:each="val,metaVal : ${search.aggregation.get(key)}" th:with="hide=${metaVal.index > 4}">
+        <div th:replace="~{this::facetLink(${hide}, ${simpleKey}, ${val}, '')}" />
     </div>
     <p />
+</div>
+<div th:fragment="facetLink(hide, id, val, icon)">
+    <span
+        th:classappend="${hide ? (id + '-more-item') : ''}"
+        th:style="${hide ? 'display:none' : ''}">
+        <i th:unless="${icon.isEmpty}" style="display: inline-block" th:class="${icon}"></i>
+        <div style="display: inline-block" th:switch="${@facets.isActive(filter, key, val.key)}">
+            <div th:case="true">
+                <span th:text="${val.label}">Aktiver Filter</span>
+                <a
+                    th:href="@{/gnd/search(q=${q}, size=${size}, from=${0}, 
+                                filter=${@facets.without(filter, key, val.key)})}">
+                    <span class="badge bg-primary">
+                        Filter entfernen <span class="bi bi-x-lg" />
+                    </span>
+                </a>
+            </div>
+            <a
+                th:case="false"
+                th:href="@{/gnd/search(q=${q}, size=${size}, from=${0}, 
+                            filter=${@facets.filter(filter, key, val.key)})}"
+                th:text="${val.label + ' (' + @pagination.formatCount(val.doc_count) + ')'}">
+                Feld (1)
+            </a>
+        </div>
+    </span>
+</div>
+<div th:fragment="facetToggle(id, moreTitle, lessTitle)">
+    <a
+        th:id="${id + '-more-link'}"
+        href="javascript:void(0)"
+        th:title="${moreTitle}"
+        class="facets-toggle"
+        th:data-facet-key="${id}">
+        <span class="bi bi-plus-square" aria-hidden="true" />
+    </a>
+    <a
+        th:id="${id + '-less-link'}"
+        href="javascript:void(0)"
+        style="display: none"
+        th:title="${lessTitle}"
+        class="facets-toggle"
+        th:data-facet-key="${id}">
+        <span class="bi bi-dash-square" aria-hidden="true" />
+    </a>
 </div>

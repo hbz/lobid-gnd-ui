@@ -6,11 +6,13 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.text.DecimalFormat;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.function.Consumer;
 import java.util.function.Function;
+import java.util.stream.Collector;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import org.springframework.beans.factory.annotation.Value;
@@ -87,7 +89,14 @@ public class SearchHandler {
     }
 
     @Component("facets")
+    @ConfigurationProperties(prefix = "app")
     public static class FacetsHelper {
+
+        private Map<String, String> types;
+
+        public void setTypes(Map<String, String> types) {
+            this.types = types;
+        }
 
         public String filter(String filter, String field, String value) {
             return String.format("%s%s", filter, filterString(field, value));
@@ -101,8 +110,29 @@ public class SearchHandler {
             return filter.replace(filterString(field, value), "").trim();
         }
 
+        public Map<String, Object> findBucket(String key, List<Map<String, Object>> buckets) {
+            return buckets.stream().filter(b -> b.get("key").equals(key)).findFirst().orElse(null);
+        }
+
+        public Map<String, List<Map<String, Object>>> grouped(List<Map<String, Object>> buckets) {
+            return buckets.stream().collect(groupingInOrderBy(supertype()));
+        }
+
+        private Collector<Map<String, Object>, ?, Map<String, List<Map<String, Object>>>>
+                groupingInOrderBy(Function<Map<String, Object>, String> supertype) {
+            return Collectors.groupingBy(supertype, LinkedHashMap::new, Collectors.toList());
+        }
+
+        private Function<Map<String, Object>, String> supertype() {
+            return bucket -> {
+                Object key = bucket.get("key");
+                return types.getOrDefault(key, key.toString());
+            };
+        }
+
         private String filterString(String field, String value) {
-            return String.format("+(%s:\"%s\")", field, value);
+            value = value.startsWith("http") ? String.format("\"%s\"", value) : value;
+            return String.format("+(%s:%s)", field, value);
         }
     }
 

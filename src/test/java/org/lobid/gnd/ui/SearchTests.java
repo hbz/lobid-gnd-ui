@@ -3,7 +3,7 @@ package org.lobid.gnd.ui;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import java.io.IOException;
-import java.net.URLEncoder;
+import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
 import org.assertj.core.api.Condition;
 import org.htmlunit.html.DomAttr;
@@ -104,7 +104,7 @@ public class SearchTests extends HtmlPageTests {
     }
 
     @ParameterizedTest
-    @ValueSource(strings = {PRODUCTION /*, DEVELOPMENT*/})
+    @ValueSource(strings = {PRODUCTION, DEVELOPMENT})
     public void testFacetLinks(String baseUrl) throws IOException {
         assertThat(search("Make-Tuwen", baseUrl))
                 .has(linkFor("Person", "type", "Person"))
@@ -194,10 +194,10 @@ public class SearchTests extends HtmlPageTests {
                 page -> hasLink(text, filterParam, page), "link for '%s' with: %s", text, field);
     }
 
-    private boolean hasLink(String text, String url, HtmlPage page) {
+    private boolean hasLink(String text, String filter, HtmlPage page) {
         DomAttr link = page.getFirstByXPath("//a[contains(text(), '" + text + "')]/@href");
-        String filter = URLEncoder.encode(String.format("+(%s)", url), StandardCharsets.UTF_8);
-        assertThat(link.getValue()).contains(String.format("filter=%s", filter));
+        String linkText = URLDecoder.decode(link.getValue(), StandardCharsets.UTF_8);
+        assertThat(linkText).contains(String.format("filter=%s", String.format("+(%s)", filter)));
         return true;
     }
 
