@@ -7,7 +7,7 @@
     <div th:replace="~{this::facet('professionOrOccupation.id', 'Beruf oder Beschäftigung')}" />
 </div>
 <div th:fragment="typeFacet" th:with="key='type', label='Entitätstyp'">
-    <h6 style="display: inline-block" th:text="${label}">Type...</h6>
+    <h5 style="display: inline-block" th:text="${label}">Type...</h5>
     <div
         th:each="bucketGroup, meta : ${@facets.grouped(search.aggregation.get(key))}"
         th:with="supertype=${bucketGroup.key}, buckets=${bucketGroup.value}, 
@@ -35,7 +35,7 @@
     <p />
 </div>
 <div th:fragment="facet(key, label)" th:with="simpleKey=${#strings.replace(key, '.id', '')}">
-    <h6 style="display: inline-block" th:text="${label}">Feld</h6>
+    <h5 style="display: inline-block" th:text="${label}">Feld</h5>
     <div style="display: inline-block" th:if="${search.aggregation.get(key).size > 5}">
         <div
             th:replace="~{this::facetToggle(

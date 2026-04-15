@@ -73,7 +73,7 @@
                                     th:href="@{/gnd/search}"
                                     class="nav-link"
                                     title="Die gesamte GND erkunden"
-                                    th:classappend="${request.path == '/search'} ? 'active' : ''"
+                                    th:classappend="${request.path == '/gnd/search'} ? 'active' : ''"
                                     >Erkunden</a
                                 >
                             </li>
@@ -82,7 +82,7 @@
                                     th:href="@{/gnd/api}"
                                     class="nav-link"
                                     title="Programmierschnittstelle"
-                                    th:classappend="${request.path == '/api'} ? 'active' : ''"
+                                    th:classappend="${request.path == '/gnd/api'} ? 'active' : ''"
                                     >API</a
                                 >
                             </li>
@@ -188,15 +188,7 @@
                     [[${MSG_ERROR}]]
                 </p>
                 <div layout:fragment="content" />
-                <div class="card my-3">
-                    <div class="card-body">
-                        Prototype, current state: render all JSON fields for a GND entity in an HTML
-                        table, e.g.:
-                        <a href="/gnd/7749153-1">GND</a>, <a href="/gnd/2047974-8">hbz</a>,
-                        <a href="/gnd/4031483-2">Köln</a>, <a href="/gnd/118512676">Böll</a>, ...
-                    </div>
-                </div>
-                <div class="card my-3">
+                <div class="card my-3 footer-card">
                     <div class="card-body footer">
                         <span class="float-start">
                             <img th:src="@{/gnd/assets/images/wappen.png}" alt="NRW-Wappen" />
