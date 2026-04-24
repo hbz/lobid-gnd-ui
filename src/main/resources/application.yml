@@ -9,7 +9,7 @@ app:
     CorporateBody: "bi bi-house-gear-fill"
     ConferenceOrEvent: "bi bi-chat-dots-fill"
     SubjectHeading: "bi bi-asterisk"
-    Work: "bi bi-journals"
+    Work: "bi bi-book-half"
     PlaceOrGeographicName: "bi bi-geo-fill"
     Person: "bi bi-person-fill"
     Family: "bi bi-people-fill"

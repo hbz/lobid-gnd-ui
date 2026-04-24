@@ -19,6 +19,6 @@
         <td th:text="${#strings.substringAfter(suggest.array[meta.index].label,'| ')}">
             Details...
         </td>
-        <td th:text="${member.gndIdentifier}">ID...</td>
+        <td th:text="${member.gndIdentifier}" th:classappend="text-muted">ID...</td>
     </tr>
 </table>
