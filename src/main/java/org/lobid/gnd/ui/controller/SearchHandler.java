@@ -15,6 +15,7 @@ import java.util.function.Function;
 import java.util.stream.Collector;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
+import java.util.stream.Stream;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.http.MediaType;
@@ -38,11 +39,24 @@ public class SearchHandler {
             MultiValueMap<String, String> params = request.queryParams();
             return Mono.zip(
                             searchWith(params),
-                            searchWith(add(params, p -> p.add("format", "json:suggest"))))
+                            searchWith(add(params, p -> p.add("format", "json:" + suggest()))))
                     .flatMap(toResponse("search", request));
         } catch (Exception e) {
             return errorResponse(request, 500, "Search failed: " + e.getMessage());
         }
+    }
+
+    private String suggest() {
+        return Stream.of(
+                        "preferredName",
+                        "dateOfBirth-dateOfDeath",
+                        "professionOrOccupation",
+                        "placeOfBusiness",
+                        "firstAuthor",
+                        "firstComposer",
+                        "dateOfProduction",
+                        "geographicAreaCode")
+                .collect(Collectors.joining(","));
     }
 
     private Mono<Map<String, Object>> searchWith(MultiValueMap<String, String> params) {
