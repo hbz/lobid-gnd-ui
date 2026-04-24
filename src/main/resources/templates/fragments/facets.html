@@ -12,14 +12,15 @@
         th:each="bucketGroup, meta : ${@facets.grouped(search.aggregation.get(key))}"
         th:with="supertype=${bucketGroup.key}, buckets=${bucketGroup.value}, 
             supertypeBucket=${@facets.findBucket(supertype, buckets)},
-            supertypeIcon=${@icons.iconClass(supertype)}">
+            supertypeIcon=${@icons.iconClass(supertype)},
+            hasTypeFilter=${#strings.contains(filter, key)}">
         <div style="display: inline-block" th:if="${buckets.size > 0}">
             <div
                 th:replace="~{this::facetLink(
                     ${false}, ${meta.index}, ${supertypeBucket}, ${supertypeIcon}
                 )}" />
         </div>
-        <div style="display: inline-block" th:if="${filter.isEmpty && buckets.size > 1}">
+        <div style="display: inline-block" th:if="${!hasTypeFilter && buckets.size > 1}">
             <div
                 th:replace="~{this::facetToggle(
                     ${meta.index}, 'Untertypen einblenden', 'Untertypen ausblenden'
@@ -28,7 +29,7 @@
         <div th:each="sub : ${buckets}" th:unless="${#strings.equals(supertype, sub.key)}">
             <div
                 th:replace="~{this::facetLink(
-                    ${filter.isEmpty}, ${meta.index}, ${sub}, 'bi bi-arrow-return-right'
+                    ${!hasTypeFilter}, ${meta.index}, ${sub}, 'bi bi-arrow-return-right'
                 )}" />
         </div>
     </div>
