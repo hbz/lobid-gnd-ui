@@ -6,6 +6,7 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -16,6 +17,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.reactive.function.server.ServerRequest;
 import org.springframework.web.reactive.function.server.ServerResponse;
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 @Component
@@ -46,12 +48,41 @@ public class DetailsHandler {
     private Function<Map<String, Object>, Mono<ServerResponse>> toResponse(
             String template, ServerRequest request) {
         return gndEntity -> {
-            Map<String, Object> entity = withImageUrlAndAttribution(gndEntity);
-            Map<String, Map<String, Object>> model =
-                    Map.of("entity", entity, "request", request.attributes());
-            // Render Thymeleaf template (in src/main/resources/templates) with model:
-            return ServerResponse.ok().render(template, model);
+            return Flux.fromIterable(gndEntity.keySet())
+                    .flatMap(key -> labelCall("property", key).map(label -> Map.entry(key, label)))
+                    .collect(
+                            () -> new HashMap<String, String>(),
+                            (map, entry) -> map.put(entry.getKey(), entry.getValue()))
+                    .flatMap(
+                            labels -> {
+                                Map<String, Object> model = new HashMap<>();
+                                model.put("entity", withImageUrlAndAttribution(gndEntity));
+                                model.put("labels", labels);
+                                model.put("request", request.attributes());
+                                return ServerResponse.ok().render(template, model);
+                            });
         };
+    }
+
+    private Mono<String> labelCall(String kind, String id) {
+        return WebClient.builder()
+                .baseUrl(apiBaseUrl)
+                .build()
+                .get()
+                .uri(b -> b.path("/reconcile/suggest/{kind}").queryParam("prefix", id).build(kind))
+                .accept(MediaType.APPLICATION_JSON)
+                .retrieve()
+                .bodyToMono(JsonNode.class)
+                .flatMap(toLabelForId(kind, id));
+    }
+
+    private Function<JsonNode, Mono<String>> toLabelForId(String kind, String id) {
+        return json ->
+                Flux.fromIterable(() -> json.get("result").elements())
+                        .filter(result -> result.get("id").textValue().equals(id))
+                        .map(result -> result.get("name").asText())
+                        .defaultIfEmpty("No " + kind + " label for " + id)
+                        .next();
     }
 
     static Map<String, Object> withImageUrlAndAttribution(Map<String, Object> javaMap) {
