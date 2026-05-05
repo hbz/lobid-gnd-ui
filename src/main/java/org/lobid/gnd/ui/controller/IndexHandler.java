@@ -3,18 +3,14 @@ package org.lobid.gnd.ui.controller;
 import static org.lobid.gnd.ui.controller.ErrorHandler.errorResponse;
 
 import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Map;
-import java.util.Random;
 import java.util.function.Function;
-import org.springframework.beans.factory.annotation.Value;
+import org.lobid.gnd.ui.LobidGndApiService;
 import org.springframework.core.io.ClassPathResource;
-import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
-import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.reactive.function.server.ServerRequest;
 import org.springframework.web.reactive.function.server.ServerResponse;
 import reactor.core.publisher.Mono;
@@ -22,45 +18,18 @@ import reactor.core.publisher.Mono;
 @Component
 public class IndexHandler {
 
-    @Value("${app.api}")
-    private String apiBaseUrl;
+    private final LobidGndApiService gnd;
 
-    @Value("${app.dontShowOnMainPage}")
-    private String[] dontShowOnMainPage;
+    public IndexHandler(LobidGndApiService gnd) {
+        this.gnd = gnd;
+    }
 
     public Mono<ServerResponse> page(ServerRequest request) {
         try {
-            return randomGndEntity().flatMap(toResponse("index", request, dataset()));
+            return gnd.randomEntity().flatMap(toResponse("index", request, dataset()));
         } catch (Exception e) {
             return errorResponse(request, 500, "Failed to load index page: " + e.getMessage());
         }
-    }
-
-    private Mono<Map<String, Object>> randomGndEntity() {
-        String randomRequestUrl =
-                apiBaseUrl + "/search?q=" + q() + "&size=1&from=" + new Random().nextInt(25000);
-        return WebClient.builder()
-                .codecs(conf -> conf.defaultCodecs().maxInMemorySize(2 * 1024 * 1024))
-                .build()
-                .get()
-                .uri(randomRequestUrl)
-                .accept(MediaType.APPLICATION_JSON)
-                .retrieve()
-                .bodyToMono(JsonNode.class)
-                .map(json -> firstMemberAsMap(json));
-    }
-
-    private String q() {
-        String qParam = "depiction:*";
-        for (String dont : dontShowOnMainPage) {
-            qParam += " AND NOT gndIdentifier:" + dont;
-        }
-        return qParam;
-    }
-
-    private Map<String, Object> firstMemberAsMap(JsonNode json) {
-        JsonNode firstMember = json.get("member").elements().next();
-        return new ObjectMapper().convertValue(firstMember, new TypeReference<>() {});
     }
 
     private Function<Map<String, Object>, Mono<ServerResponse>> toResponse(

@@ -2,20 +2,15 @@ package org.lobid.gnd.ui.controller;
 
 import static org.lobid.gnd.ui.controller.ErrorHandler.errorResponse;
 
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.function.Function;
-import org.lobid.gnd.ui.service.LabelService;
+import org.lobid.gnd.ui.LobidGndApiService;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
-import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.reactive.function.server.ServerRequest;
 import org.springframework.web.reactive.function.server.ServerResponse;
 import reactor.core.publisher.Flux;
@@ -27,36 +22,25 @@ public class DetailsHandler {
     @Value("${app.api}")
     private String apiBaseUrl;
 
-    private final LabelService labels;
+    private final LobidGndApiService gnd;
 
-    public DetailsHandler(LabelService labels) {
-        this.labels = labels;
+    public DetailsHandler(LobidGndApiService gnd) {
+        this.gnd = gnd;
     }
 
     public Mono<ServerResponse> byId(ServerRequest request) {
         try {
-            return gndEntity(request.pathVariable("id")).flatMap(toResponse("details", request));
+            return gnd.entity(request.pathVariable("id")).flatMap(toResponse("details", request));
         } catch (Exception e) {
             return errorResponse(request, 500, "Failed to load details page: " + e.getMessage());
         }
-    }
-
-    private Mono<Map<String, Object>> gndEntity(String gndId) {
-        // Get JSON data from lobid-gnd, convert JSON data to Java Map (to be passed to template):
-        return WebClient.create()
-                .get()
-                .uri(apiBaseUrl + "/" + gndId)
-                .accept(MediaType.APPLICATION_JSON)
-                .retrieve()
-                .bodyToMono(JsonNode.class)
-                .map(json -> new ObjectMapper().convertValue(json, new TypeReference<>() {}));
     }
 
     private Function<Map<String, Object>, Mono<ServerResponse>> toResponse(
             String template, ServerRequest request) {
         return gndEntity -> {
             return Flux.fromIterable(gndEntity.keySet())
-                    .flatMap(key -> labels.get("property", key).map(label -> Map.entry(key, label)))
+                    .flatMap(key -> gnd.label("property", key).map(label -> Map.entry(key, label)))
                     .collect(
                             () -> new HashMap<String, String>(),
                             (map, entry) -> map.put(entry.getKey(), entry.getValue()))
