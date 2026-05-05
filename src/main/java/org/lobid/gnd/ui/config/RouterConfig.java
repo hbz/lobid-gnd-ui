@@ -1,5 +1,9 @@
-package org.lobid.gnd.ui.controller;
+package org.lobid.gnd.ui.config;
 
+import org.lobid.gnd.ui.controller.DetailsHandler;
+import org.lobid.gnd.ui.controller.ErrorHandler;
+import org.lobid.gnd.ui.controller.IndexHandler;
+import org.lobid.gnd.ui.controller.SearchHandler;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.ClassPathResource;
