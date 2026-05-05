@@ -2,27 +2,19 @@ package org.lobid.gnd.ui.controller;
 
 import static org.lobid.gnd.ui.controller.ErrorHandler.errorResponse;
 
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import java.text.DecimalFormat;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.stream.Collector;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
-import java.util.stream.Stream;
-import org.springframework.beans.factory.annotation.Value;
+import org.lobid.gnd.ui.LobidGndApiService;
 import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
-import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
-import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.reactive.function.server.ServerRequest;
 import org.springframework.web.reactive.function.server.ServerResponse;
 import reactor.core.publisher.Mono;
@@ -31,52 +23,20 @@ import reactor.util.function.Tuple2;
 @Component
 public class SearchHandler {
 
-    @Value("${app.api}")
-    private String apiBaseUrl;
+    private final LobidGndApiService gnd;
+
+    public SearchHandler(LobidGndApiService gnd) {
+        this.gnd = gnd;
+    }
 
     public Mono<ServerResponse> byQ(ServerRequest request) {
         try {
             MultiValueMap<String, String> params = request.queryParams();
-            return Mono.zip(
-                            searchWith(params),
-                            searchWith(add(params, p -> p.add("format", "json:" + suggest()))))
+            return Mono.zip(gnd.search(params), gnd.suggest(params))
                     .flatMap(toResponse("search", request));
         } catch (Exception e) {
             return errorResponse(request, 500, "Search failed: " + e.getMessage());
         }
-    }
-
-    private String suggest() {
-        return Stream.of(
-                        "preferredName",
-                        "dateOfBirth-dateOfDeath",
-                        "professionOrOccupation",
-                        "placeOfBusiness",
-                        "firstAuthor",
-                        "firstComposer",
-                        "dateOfProduction",
-                        "geographicAreaCode")
-                .collect(Collectors.joining(","));
-    }
-
-    private Mono<Map<String, Object>> searchWith(MultiValueMap<String, String> params) {
-        return WebClient.builder()
-                .codecs(conf -> conf.defaultCodecs().maxInMemorySize(2 * 1024 * 1024))
-                .baseUrl(apiBaseUrl)
-                .build()
-                .get()
-                .uri(builder -> builder.path("/search").queryParams(params).build())
-                .accept(MediaType.APPLICATION_JSON)
-                .retrieve()
-                .bodyToMono(JsonNode.class)
-                .map(toJavaMap());
-    }
-
-    private Function<JsonNode, Map<String, Object>> toJavaMap() {
-        return json ->
-                json.isArray()
-                        ? Map.of("array", new ObjectMapper().convertValue(json, Map[].class))
-                        : new ObjectMapper().convertValue(json, new TypeReference<>() {});
     }
 
     private Function<Tuple2<Map<String, Object>, Map<String, Object>>, Mono<ServerResponse>>
@@ -92,14 +52,6 @@ public class SearchHandler {
                             request.attributes());
             return ServerResponse.ok().render(template, model);
         };
-    }
-
-    private MultiValueMap<String, String> add(
-            MultiValueMap<String, String> queryParams,
-            Consumer<MultiValueMap<String, String>> object) {
-        MultiValueMap<String, String> suggestQueryParams = new LinkedMultiValueMap<>(queryParams);
-        object.accept(suggestQueryParams);
-        return suggestQueryParams;
     }
 
     @Component("facets")
