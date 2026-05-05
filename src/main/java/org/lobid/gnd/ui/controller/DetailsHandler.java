@@ -11,6 +11,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.function.Function;
+import org.lobid.gnd.ui.service.LabelService;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
@@ -25,6 +26,12 @@ public class DetailsHandler {
 
     @Value("${app.api}")
     private String apiBaseUrl;
+
+    private final LabelService labels;
+
+    public DetailsHandler(LabelService labels) {
+        this.labels = labels;
+    }
 
     public Mono<ServerResponse> byId(ServerRequest request) {
         try {
@@ -49,7 +56,7 @@ public class DetailsHandler {
             String template, ServerRequest request) {
         return gndEntity -> {
             return Flux.fromIterable(gndEntity.keySet())
-                    .flatMap(key -> labelCall("property", key).map(label -> Map.entry(key, label)))
+                    .flatMap(key -> labels.get("property", key).map(label -> Map.entry(key, label)))
                     .collect(
                             () -> new HashMap<String, String>(),
                             (map, entry) -> map.put(entry.getKey(), entry.getValue()))
@@ -62,27 +69,6 @@ public class DetailsHandler {
                                 return ServerResponse.ok().render(template, model);
                             });
         };
-    }
-
-    private Mono<String> labelCall(String kind, String id) {
-        return WebClient.builder()
-                .baseUrl(apiBaseUrl)
-                .build()
-                .get()
-                .uri(b -> b.path("/reconcile/suggest/{kind}").queryParam("prefix", id).build(kind))
-                .accept(MediaType.APPLICATION_JSON)
-                .retrieve()
-                .bodyToMono(JsonNode.class)
-                .flatMap(toLabelForId(kind, id));
-    }
-
-    private Function<JsonNode, Mono<String>> toLabelForId(String kind, String id) {
-        return json ->
-                Flux.fromIterable(() -> json.get("result").elements())
-                        .filter(result -> result.get("id").textValue().equals(id))
-                        .map(result -> result.get("name").asText())
-                        .defaultIfEmpty("No " + kind + " label for " + id)
-                        .next();
     }
 
     static Map<String, Object> withImageUrlAndAttribution(Map<String, Object> javaMap) {
