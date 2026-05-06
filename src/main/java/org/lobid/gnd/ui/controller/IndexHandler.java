@@ -34,8 +34,7 @@ public class IndexHandler {
 
     private Function<Map<String, Object>, Mono<ServerResponse>> toResponse(
             String template, ServerRequest request, Map<String, Object> dataset) {
-        return gndEntity -> {
-            Map<String, Object> entity = DetailsHandler.withImageUrlAndAttribution(gndEntity);
+        return entity -> {
             Map<String, Map<String, Object>> model =
                     Map.of("entity", entity, "dataset", dataset, "request", request.attributes());
             return ServerResponse.ok().render(template, model);
