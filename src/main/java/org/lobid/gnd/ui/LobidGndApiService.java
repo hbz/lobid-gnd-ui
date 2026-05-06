@@ -4,10 +4,7 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.net.URI;
-import java.util.Collections;
-import java.util.HashMap;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Optional;
@@ -35,6 +32,8 @@ public class LobidGndApiService {
 
     @Value("${app.dontShowOnMainPage}")
     private String[] dontShowOnMainPage;
+
+    private static final ObjectMapper JSON = new ObjectMapper();
 
     private static final ConcurrentHashMap<String, Mono<String>> cache = new ConcurrentHashMap<>();
 
@@ -113,8 +112,8 @@ public class LobidGndApiService {
 
     private Map<String, Object> javaMap(JsonNode json) {
         return json.isArray()
-                ? Map.of("array", new ObjectMapper().convertValue(json, Map[].class))
-                : new ObjectMapper().convertValue(json, new TypeReference<>() {});
+                ? Map.of("array", JSON.convertValue(json, Map[].class))
+                : JSON.convertValue(json, new TypeReference<>() {});
     }
 
     private String q() {
@@ -127,7 +126,7 @@ public class LobidGndApiService {
 
     private Map<String, Object> firstMemberAsMap(JsonNode json) {
         JsonNode firstMember = json.get("member").elements().next();
-        return new ObjectMapper().convertValue(firstMember, new TypeReference<>() {});
+        return JSON.convertValue(firstMember, new TypeReference<>() {});
     }
 
     private Mono<String> labelForId(JsonNode json, String kind, String id) {
@@ -139,21 +138,20 @@ public class LobidGndApiService {
     }
 
     private Mono<Map<String, Object>> withPropertyAndTypeLabels(JsonNode gndEntity) {
-        Stream<String> properties = toStream(gndEntity.fieldNames());
-        Stream<String> types = toStream(gndEntity.get("type").elements()).map(JsonNode::asText);
+        Stream<String> properties = asStream(gndEntity.fieldNames());
+        Stream<String> types = asStream(gndEntity.get("type").elements()).map(JsonNode::asText);
         return Flux.concat(labelsFor(properties, "property"), labelsFor(types, "type"))
-                .collect(
-                        () -> new HashMap<String, String>(),
-                        (map, entry) -> map.put(entry.getKey(), entry.getValue()))
-                .map(
-                        labels -> {
-                            Map<String, Object> model = javaMap(gndEntity);
-                            model.put("labels", labels);
-                            return model;
-                        });
+                .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue))
+                .map(labelMap -> entityWith(gndEntity, "labels", labelMap));
     }
 
-    private <T> Stream<T> toStream(Iterator<T> fieldNames) {
+    private Map<String, Object> entityWith(JsonNode json, String key, Map<String, String> value) {
+        Map<String, Object> entity = javaMap(json);
+        entity.put(key, value);
+        return entity;
+    }
+
+    private <T> Stream<T> asStream(Iterator<T> fieldNames) {
         Iterable<T> iterable = () -> fieldNames;
         return StreamSupport.stream(iterable.spliterator(), false);
     }
@@ -165,22 +163,20 @@ public class LobidGndApiService {
 
     private Map<String, Object> withImageUrlAndAttribution(Map<String, Object> javaMap) {
         if (javaMap.containsKey("depiction")) {
-            @SuppressWarnings("unchecked")
-            var depictions = (List<Map<String, Object>>) javaMap.get("depiction");
-            String imageAttribution = createAttribution(depictions.getFirst());
+            JsonNode depictionNode = JSON.convertValue(javaMap.get("depiction"), JsonNode.class);
+            String imageAttribution = createAttribution(depictionNode.get(0));
             String proxyPrefix = "https://lobid.org/imagesproxy?url=";
-            javaMap.put("imageUrl", proxyPrefix + depictions.getFirst().get("thumbnail"));
+            javaMap.put("imageUrl", proxyPrefix + depictionNode.get(0).get("thumbnail").asText());
             javaMap.put("imageAttribution", String.format("Bildquelle: %s", imageAttribution));
         }
         return javaMap;
     }
 
-    private String createAttribution(Map<String, Object> depiction) {
-        @SuppressWarnings("unchecked")
-        Map<String, Object> license =
-                Optional.ofNullable(((List<Map<String, Object>>) depiction.get("license")))
-                        .map(list -> list.get(0))
-                        .orElse(Collections.emptyMap());
+    private String createAttribution(JsonNode depiction) {
+        JsonNode license =
+                Optional.ofNullable(depiction.get("license"))
+                        .map(node -> node.get(0))
+                        .orElse(JSON.createObjectNode());
         String artist = findText(depiction, "creatorName").replaceAll("(Unknown.*){2}", "$1");
         String licenseText = findText(license, "abbr");
         String licenseUrl = findText(license, "id");
@@ -189,10 +185,11 @@ public class LobidGndApiService {
         return attributionHtml(artist, licenseText, fileSourceUrl, urlForLicense);
     }
 
-    private String findText(Map<String, Object> map, String field) {
-        Object value = map.get(field);
-        value = value instanceof List ? ((List<?>) value).get(0) : value;
-        return value != null ? value.toString().replace("\n", " ").trim() : "";
+    private String findText(JsonNode node, String field) {
+        return Optional.ofNullable(node.get(field))
+                .map(JsonNode::asText)
+                .map(text -> text.replace("\n", " ").trim())
+                .orElse("");
     }
 
     private String attributionHtml(
