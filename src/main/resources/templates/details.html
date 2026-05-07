@@ -8,7 +8,18 @@
     </head>
     <body>
         <div layout:fragment="content">
-            <h1 class="mb-4" th:text="${entity.preferredName}">Header...</h1>
+            <h1 class="mb-4">
+                [[${entity.preferredName}]]
+                <a
+                    th:each="type : ${entity.type}"
+                    th:href="@{/gnd/search(filter=${'+(type:'+type+')'})}"
+                    th:text="${entity.labels.get(type)}"
+                    class="badge text-bg-primary">
+                    Type...
+                </a>
+                <br />
+                <small th:text="${entity.labels.get(entity.gndIdentifier)}">Description...</small>
+            </h1>
             <p th:text="${entity.id}">Details...</p>
             <table class="table table-striped table-condensed">
                 <tr th:each="field : ${entity}">

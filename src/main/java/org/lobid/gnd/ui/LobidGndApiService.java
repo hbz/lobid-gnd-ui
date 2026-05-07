@@ -67,7 +67,7 @@ public class LobidGndApiService {
                 .map(this::withImageUrlAndAttribution);
     }
 
-    private Mono<String> label(String kind, String id) {
+    private Mono<String> label(String kind, String id, String field) {
         Function<UriBuilder, URI> uriFunction =
                 builder ->
                         builder.path("/reconcile/suggest/{kind}")
@@ -75,7 +75,7 @@ public class LobidGndApiService {
                                 .build(kind);
         return cache.computeIfAbsent(
                 kind + ":" + id,
-                key -> gndCall(uriFunction).flatMap(json -> labelForId(json, kind, id)));
+                key -> gndCall(uriFunction).flatMap(json -> labelForId(json, kind, id, field)));
     }
 
     private Mono<JsonNode> gndCall(Function<UriBuilder, URI> uriFunction) {
@@ -129,10 +129,10 @@ public class LobidGndApiService {
         return JSON.convertValue(firstMember, new TypeReference<>() {});
     }
 
-    private Mono<String> labelForId(JsonNode json, String kind, String id) {
+    private Mono<String> labelForId(JsonNode json, String kind, String id, String field) {
         return Flux.fromIterable(() -> json.get("result").elements())
                 .filter(result -> result.get("id").textValue().equals(id))
-                .map(result -> result.get("name").asText())
+                .map(result -> result.get(field).asText())
                 .defaultIfEmpty("No " + kind + " label for " + id)
                 .next();
     }
@@ -140,7 +140,11 @@ public class LobidGndApiService {
     private Mono<Map<String, Object>> withPropertyAndTypeLabels(JsonNode gndEntity) {
         Stream<String> properties = asStream(gndEntity.fieldNames());
         Stream<String> types = asStream(gndEntity.get("type").elements()).map(JsonNode::asText);
-        return Flux.concat(labelsFor(properties, "property"), labelsFor(types, "type"))
+        Stream<String> id = Stream.of(gndEntity.get("gndIdentifier").asText());
+        return Flux.concat(
+                        labelsFor(properties, "property", "name"),
+                        labelsFor(types, "type", "name"),
+                        labelsFor(id, "entity", "description"))
                 .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue))
                 .map(labelMap -> entityWith(gndEntity, "labels", labelMap));
     }
@@ -156,9 +160,10 @@ public class LobidGndApiService {
         return StreamSupport.stream(iterable.spliterator(), false);
     }
 
-    private Flux<Entry<String, String>> labelsFor(Stream<String> keys, String kind) {
+    private Flux<Entry<String, String>> labelsFor(Stream<String> keys, String kind, String field) {
         return Flux.fromStream(keys)
-                .flatMap(key -> label(kind, key).map(label -> Map.entry(key, label)));
+                .filter(key -> !key.equals("AuthorityResource"))
+                .flatMap(key -> label(kind, key, field).map(label -> Map.entry(key, label)));
     }
 
     private Map<String, Object> withImageUrlAndAttribution(Map<String, Object> javaMap) {
