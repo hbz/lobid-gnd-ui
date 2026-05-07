@@ -65,6 +65,11 @@ tasks.withType(JavaCompile) {
     options.compilerArgs << '-Xlint:all' << '-Werror'
 }
 
+def currentVersion = "node -v".execute().text.trim().replace("v", "").split("\\.")[0]
+if (currentVersion != "22") {
+    throw new GradleException("Incompatible Node version: $currentVersion. Project requires 22.")
+}
+
 spotless {
 
     java {
