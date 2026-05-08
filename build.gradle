@@ -65,12 +65,14 @@ tasks.withType(JavaCompile) {
     options.compilerArgs << '-Xlint:all' << '-Werror'
 }
 
-def currentVersion = "node -v".execute().text.trim().replace("v", "").split("\\.")[0]
-if (currentVersion != "22") {
-    throw new GradleException("Incompatible Node version: $currentVersion. Project requires 22.")
-}
-
 spotless {
+
+    if (project.gradle.startParameter.taskNames.any { it.startsWith('spotless') }) {
+        def currentVersion = "node -v".execute().text.trim().replace("v", "").split("\\.")[0].toInteger()
+        if (currentVersion < 16) {
+            throw new GradleException("Incompatible Node version: $currentVersion. Prettier requires >= 16.")
+        }
+    }
 
     java {
         target 'src/*/java/**/*.java'
