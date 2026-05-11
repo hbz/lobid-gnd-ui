@@ -20,13 +20,13 @@ document.addEventListener("DOMContentLoaded", function () {
         updateClearButton();
     }
 
-    // Creat custom autocomplete widget: add categories to autocomplete widget
+    // Create custom autocomplete widget: add categories to autocomplete widget
     $.widget("custom.categoryAutocomplete", $.ui.autocomplete, {
         _renderItem: function (ul, item) {
             var labels = "";
             var img = "";
             if (item.image) {
-                img = "<img style='height: 50px' src='" + item.image + "'/>&nbsp;";
+                img = "<img class='hbz-logo' src='" + item.image + "'/>&nbsp;";
             }
             var categories = item.category.split(" | ");
             for (var category in categories) {
@@ -70,14 +70,15 @@ document.addEventListener("DOMContentLoaded", function () {
         event.preventDefault();
         const facetKey = $(this).data("facet-key");
         const showMore = $(this).attr("id").includes("more-link");
+        const hidden = "d-none";
         if (showMore) {
-            $("." + facetKey + "-more-item").show();
-            $("#" + facetKey + "-more-link").hide();
-            $("#" + facetKey + "-less-link").show();
+            $("." + facetKey + "-more-item").removeClass(hidden);
+            $("#" + facetKey + "-more-link").addClass(hidden);
+            $("#" + facetKey + "-less-link").removeClass(hidden);
         } else {
-            $("." + facetKey + "-more-item").hide();
-            $("#" + facetKey + "-more-link").show();
-            $("#" + facetKey + "-less-link").hide();
+            $("." + facetKey + "-more-item").addClass(hidden);
+            $("#" + facetKey + "-more-link").removeClass(hidden);
+            $("#" + facetKey + "-less-link").addClass(hidden);
         }
     });
 });

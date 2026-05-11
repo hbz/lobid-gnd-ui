@@ -358,3 +358,23 @@ h1 small {
 :root {
     --bs-body-font-family: "Noto Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
 }
+
+h1 .badge {
+    font-size: 0.7rem;
+    line-height: 1;
+    vertical-align: middle;
+    margin: 1px;
+}
+
+.ui-autocomplete-clear {
+    display: none;
+    margin-left: -1px;
+}
+
+#name-column {
+    min-width: 30%;
+}
+
+#id-column {
+    min-width: 10%;
+}
