@@ -34,7 +34,9 @@ public class DetailsTests extends HtmlPageTests {
     @ParameterizedTest
     @ValueSource(strings = {PRODUCTION, DEVELOPMENT})
     public void testDetailsViewHeader(String baseUrl) throws IOException {
-        assertThat(pageFor(baseUrl, COLOGNE).getElementsByTagName("h1").getFirst().getTextContent())
+        HtmlPage detailsPage = pageFor(baseUrl, COLOGNE);
+        assertThat(detailsPage.getElementsByTagName("h1").getFirst().getTextContent())
+                .as("Main header of full page as XML: \n%s", detailsPage.asXml())
                 .contains("Köln")
                 .contains("Gebietskörperschaft oder Verwaltungseinheit")
                 .contains("Geografikum")
