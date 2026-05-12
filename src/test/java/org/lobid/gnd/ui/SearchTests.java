@@ -204,14 +204,16 @@ public class SearchTests extends HtmlPageTests {
     private Condition<HtmlPage> linkActive(String linkText) {
         return new Condition<>(
                 page -> isActive(linkPath(linkText), page),
-                "parent of or '%s' should be active",
+                "parent of '%s' or '%s' itself should be active",
+                linkText,
                 linkText);
     }
 
     private Condition<HtmlPage> linkActiveAfterClick(String linkText) {
         return new Condition<>(
                 page -> isActiveAfterClick(linkPath(linkText), page),
-                "parent of or '%s' should be active after click",
+                "parent of '%s' or '%s' itself should be active",
+                linkText,
                 linkText);
     }
 
