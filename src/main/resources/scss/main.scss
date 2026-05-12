@@ -107,45 +107,21 @@ a.active {
     z-index: 100 !important;
 }
 
-.ui-autocomplete-category {
-    color: #333;
-    font-weight: bold;
-}
-
-.ui-autocomplete li a {
+.ui-autocomplete .ui-menu-item a {
     color: #004678;
+    display: block;
+    padding: 4px 10px;
+    text-decoration: none;
 }
 
-.ui-autocomplete-input-has-clear {
-    padding-right: 24px;
-}
-
-.ui-autocomplete-input-has-clear::-ms-clear {
-    display: none;
-}
-
-.ui-autocomplete-clear {
-    position: absolute;
-    top: 1px;
-    right: 40px;
-    width: 32px;
-    height: 32px;
-    display: inline-block;
-    text-align: center;
-    cursor: pointer;
-    border: none;
-    background-color: transparent;
-    z-index: 3;
-}
-
-.ui-autocomplete-clear:hover,
-.ui-autocomplete-clear:focus {
-    background-color: #eee;
-}
-
-.ui-autocomplete-clear .glyphicon {
-    position: relative;
-    top: 3px;
+// Hover and keyboard focus/active states
+.ui-autocomplete .ui-menu-item:hover .ui-menu-item-wrapper,
+.ui-autocomplete .ui-menu-item.ui-state-focus .ui-menu-item-wrapper,
+.ui-autocomplete .ui-menu-item-wrapper.ui-state-focus,
+.ui-autocomplete .ui-menu-item-wrapper.ui-state-active {
+    background-color: #e6e6e6;
+    border-color: #ccc;
+    color: #004678;
 }
 
 .table-condensed > thead > tr > th,
@@ -164,6 +140,11 @@ a.active {
 
 .hbz-logo {
     height: 50px;
+}
+
+.footer-card {
+    margin-top: 35px !important;
+    padding: 10px;
 }
 
 .footer {
@@ -186,6 +167,11 @@ a.active {
 
 .footer-gnd a {
     color: white;
+}
+
+.pagination-panel {
+    padding-top: 5px;
+    padding-bottom: 25px;
 }
 
 .pagination {
@@ -229,9 +215,8 @@ a.active {
     overflow-x: hidden;
 }
 
-.nav li a {
-    padding-left: 10px !important;
-    padding-right: 10px !important;
+a.disabled {
+    padding-left: 0px !important;
 }
 
 li .dropdown-header {
@@ -372,4 +357,24 @@ h1 small {
 
 :root {
     --bs-body-font-family: "Noto Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
+}
+
+h1 .badge {
+    font-size: 0.7rem;
+    line-height: 1;
+    vertical-align: middle;
+    margin: 1px;
+}
+
+.ui-autocomplete-clear {
+    display: none;
+    margin-left: -1px;
+}
+
+#name-column {
+    min-width: 30%;
+}
+
+#id-column {
+    min-width: 10%;
 }

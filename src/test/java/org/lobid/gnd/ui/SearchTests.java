@@ -3,7 +3,7 @@ package org.lobid.gnd.ui;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import java.io.IOException;
-import java.net.URLEncoder;
+import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
 import org.assertj.core.api.Condition;
 import org.htmlunit.html.DomAttr;
@@ -21,7 +21,7 @@ public class SearchTests extends HtmlPageTests {
     private static final String SEARCH = "/search";
 
     @ParameterizedTest
-    @ValueSource(strings = {PRODUCTION /*, DEVELOPMENT*/})
+    @ValueSource(strings = {PRODUCTION, DEVELOPMENT})
     public void testSearchForm(String baseUrl) throws IOException {
         HtmlPage searchPage = pageFor(baseUrl, SEARCH);
         HtmlInput searchBox = searchPage.getFirstByXPath("//input[@id='gnd-query']");
@@ -31,20 +31,20 @@ public class SearchTests extends HtmlPageTests {
     }
 
     @ParameterizedTest
-    @ValueSource(strings = {PRODUCTION /*, DEVELOPMENT*/})
+    @ValueSource(strings = {PRODUCTION, DEVELOPMENT})
     public void testSearchFormClear(String baseUrl) throws IOException {
         HtmlPage searchPage = pageFor(baseUrl, SEARCH);
         HtmlInput searchBox = searchPage.getFirstByXPath("//input[@id='gnd-query']");
         searchBox.type("Test");
         assertThat(searchBox.getValue()).isEqualTo("Test");
         HtmlButton clearButton =
-                searchPage.getFirstByXPath("//button[@class='ui-autocomplete-clear']");
+                searchPage.getFirstByXPath("//button[contains(@class, 'ui-autocomplete-clear')]");
         clearButton.click();
         assertThat(searchBox.getValue()).as("search box should be empty after clearing").isEmpty();
     }
 
     @ParameterizedTest
-    @ValueSource(strings = {PRODUCTION /*, DEVELOPMENT*/})
+    @ValueSource(strings = {PRODUCTION, DEVELOPMENT})
     public void testPageSize(String baseUrl) throws IOException {
         assertThat(search("Test", baseUrl))
                 .as("page size can be switched, default is 10")
@@ -55,7 +55,7 @@ public class SearchTests extends HtmlPageTests {
     }
 
     @ParameterizedTest
-    @ValueSource(strings = {PRODUCTION /*, DEVELOPMENT*/})
+    @ValueSource(strings = {PRODUCTION, DEVELOPMENT})
     public void testPageLinks(String baseUrl) throws IOException {
         assertThat(search("Test", baseUrl))
                 .as("specific page can be selected, default is 1")
@@ -72,7 +72,7 @@ public class SearchTests extends HtmlPageTests {
     }
 
     @ParameterizedTest
-    @ValueSource(strings = {PRODUCTION /*, DEVELOPMENT*/})
+    @ValueSource(strings = {PRODUCTION, DEVELOPMENT})
     public void testSearchResults(String baseUrl) throws IOException {
         HtmlPage searchPage = search("Make-Tuwen", baseUrl);
         DomAttr detailsLink = searchPage.getFirstByXPath("//a[text()='Twain, Mark']/@href");
@@ -89,7 +89,7 @@ public class SearchTests extends HtmlPageTests {
                 .as("the results contains details for each entity")
                 .contains("Twain, Mark")
                 .contains("Individualisierte Person")
-                .contains("Schriftsteller, Journalist, Drucker, Lotse, Soldat")
+                .contains("Schriftsteller", "Journalist", "Drucker", "Lotse", "Soldat")
                 .contains("1835–1910")
                 .contains("118624822");
         assertThat(searchResults)
@@ -104,7 +104,7 @@ public class SearchTests extends HtmlPageTests {
     }
 
     @ParameterizedTest
-    @ValueSource(strings = {PRODUCTION /*, DEVELOPMENT*/})
+    @ValueSource(strings = {PRODUCTION, DEVELOPMENT})
     public void testFacetLinks(String baseUrl) throws IOException {
         assertThat(search("Make-Tuwen", baseUrl))
                 .has(linkFor("Person", "type", "Person"))
@@ -142,7 +142,7 @@ public class SearchTests extends HtmlPageTests {
     }
 
     @ParameterizedTest
-    @ValueSource(strings = {PRODUCTION /*, DEVELOPMENT*/})
+    @ValueSource(strings = {PRODUCTION, DEVELOPMENT})
     public void testFacetFilter(String baseUrl) throws IOException {
         HtmlPage searchPage = search("Make-Tuwen", baseUrl);
         assertThat(searchPage.getByXPath(linksToRemoveFilter()))
@@ -157,13 +157,14 @@ public class SearchTests extends HtmlPageTests {
     }
 
     @ParameterizedTest
-    @ValueSource(strings = {PRODUCTION /*, DEVELOPMENT*/})
+    @ValueSource(strings = {PRODUCTION, DEVELOPMENT})
     public void testAutocomplete(String baseUrl) throws IOException {
         HtmlPage searchPage = pageFor(baseUrl, SEARCH);
+        webClient.getOptions().setCssEnabled(false);
 
         HtmlInput searchBox = searchPage.getFirstByXPath("//input[@id='gnd-query']");
         searchBox.type("Make-Tuwen");
-        webClient.waitForBackgroundJavaScript(1000);
+        webClient.waitForBackgroundJavaScript(1500);
         HtmlListItem suggestion =
                 searchPage.getFirstByXPath("//ul[contains(@class, 'ui-autocomplete')]/li");
         assertThat(suggestion.asNormalizedText())
@@ -172,9 +173,9 @@ public class SearchTests extends HtmlPageTests {
                 .contains("Schriftsteller; Journalist; Drucker; Lotse; Soldat");
 
         HtmlPage detailsPage = suggestion.click();
-        webClient.waitForBackgroundJavaScript(10);
+        webClient.waitForBackgroundJavaScript(15);
         assertThat(detailsPage.asNormalizedText())
-                .as("details page for selected suggestion should be open")
+                .as("details page for selected suggestion should be open: " + detailsPage.getUrl())
                 .contains("https://d-nb.info/gnd/118624822")
                 .contains("Snodgrass, Quintus Curtius");
     }
@@ -193,24 +194,26 @@ public class SearchTests extends HtmlPageTests {
                 page -> hasLink(text, filterParam, page), "link for '%s' with: %s", text, field);
     }
 
-    private boolean hasLink(String text, String url, HtmlPage page) {
+    private boolean hasLink(String text, String filter, HtmlPage page) {
         DomAttr link = page.getFirstByXPath("//a[contains(text(), '" + text + "')]/@href");
-        String filter = URLEncoder.encode(String.format("+(%s)", url), StandardCharsets.UTF_8);
-        assertThat(link.getValue()).contains(String.format("filter=%s", filter));
+        String linkText = URLDecoder.decode(link.getValue(), StandardCharsets.UTF_8);
+        assertThat(linkText).contains(String.format("filter=%s", String.format("+(%s)", filter)));
         return true;
     }
 
     private Condition<HtmlPage> linkActive(String linkText) {
         return new Condition<>(
                 page -> isActive(linkPath(linkText), page),
-                "parent of '%s' should be active",
+                "parent of '%s' or '%s' itself should be active",
+                linkText,
                 linkText);
     }
 
     private Condition<HtmlPage> linkActiveAfterClick(String linkText) {
         return new Condition<>(
                 page -> isActiveAfterClick(linkPath(linkText), page),
-                "parent of '%s' should be active after click",
+                "parent of '%s' or '%s' itself should be active",
+                linkText,
                 linkText);
     }
 
@@ -219,7 +222,9 @@ public class SearchTests extends HtmlPageTests {
     }
 
     private boolean isActive(String linkPath, HtmlPage page) {
-        return page.getFirstByXPath(linkPath + "/parent::*[@class='active']") != null;
+        return (page.getFirstByXPath(linkPath + "[contains(@class,'active')]") != null)
+                || (page.getFirstByXPath(linkPath + "/parent::*[contains(@class,'active')]")
+                        != null);
     }
 
     private boolean isActiveAfterClick(String linkPath, HtmlPage page) {

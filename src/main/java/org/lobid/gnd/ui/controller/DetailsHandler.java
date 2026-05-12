@@ -1,17 +1,16 @@
 package org.lobid.gnd.ui.controller;
 
+import static org.lobid.gnd.ui.controller.ErrorHandler.errorResponse;
+
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import java.io.IOException;
-import java.io.InputStream;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.Random;
 import java.util.function.Function;
-import org.springframework.core.io.ClassPathResource;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.WebClient;
@@ -22,68 +21,40 @@ import reactor.core.publisher.Mono;
 @Component
 public class DetailsHandler {
 
-    public Mono<ServerResponse> index(ServerRequest request) {
-        try {
-            return gndEntity(randomEntityWithDepiction())
-                    .flatMap(toResponse("index", request, dataset()));
-        } catch (IOException e) {
-            return errorResponse(request, 500, "Failed to load index page: " + e.getMessage());
-        }
-    }
+    @Value("${app.api}")
+    private String apiBaseUrl;
 
     public Mono<ServerResponse> byId(ServerRequest request) {
         try {
-            return gndEntity(request.pathVariable("id"))
-                    .flatMap(toResponse("details", request, dataset()));
-        } catch (IOException e) {
+            return gndEntity(request.pathVariable("id")).flatMap(toResponse("details", request));
+        } catch (Exception e) {
             return errorResponse(request, 500, "Failed to load details page: " + e.getMessage());
         }
-    }
-
-    public Mono<ServerResponse> notImplemented(ServerRequest request) {
-        return errorResponse(request, 501, "Not Implemented");
     }
 
     private Mono<Map<String, Object>> gndEntity(String gndId) {
         // Get JSON data from lobid-gnd, convert JSON data to Java Map (to be passed to template):
         return WebClient.create()
                 .get()
-                .uri("https://lobid.org/gnd/{id}", gndId)
+                .uri(apiBaseUrl + "/" + gndId)
                 .accept(MediaType.APPLICATION_JSON)
                 .retrieve()
                 .bodyToMono(JsonNode.class)
                 .map(json -> new ObjectMapper().convertValue(json, new TypeReference<>() {}));
     }
 
-    private String randomEntityWithDepiction() {
-        // Temp for implementing index template, replace with actual query as in lobid-gnd:
-        List<String> entities = List.of("4031483-2", "118512676", "118637649", "118548018");
-        return entities.get(new Random().nextInt(entities.size()));
-    }
-
     private Function<Map<String, Object>, Mono<ServerResponse>> toResponse(
-            String template, ServerRequest request, Map<String, Object> dataset) {
+            String template, ServerRequest request) {
         return gndEntity -> {
             Map<String, Object> entity = withImageUrlAndAttribution(gndEntity);
             Map<String, Map<String, Object>> model =
-                    Map.of("entity", entity, "dataset", dataset, "request", request.attributes());
+                    Map.of("entity", entity, "request", request.attributes());
             // Render Thymeleaf template (in src/main/resources/templates) with model:
             return ServerResponse.ok().render(template, model);
         };
     }
 
-    private Map<String, Object> dataset() throws IOException {
-        InputStream dataset = new ClassPathResource("static/dataset.jsonld").getInputStream();
-        return new ObjectMapper().readValue(dataset, new TypeReference<>() {});
-    }
-
-    private Mono<ServerResponse> errorResponse(ServerRequest request, int status, String message) {
-        Map<String, Object> model =
-                Map.of("request", request.attributes(), "status", status, "error", message);
-        return ServerResponse.status(status).render("error", model);
-    }
-
-    private Map<String, Object> withImageUrlAndAttribution(Map<String, Object> javaMap) {
+    static Map<String, Object> withImageUrlAndAttribution(Map<String, Object> javaMap) {
         if (javaMap.containsKey("depiction")) {
             @SuppressWarnings("unchecked")
             var depictions = (List<Map<String, Object>>) javaMap.get("depiction");

@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html
+    xmlns:th="http://www.thymeleaf.org"
+    xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+    layout:decorate="~{layout}">
+    <head>
+        <title>[[#{app.title}]] - search</title>
+    </head>
+    <body>
+        <div
+            layout:fragment="content"
+            th:with="
+                q=${request.q},
+                total=${search.totalItems},
+                from=${request.from},
+                size=${request.size},
+                filter=${request.filter}">
+            <div class="row" id="search-results">
+                <div th:class="${search.totalItems > 0 ? 'col-md-8' : 'col-md-12'}">
+                    <div th:replace="~{fragments/pagination::pageSizeLinks}" />
+                    <div class="card my-3">
+                        <div th:replace="~{fragments/pagination::paginationInfo}" />
+                        <table th:replace="~{fragments/results::resultsTable}" />
+                        <div th:replace="~{fragments/pagination::pageLinks}" />
+                    </div>
+                </div>
+                <div th:replace="~{fragments/facets::facetsArea}" />
+            </div>
+        </div>
+    </body>
+</html>

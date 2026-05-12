@@ -13,6 +13,9 @@
             th:href="@{/gnd/assets/css/bundle.css}"
             rel="stylesheet" />
         <script th:src="@{/gnd/assets/js/bundle.js}" defer></script>
+        <script th:inline="javascript">
+            const API_BASE_URL = /*[[${@environment.getProperty('app.api')}]]*/ "";
+        </script>
         <script type="application/ld+json">
             {
                 "@context": "http://schema.org",
@@ -70,7 +73,7 @@
                                     th:href="@{/gnd/search}"
                                     class="nav-link"
                                     title="Die gesamte GND erkunden"
-                                    th:classappend="${request.path == '/search'} ? 'active' : ''"
+                                    th:classappend="${request.path == '/gnd/search'} ? 'active' : ''"
                                     >Erkunden</a
                                 >
                             </li>
@@ -79,7 +82,7 @@
                                     th:href="@{/gnd/api}"
                                     class="nav-link"
                                     title="Programmierschnittstelle"
-                                    th:classappend="${request.path == '/api'} ? 'active' : ''"
+                                    th:classappend="${request.path == '/gnd/api'} ? 'active' : ''"
                                     >API</a
                                 >
                             </li>
@@ -152,15 +155,19 @@
                         type="text"
                         name="q"
                         id="gnd-query"
-                        value=""
+                        th:value="${request.q}"
                         class="form-control"
                         autocomplete="off"
                         placeholder='Suchoptionen: AND, OR, AND NOT, ""-Phrasensuche, *-Trunkierung'
                         title="Suchanfrage" />
-                    <span
-                        role="status"
-                        aria-live="polite"
-                        class="ui-helper-hidden-accessible"></span>
+                    <input type="hidden" name="from" th:value="0" />
+                    <input type="hidden" name="size" th:value="${request.size}" />
+                    <button
+                        type="button"
+                        class="btn btn-default ui-autocomplete-clear"
+                        title="Suchtext löschen">
+                        <i class="bi bi-x-circle"></i>
+                    </button>
                     <button class="btn btn-default" type="submit" title="Suchen">
                         <i class="bi bi-search"></i>
                     </button>
@@ -180,15 +187,7 @@
                     [[${MSG_ERROR}]]
                 </p>
                 <div layout:fragment="content" />
-                <div class="card my-3">
-                    <div class="card-body">
-                        Prototype, current state: render all JSON fields for a GND entity in an HTML
-                        table, e.g.:
-                        <a href="/gnd/7749153-1">GND</a>, <a href="/gnd/2047974-8">hbz</a>,
-                        <a href="/gnd/4031483-2">Köln</a>, <a href="/gnd/118512676">Böll</a>, ...
-                    </div>
-                </div>
-                <div class="card my-3">
+                <div class="card my-3 footer-card">
                     <div class="card-body footer">
                         <span class="float-start">
                             <img th:src="@{/gnd/assets/images/wappen.png}" alt="NRW-Wappen" />
