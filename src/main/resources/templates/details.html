@@ -29,6 +29,15 @@
                     class="badge text-bg-primary">
                     Type...
                 </a>
+                <a
+                    class="float-end"
+                    title="JSON-LD-Indexdaten anzeigen"
+                    th:href="|${@environment.getProperty('app.api')}/${entity.gndIdentifier}.json|">
+                    <img
+                        class="json-ld-icon"
+                        th:src="@{/gnd/assets/images/json-ld.png}"
+                        alt="JSON" />
+                </a>
                 <br />
                 <small th:text="${entity.labels.get(entity.gndIdentifier)}">Description...</small>
             </h1>
