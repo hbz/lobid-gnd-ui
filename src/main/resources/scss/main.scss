@@ -296,14 +296,13 @@ figcaption {
     height: 1.4em;
 }
 
-.tooltip.right .tooltip-arrow {
-    border-right-color: #fff;
+.tooltip-inner {
+    border: solid 1px #cccccc;
 }
 
-.tooltip-inner {
-    color: #000;
-    background: #fff;
-    border: solid 1px #cccccc;
+.custom-tooltip {
+    --bs-tooltip-bg: #fff;
+    --bs-tooltip-color: #000;
 }
 
 .invisible-link {

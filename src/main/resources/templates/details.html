@@ -9,7 +9,19 @@
     <body>
         <div layout:fragment="content">
             <h1 class="mb-4">
-                [[${entity.preferredName}]]
+                <a
+                    th:with="info='Namen in die Zwischenablage kopieren'"
+                    class="invisible-link"
+                    data-bs-toggle="tooltip"
+                    data-bs-placement="right"
+                    data-bs-custom-class="custom-tooltip"
+                    th:title="${info}"
+                    th:data-copy-text="${entity.preferredName}"
+                    th:data-copy-info="${info}"
+                    href="#"
+                    onclick="copyToClipboard($(this)); return false;">
+                    [[${entity.preferredName}]]
+                </a>
                 <a
                     th:each="type : ${entity.type}"
                     th:href="@{/gnd/search(filter=${'+(type:'+type+')'})}"

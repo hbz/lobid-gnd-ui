@@ -1,7 +1,7 @@
-import "bootstrap";
 import "scss/app.scss";
 import "scss/main.scss";
 import $ from "jquery";
+import { Tooltip } from "bootstrap";
 import "jquery-ui/ui/widgets/autocomplete";
 
 document.addEventListener("DOMContentLoaded", function () {
@@ -82,3 +82,53 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     });
 });
+
+$(function () {
+    document.querySelectorAll('[data-bs-toggle="tooltip"]').forEach((trigger) => {
+        new Tooltip(trigger);
+    });
+});
+
+function result(string, link, res) {
+    if (res) {
+        link.trigger("copied", ["Kopiert: " + string]);
+    }
+    return res;
+}
+
+function copyToClipboard(link) {
+    const text = link.data("copy-text");
+    const info = link.data("copy-info");
+    link.bind("copied", function (event, message) {
+        const tooltip = Tooltip.getOrCreateInstance(this);
+        tooltip.setContent({ ".tooltip-inner": message });
+        tooltip.show();
+    });
+    link.on("mouseleave", function () {
+        const tooltip = Tooltip.getInstance(this);
+        if (tooltip) {
+            tooltip.hide();
+            tooltip.setContent({ ".tooltip-inner": info });
+        }
+    });
+    if (window.clipboardData && window.clipboardData.setData) {
+        return result(text, link, clipboardData.setData("Text", text));
+    } else if (document.queryCommandSupported && document.queryCommandSupported("copy")) {
+        var temp = document.createElement("textarea");
+        temp.textContent = text;
+        temp.style.position = "fixed";
+        document.body.appendChild(temp);
+        temp.select();
+        try {
+            return result(text, link, document.execCommand("copy"));
+        } catch (ex) {
+            console.warn("Copy to clipboard failed.", ex);
+            window.prompt("Kopieren: Strg+C, Enter", text);
+        } finally {
+            document.body.removeChild(temp);
+        }
+    }
+}
+
+window.copyToClipboard = copyToClipboard;
+window.$ = $;
