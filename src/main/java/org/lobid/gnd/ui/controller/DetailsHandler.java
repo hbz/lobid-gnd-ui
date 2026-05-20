@@ -2,6 +2,8 @@ package org.lobid.gnd.ui.controller;
 
 import static org.lobid.gnd.ui.controller.ErrorHandler.errorResponse;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
@@ -42,6 +44,36 @@ public class DetailsHandler {
                 case String s -> labels.getOrDefault(s, value.toString());
                 default -> value.toString();
             };
+        }
+
+        public String getFirstAndLastName(Map<String, Object> entity) {
+            String preferred = entity.get("preferredName").toString();
+            String[] lastAndFirst = preferred.split(", ");
+            return lastAndFirst.length == 2 ? lastAndFirst[1] + " " + lastAndFirst[0] : preferred;
+        }
+
+        public boolean isLivingPerson(Map<String, Object> entity) {
+            JsonNode json = new ObjectMapper().convertValue(entity, JsonNode.class);
+            JsonNode dateOfBirth = json.get("dateOfBirth");
+            JsonNode dateOfDeath = json.get("dateOfDeath");
+            return json.get("type").toString().contains("DifferentiatedPerson")
+                    && (dateOfBirth == null || getYear(dateOfBirth) > 1940)
+                    && dateOfDeath == null;
+        }
+
+        private Integer getYear(JsonNode node) {
+            String date = node.elements().next().textValue();
+            String year = date.matches("\\d{4}-\\d{2}-\\d{2}") ? date.split("-")[0] : date;
+            return asInt(year);
+        }
+
+        private Integer asInt(String year) {
+            try {
+                return Integer.parseInt(year);
+            } catch (NumberFormatException e) {
+                e.printStackTrace();
+                return null;
+            }
         }
     }
 

@@ -41,7 +41,52 @@
                 <br />
                 <small th:text="${entity.labels.get(entity.gndIdentifier)}">Description...</small>
             </h1>
-            <p th:text="${entity.id}">Details...</p>
+            <div th:if="${@details.isLivingPerson(entity)}" id="meta-person" class="card">
+                <div class="card-header" role="tab" id="headingOne">
+                    <h5 class="card-text">
+                        <a
+                            role="button"
+                            data-bs-toggle="collapse"
+                            href="#infotext"
+                            aria-expanded="false"
+                            aria-controls="infotext">
+                            <span class="bi bi-chevron-right collapse-icon"></span> Sind Sie
+                            [[${@details.getFirstAndLastName(entity)}]]? Klicken Sie hier.
+                        </a>
+                    </h5>
+                </div>
+                <div
+                    id="infotext"
+                    class="panel-collapse collapse"
+                    role="tabpanel"
+                    aria-labelledby="headingOne">
+                    <div class="card-body">
+                        <p class="card-text">
+                            <span class="bi bi-info-circle"></span> Diese Seite zeigt einen
+                            Datensatz aus der
+                            <a href="https://de.wikipedia.org/wiki/Gemeinsame_Normdatei">
+                                Gemeinsamen Normdatei (GND)
+                            </a>
+                            an. Die GND wird von Bibliotheken, Archiven und Museen gepflegt und
+                            dient der eindeutigen Identifizierung von Urheber:innen. Ein GND-Eintrag
+                            zu einer Person wird beispielsweise bei der Katalogisierung einer
+                            Publikation angelegt, um die Publikation korrekt und eindeutig der
+                            Person zuordnen zu können.
+                        </p>
+                        <p class="card-text">
+                            Die Informationen in einem Normdatensatz werden ausschließlich aus
+                            öffentlich zugänglichen Quellen übernommen, Fehler oder
+                            Unvollständigkeiten sind nicht ausgeschlossen. Falls Sie Änderungen
+                            melden möchten oder mit der Veröffentlichung bestimmter Informationen
+                            nicht einverstanden sind, wenden Sie sich bitte an
+                            <a href="mailto:gnd-datenschutz@hbz-nrw.de">
+                                gnd-datenschutz@hbz-nrw.de</a
+                            >.
+                        </p>
+                    </div>
+                </div>
+            </div>
+            <p class="page-header" th:text="${entity.id}">Details...</p>
             <table class="table table-striped table-condensed">
                 <tr th:each="field : ${entity}">
                     <td th:text="${entity.labels.get(field.key)}">Key...</td>

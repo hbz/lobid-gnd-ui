@@ -81,6 +81,21 @@ document.addEventListener("DOMContentLoaded", function () {
             $("#" + facetKey + "-less-link").addClass(hidden);
         }
     });
+
+    const info = document.getElementById("infotext");
+    const icon = document.querySelector(".collapse-icon");
+
+    if (info && icon) {
+        info.addEventListener("show.bs.collapse", function () {
+            icon.classList.remove("bi-chevron-right");
+            icon.classList.add("bi-chevron-down");
+        });
+
+        info.addEventListener("hide.bs.collapse", function () {
+            icon.classList.remove("bi-chevron-down");
+            icon.classList.add("bi-chevron-right");
+        });
+    }
 });
 
 $(function () {
