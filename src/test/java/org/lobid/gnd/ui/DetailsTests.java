@@ -86,7 +86,7 @@ public class DetailsTests extends HtmlPageTests {
     }
 
     @ParameterizedTest
-    @ValueSource(strings = {PRODUCTION /*, DEVELOPMENT*/})
+    @ValueSource(strings = {PRODUCTION, DEVELOPMENT})
     public void testDetailsViewPersonHistorical(String baseUrl) throws IOException {
         HtmlPage detailsPage = pageFor(baseUrl, PERSON_HISTORICAL);
         assertThat(detailsPage.asNormalizedText())
@@ -102,12 +102,13 @@ public class DetailsTests extends HtmlPageTests {
     }
 
     @ParameterizedTest
-    @ValueSource(strings = {PRODUCTION /*, DEVELOPMENT*/})
+    @ValueSource(strings = {PRODUCTION, DEVELOPMENT})
     public void testDetailsViewPersonAlive(String baseUrl) throws IOException {
         HtmlPage detailsPage = pageFor(baseUrl, PERSON_ALIVE);
         HtmlDivision personBox = detailsPage.getHtmlElementById("meta-person");
         assertThat(personBox).isNotNull();
-        HtmlAnchor link = (HtmlAnchor) personBox.getByXPath("//a[@data-toggle='collapse']").get(0);
+        String linkPath = "//a[@data-toggle='collapse' or @data-bs-toggle='collapse']";
+        HtmlAnchor link = (HtmlAnchor) personBox.getByXPath(linkPath).get(0);
         assertThat(link).isNotNull();
         assertThat(link.getTextContent()).contains("Sind Sie").contains("Klicken Sie hier");
         String text = "Diese Seite zeigt einen Datensatz aus der Gemeinsamen Normdatei";
