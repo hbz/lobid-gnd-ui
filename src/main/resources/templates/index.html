@@ -23,23 +23,7 @@
                     <div th:utext="${dataset.description.de}"></div>
                 </div>
                 <div class="col-3">
-                    <figure>
-                        <a th:href="@{'/gnd/' + ${entity.gndIdentifier}}">
-                            <img
-                                id="index-image"
-                                th:src="@{${entity.imageUrl}}"
-                                th:alt="${entity.preferredName}" />
-                        </a>
-                        <figcaption>
-                            <a
-                                th:href="@{'/gnd/' + ${entity.gndIdentifier}}"
-                                th:text="${entity.preferredName}">
-                                An entity
-                            </a>
-                            <br />
-                            <small th:utext="${entity.imageAttribution}">An attribution</small>
-                        </figcaption>
-                    </figure>
+                    <div th:replace="~{fragments/figure}" />
                 </div>
             </div>
         </div>

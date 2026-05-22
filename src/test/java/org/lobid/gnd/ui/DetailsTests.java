@@ -72,7 +72,7 @@ public class DetailsTests extends HtmlPageTests {
     }
 
     @ParameterizedTest
-    @ValueSource(strings = {PRODUCTION /*, DEVELOPMENT*/})
+    @ValueSource(strings = {PRODUCTION, DEVELOPMENT})
     public void testDetailsViewImage(String baseUrl) throws IOException {
         HtmlPage detailsPage = pageFor(baseUrl, COLOGNE);
         assertThat(detailsPage.getByXPath("//img[@alt='Köln']")).isNotEmpty();
