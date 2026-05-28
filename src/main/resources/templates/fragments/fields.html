@@ -1,0 +1,32 @@
+<tr th:each="field : ${entity}" th:with="fieldLabel=${entity.labels.get(field.key)}">
+    <td th:text="${fieldLabel}">Field label...</td>
+    <td th:switch="true">
+        <div th:case="${field.value instanceof T(java.util.List)}">
+            <span th:each="value, meta : ${field.value}" th:switch="true">
+                <span
+                    th:case="${value instanceof T(java.util.Map) && value.containsKey('id')}"
+                    th:with="valueLabel=${value.containsKey('label') ? value.label : value.id}">
+                    <a
+                        th:title='|Linked-Data-Quelle zu "${valueLabel}" anzeigen|'
+                        th:href="${#strings.replace(value.id, 'https://d-nb.info/gnd', '/gnd')}"
+                        th:text="${valueLabel}">
+                        Link label...
+                    </a>
+                    <a
+                        th:title='|Weitere Einträge mit ${fieldLabel} "${valueLabel}" suchen|'
+                        th:href='@{/gnd/search(q=|${field.key}.id:"${value.id}"|)}'>
+                        <span class="bi bi-search" />
+                    </a>
+                </span>
+                <span
+                    th:case="${value instanceof T(java.lang.String)}"
+                    th:text="${@details.label(entity.labels, value)}">
+                    String value...
+                </span>
+                <span th:case="*" th:text="${value}">Other value...</span>
+                <span th:unless="${meta.last}"> | </span>
+            </span>
+        </div>
+        <span th:case="*" th:text="${field.value}">Other value...</span>
+    </td>
+</tr>

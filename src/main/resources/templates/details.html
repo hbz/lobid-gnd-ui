@@ -89,12 +89,7 @@
             <div class="row mt-3">
                 <div th:class="|${entity.containsKey('depiction') ? 'col-9' : 'col-12'} intro|">
                     <table class="table table-striped table-condensed">
-                        <tr th:each="field : ${entity}">
-                            <td th:text="${entity.labels.get(field.key)}">Key...</td>
-                            <td th:text="${@details.label(entity.labels, field.value)}">
-                                Value...
-                            </td>
-                        </tr>
+                        <tr th:replace="~{fragments/fields}" />
                     </table>
                 </div>
                 <div th:if="${entity.containsKey('depiction')}" class="col-3">
