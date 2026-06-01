@@ -44,7 +44,7 @@ public class DetailsTests extends HtmlPageTests {
     }
 
     @ParameterizedTest
-    @ValueSource(strings = {PRODUCTION /*, DEVELOPMENT*/})
+    @ValueSource(strings = {PRODUCTION, DEVELOPMENT})
     public void testDetailsViewLinks(String baseUrl) throws IOException {
         assertThat(pageFor(baseUrl, COLOGNE).getElementsByTagName("a").toString())
                 .contains("TerritorialCorporateBodyOrAdministrativeUnit")

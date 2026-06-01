@@ -91,17 +91,10 @@
                     <table class="table table-striped table-condensed">
                         <tr th:replace="~{fragments/fields}" />
                     </table>
+                    <div th:replace="~{fragments/sources}" />
                 </div>
                 <div th:if="${entity.containsKey('depiction')}" class="col-3">
                     <div th:replace="~{fragments/figure}" />
-                </div>
-            </div>
-            <div class="card my-3">
-                <div class="card-body">
-                    Prototype, current state: render all JSON fields for a GND entity in an HTML
-                    table, e.g.:
-                    <a href="/gnd/7749153-1">GND</a>, <a href="/gnd/2047974-8">hbz</a>,
-                    <a href="/gnd/4031483-2">Köln</a>, <a href="/gnd/118512676">Böll</a>, ...
                 </div>
             </div>
         </div>
