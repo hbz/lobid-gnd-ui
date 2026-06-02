@@ -1,6 +1,6 @@
 <div
     class="mb-3 text-center small"
-    th:with="hasEntityFacts=${entity.sameAs.size > 3 && entity.depiction != null}">
+    th:with="hasEntityFacts=${entity.sameAs.size > 3 && entity.containsKey('depiction')}">
     Datenquellen: DNB
     <a href="https://www.dnb.de/lds">Linked-Data-Service</a> (<a
         title="RDF/XML aus GND anzeigen"
