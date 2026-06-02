@@ -4,8 +4,11 @@ import static org.lobid.gnd.ui.controller.ErrorHandler.errorResponse;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.SortedMap;
+import java.util.TreeMap;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import org.lobid.gnd.ui.LobidGndApiService;
@@ -20,6 +23,9 @@ public class DetailsHandler {
 
     @Value("${app.api}")
     private String apiBaseUrl;
+
+    @Value("${app.fieldOrder}")
+    private String[] fieldOrder;
 
     private final LobidGndApiService gnd;
 
@@ -81,9 +87,29 @@ public class DetailsHandler {
             String template, ServerRequest request) {
         return gndEntity -> {
             Map<String, Map<String, Object>> model =
-                    Map.of("entity", gndEntity, "request", request.attributes());
+                    Map.of("entity", sorted(gndEntity), "request", request.attributes());
             // Render Thymeleaf template (in src/main/resources/templates) with model:
             return ServerResponse.ok().render(template, model);
         };
+    }
+
+    private SortedMap<String, Object> sorted(Map<String, Object> gndEntity) {
+        List<String> order = Arrays.asList(fieldOrder);
+        SortedMap<String, Object> sortedMap =
+                new TreeMap<>(
+                        (field1, field2) -> {
+                            int indexOf1 = order.indexOf(field1);
+                            int indexOf2 = order.indexOf(field2);
+                            // both unspecified, sort by field name:
+                            if (indexOf1 == -1 && indexOf2 == -1) {
+                                return field1.compareTo(field2);
+                            }
+                            // sort by order, unspecified after specified fields:
+                            int end = Integer.MAX_VALUE;
+                            return Integer.valueOf(indexOf1 == -1 ? end : indexOf1)
+                                    .compareTo(Integer.valueOf(indexOf2 == -1 ? end : indexOf2));
+                        });
+        sortedMap.putAll(gndEntity);
+        return sortedMap;
     }
 }
