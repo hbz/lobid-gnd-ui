@@ -1,3 +1,21 @@
+<tr th:with="uri=|https://d-nb.info/gnd/${entity.gndIdentifier}|">
+    <td>URI</td>
+    <td>
+        [[${uri}]]<a
+            th:with="info='URI in die Zwischenablage kopieren'"
+            class="text-decoration-none"
+            data-bs-toggle="tooltip"
+            data-bs-placement="right"
+            data-bs-custom-class="custom-tooltip"
+            th:title="${info}"
+            th:data-copy-text="${uri}"
+            th:data-copy-info="${info}"
+            href="#"
+            onclick="copyToClipboard($(this)); return false;">
+            <span class="bi bi-clipboard-plus" />
+        </a>
+    </td>
+</tr>
 <tr th:each="field : ${entity}" th:with="fieldLabel=${entity.labels.get(field.key)}">
     <td th:text="${fieldLabel}">Field label...</td>
     <td th:switch="true">
