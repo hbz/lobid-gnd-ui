@@ -3,7 +3,7 @@ spring:
     resources:
       static-locations: [] # use custom RouterConfig only
 app:
-  api: https://test.lobid.org/gnd
+  api: http://quaoar13:7100/gnd
   dontShowOnMainPage: 1012979-0, 118551655
   icons:
     CorporateBody: "bi bi-house-gear-fill"
