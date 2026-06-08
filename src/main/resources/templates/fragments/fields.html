@@ -24,9 +24,29 @@
             <div th:case="${field.value instanceof T(java.util.List)}" th:with="showMax=5">
                 <span
                     th:each="value, meta : ${field.value}"
-                    th:with="skipValue=${#strings.equals(value,'AuthorityResource')}"
+                    th:with="skipValue=${#strings.equals(value,'AuthorityResource') 
+                        || (value instanceof T(java.util.Map) && value.containsKey('id') 
+                        && (#strings.contains(value.id,'d-nb.info') && not #strings.endsWith(value.id,'/about')))}"
                     th:classappend="${meta.index >= showMax ? (field.key + '-more-item d-none') : ''}"
                     th:switch="true">
+                    <span
+                        th:unless="${skipValue}"
+                        th:case="${value instanceof T(java.util.Map) && value.containsKey('collection')}"
+                        th:with="
+                            collection=${value.collection},
+                            valueLabel=${collection.containsKey('name') ? collection.name : collection.id}">
+                        <img
+                            th:if="${collection.containsKey('icon')}"
+                            th:src="|https://lobid.org/imagesproxy?url=${collection.icon}|"
+                            style="height: 1em"
+                            alt="&#128443;" />
+                        <a
+                            th:title='|Diesen Eintrag in "${valueLabel}" anzeigen|'
+                            th:href="${value.id}"
+                            th:text="${valueLabel}">
+                            Link label...
+                        </a>
+                    </span>
                     <span
                         th:case="${value instanceof T(java.util.Map) && value.containsKey('id')}"
                         th:with="valueLabel=${value.containsKey('label') ? value.label : value.id}">
