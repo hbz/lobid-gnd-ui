@@ -21,10 +21,11 @@
         th:if="${fieldLabel != null && not #strings.startsWith(fieldLabel, 'No property label for')}">
         <td th:text="${fieldLabel}">Field label...</td>
         <td th:switch="true">
-            <div th:case="${field.value instanceof T(java.util.List)}">
+            <div th:case="${field.value instanceof T(java.util.List)}" th:with="showMax=5">
                 <span
                     th:each="value, meta : ${field.value}"
                     th:with="skipValue=${#strings.equals(value,'AuthorityResource')}"
+                    th:classappend="${meta.index >= showMax ? (field.key + '-more-item d-none') : ''}"
                     th:switch="true">
                     <span
                         th:case="${value instanceof T(java.util.Map) && value.containsKey('id')}"
@@ -55,6 +56,11 @@
                     <span th:case="*" th:text="${value}">Other value...</span>
                     <span th:unless="${meta.last || skipValue}"> | </span>
                 </span>
+                <div th:if="${field.value.size() > showMax}" class="d-inline-block">
+                    <div
+                        th:replace="~{fragments/facets::facetToggle(
+                            ${field.key}, 'Mehr Werte anzeigen', 'Weniger Werte anzeigen')}" />
+                </div>
             </div>
             <span th:case="*" th:text="${field.value}">Other value...</span>
         </td>
