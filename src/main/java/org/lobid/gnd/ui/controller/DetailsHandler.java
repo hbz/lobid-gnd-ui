@@ -4,9 +4,13 @@ import static org.lobid.gnd.ui.controller.ErrorHandler.errorResponse;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
+import java.util.Optional;
+import java.util.Scanner;
 import java.util.SortedMap;
 import java.util.TreeMap;
 import java.util.function.Function;
@@ -56,6 +60,28 @@ public class DetailsHandler {
             String preferred = entity.get("preferredName").toString();
             String[] lastAndFirst = preferred.split(", ");
             return lastAndFirst.length == 2 ? lastAndFirst[1] + " " + lastAndFirst[0] : preferred;
+        }
+
+        public String getLatLon(Map<String, Object> entity) {
+            JsonNode json = new ObjectMapper().convertValue(entity, JsonNode.class);
+            return Optional.ofNullable(json.findValue("asWKT"))
+                    .map(optional -> optional.elements().next().textValue())
+                    .map(this::scanLatLon)
+                    .orElse(null);
+        }
+
+        private String scanLatLon(String geoString) {
+            List<Double> lonLat = new ArrayList<Double>();
+            try (Scanner s = new Scanner(geoString).useLocale(Locale.US)) {
+                while (s.hasNext()) {
+                    if (s.hasNextDouble()) {
+                        lonLat.add(s.nextDouble());
+                    } else {
+                        s.next();
+                    }
+                }
+            }
+            return String.format("%s,%s", lonLat.get(1), lonLat.get(0));
         }
 
         public boolean isLivingPerson(Map<String, Object> entity) {

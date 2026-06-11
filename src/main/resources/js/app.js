@@ -3,6 +3,7 @@ import "scss/main.scss";
 import $ from "jquery";
 import { Tooltip } from "bootstrap";
 import "jquery-ui/ui/widgets/autocomplete";
+import L from "leaflet";
 
 document.addEventListener("DOMContentLoaded", function () {
     const searchBox = document.getElementById("gnd-query");
@@ -95,6 +96,39 @@ document.addEventListener("DOMContentLoaded", function () {
             icon.classList.remove("bi-chevron-down");
             icon.classList.add("bi-chevron-right");
         });
+    }
+
+    const mapElement = document.getElementById("authority-map");
+
+    if (mapElement) {
+        let zoom = 10; // default
+        const type = mapElement.dataset.type;
+        if (type.includes("Country")) {
+            zoom = 3;
+        } else if (type.includes("MemberState")) {
+            zoom = 5;
+        }
+
+        const layer = L.tileLayer("https://lobid.org/tiles/{z}/{x}/{y}.png", {
+            attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors',
+        });
+
+        let [lat, lon] = mapElement.dataset.geo.split(",");
+        const center = L.latLng(lat, lon);
+        const map = L.map("authority-map", {
+            center: center,
+            zoom: zoom,
+            maxZoom: 17,
+            scrollWheelZoom: true,
+            attributionControl: true,
+            zoomControl: true,
+        });
+
+        L.Icon.Default.imagePath = "/gnd/assets/images/leaflet/";
+        const marker = L.marker(center, { title: mapElement.dataset.title });
+
+        marker.addTo(map);
+        map.addLayer(layer);
     }
 });
 
