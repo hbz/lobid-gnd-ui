@@ -1,7 +1,8 @@
 import "scss/app.scss";
 import "scss/main.scss";
 import $ from "jquery";
-import { Tooltip } from "bootstrap";
+import { Tooltip, Tab } from "bootstrap";
+import { DataSet, Network } from "vis-network/standalone/esm/vis-network.mjs";
 import "jquery-ui/ui/widgets/autocomplete";
 import L from "leaflet";
 
@@ -129,6 +130,108 @@ document.addEventListener("DOMContentLoaded", function () {
 
         marker.addTo(map);
         map.addLayer(layer);
+    }
+
+    const networkElement = document.getElementById("gnd-network");
+
+    if (networkElement) {
+        const nodes = new DataSet(JSON.parse(networkElement.dataset.nodes));
+        const edges = new DataSet(JSON.parse(networkElement.dataset.edges));
+
+        const container = document.getElementById("gnd-network");
+
+        const options = {
+            interaction: {
+                hover: true,
+                navigationButtons: false,
+                keyboard: false,
+            },
+            edges: { chosen: false },
+            layout: { randomSeed: 2 },
+            physics: {
+                forceAtlas2Based: {
+                    springLength: 175,
+                    centralGravity: Math.min(0.0015 * edges.length, 0.015),
+                    avoidOverlap: 1,
+                },
+                solver: "forceAtlas2Based",
+                stabilization: { enabled: true },
+            },
+        };
+
+        const network = new Network(container, { nodes, edges }, options);
+        network.selectNodes([networkElement.dataset.entityId], false);
+
+        function changeCursor(cursor) {
+            const canvas = container.querySelector("canvas");
+            if (canvas) canvas.style.cursor = cursor;
+        }
+
+        function valid(t, regex) {
+            if (!t) return false;
+            var match = t.match(regex);
+            return match && match[0].length == t.length;
+        }
+
+        function validTarget(target) {
+            return valid(target, /^\d.*/);
+        }
+
+        function validEdge(edge) {
+            return valid(edge, /[a-zA-Z]+/);
+        }
+
+        network.on("stabilizationIterationsDone", function () {
+            network.setOptions({ physics: false });
+            changeCursor("grab");
+        });
+
+        network.on("hoverNode", function (params) {
+            var target = this.getNodeAt(params.pointer.DOM);
+            if (validTarget(target)) {
+                changeCursor("pointer");
+            }
+        });
+
+        network.on("blurNode", function () {
+            changeCursor("grab");
+        });
+
+        network.on("hoverEdge", function (params) {
+            var edge = this.getEdgeAt(params.pointer.DOM).split("_")[0];
+            if (validEdge(edge)) {
+                changeCursor("pointer");
+            }
+        });
+
+        network.on("blurEdge", function () {
+            changeCursor("grab");
+        });
+
+        network.on("click", function (params) {
+            const target = this.getNodeAt(params.pointer.DOM);
+            if (target && /^\d/.test(target)) {
+                window.location.href = target + "#rels";
+            } else {
+                const edgeId = params.edges[0];
+                if (edgeId) {
+                    const [rel, to] = edgeId.split("_");
+                    if (rel && /^[a-zA-Z]+$/.test(rel)) {
+                        window.location.href = `/gnd/search?q=${rel}.id:"https://d-nb.info/gnd/${to}"`;
+                    }
+                }
+            }
+        });
+
+        document.getElementById("rels").addEventListener("shown.bs.tab", function () {
+            network.fit();
+        });
+
+        if (window.location.href.split("#")[1] === "rels") {
+            setTimeout(() => {
+                new Tab(document.getElementById("rels")).show();
+            }, 0);
+        }
     }
 });
 

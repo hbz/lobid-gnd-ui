@@ -11,7 +11,8 @@
         "bootstrap-icons": "1.13.1",
         "jquery": "3.7.1",
         "jquery-ui": "1.14.0",
-        "leaflet": "1.7.1"
+        "leaflet": "1.7.1",
+        "vis-network": "10.1.0"
     },
     "devDependencies": {
         "@babel/core": "7.28.4",

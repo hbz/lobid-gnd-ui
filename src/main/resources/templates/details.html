@@ -90,12 +90,60 @@
                 class="row mt-3"
                 th:with="
                     hasImage=${entity.containsKey('depiction')},
-                    hasGeo=${entity.containsKey('hasGeometry')}">
-                <div th:class="|${hasImage || hasGeo ? 'col-9' : 'col-12'} mt-2|">
-                    <table class="table table-striped table-condensed">
-                        <tr th:replace="~{fragments/fields}" />
-                    </table>
-                    <div th:replace="~{fragments/sources}" />
+                    hasGeo=${entity.containsKey('hasGeometry')},
+                    hasGraph=${@relations.hasGndRelations(entity)}">
+                <div th:class="|${(hasImage || hasGeo) ? 'col-9' : 'col-12'} mt-2|">
+                    <ul th:if="${hasGraph}" class="nav nav-tabs" id="detailsTabs" role="tablist">
+                        <li class="nav-item" role="presentation">
+                            <button
+                                class="nav-link active"
+                                id="fields-tab"
+                                data-bs-toggle="tab"
+                                data-bs-target="#fields-content"
+                                type="button"
+                                role="tab"
+                                aria-controls="fields-content"
+                                aria-selected="true">
+                                Felder
+                            </button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button
+                                class="nav-link"
+                                id="rels"
+                                data-bs-toggle="tab"
+                                data-bs-target="#relations-content"
+                                type="button"
+                                role="tab"
+                                aria-controls="relations-content"
+                                aria-selected="false">
+                                Beziehungen
+                            </button>
+                        </li>
+                    </ul>
+                    <div class="tab-content" id="detailsTabsContent">
+                        <div
+                            class="tab-pane show active"
+                            id="fields-content"
+                            role="tabpanel"
+                            aria-labelledby="fields-tab">
+                            <table class="table table-striped table-condensed">
+                                <tr th:replace="~{fragments/fields}" />
+                            </table>
+                        </div>
+                        <div
+                            class="tab-pane"
+                            id="relations-content"
+                            role="tabpanel"
+                            aria-labelledby="rels">
+                            <div
+                                id="gnd-network"
+                                th:data-nodes="${@relations.gndRelationNodes(entity)}"
+                                th:data-edges="${@relations.gndRelationEdges(entity)}"
+                                th:data-entity-id="${entity.gndIdentifier}"></div>
+                        </div>
+                        <div th:replace="~{fragments/sources}" />
+                    </div>
                 </div>
                 <div th:if="${hasImage || hasGeo}" class="col-3 mt-2">
                     <div
