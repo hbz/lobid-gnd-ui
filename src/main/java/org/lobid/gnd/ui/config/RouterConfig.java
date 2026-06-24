@@ -32,7 +32,7 @@ public class RouterConfig {
                 .build();
     }
 
-    private HandlerFilterFunction<ServerResponse, ServerResponse> addIsDevserver() {
+    public static HandlerFilterFunction<ServerResponse, ServerResponse> addIsDevserver() {
         return (request, next) ->
                 next.handle(
                         ServerRequest.from(request)

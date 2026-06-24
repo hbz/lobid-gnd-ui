@@ -4,12 +4,21 @@
     xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
     layout:decorate="~{layout}">
     <head>
-        <title>[[${status}]] - [[${error}]]</title>
+        <title>[[${errorDetails.status}]] - [[${errorDetails.error}]]</title>
     </head>
     <body>
         <div layout:fragment="content">
-            <h1 class="mb-4">[[${status}]] - [[${error}]]</h1>
-            <p>[[#{error.page.message}]]</p>
+            <div class="card border-danger">
+                <div class="card-header">
+                    [[${errorDetails.status}]] - [[${errorDetails.error}]]
+                </div>
+                <div class="card-body text-danger">
+                    <h2>[[${errorDetails.message}]]</h2>
+                </div>
+                <div th:if="${errorDetails.containsKey('requestId')}" class="card-footer">
+                    Request ID: [[${errorDetails.requestId}]]
+                </div>
+            </div>
         </div>
     </body>
 </html>
