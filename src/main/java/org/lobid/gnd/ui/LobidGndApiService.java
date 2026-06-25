@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.net.URI;
+import java.time.Duration;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -16,6 +17,7 @@ import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.MediaType;
+import org.springframework.http.client.reactive.ReactorClientHttpConnector;
 import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
@@ -23,6 +25,8 @@ import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.util.UriBuilder;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
+import reactor.netty.http.client.HttpClient;
+import reactor.netty.resources.ConnectionProvider;
 
 @Service
 public class LobidGndApiService {
@@ -79,7 +83,10 @@ public class LobidGndApiService {
     }
 
     private Mono<JsonNode> gndCall(Function<UriBuilder, URI> uriFunction) {
+        ConnectionProvider provider =
+                ConnectionProvider.builder("").maxIdleTime(Duration.ofSeconds(1)).build();
         return WebClient.builder()
+                .clientConnector(new ReactorClientHttpConnector(HttpClient.create(provider)))
                 .codecs(conf -> conf.defaultCodecs().maxInMemorySize(2 * 1024 * 1024))
                 .baseUrl(apiBaseUrl)
                 .build()
