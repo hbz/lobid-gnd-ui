@@ -30,7 +30,7 @@ dependencies {
     implementation('nz.net.ultraq.thymeleaf:thymeleaf-layout-dialect')
     developmentOnly("org.springframework.boot:spring-boot-devtools")
     testImplementation('org.springframework.boot:spring-boot-starter-test')
-    testImplementation('org.htmlunit:htmlunit')
+    testImplementation('org.htmlunit:htmlunit:5.1.0')
 }
 
 node {

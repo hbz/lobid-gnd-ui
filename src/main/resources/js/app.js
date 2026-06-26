@@ -2,7 +2,8 @@ import "scss/app.scss";
 import "scss/main.scss";
 import $ from "jquery";
 import { Tooltip, Tab } from "bootstrap";
-import { DataSet, Network } from "vis-network/standalone/esm/vis-network.mjs";
+import { DataSet } from "vis-data/peer/esm/vis-data.js";
+import { Network } from "vis-network/peer/esm/vis-network.js";
 import "jquery-ui/ui/widgets/autocomplete";
 import L from "leaflet";
 
@@ -161,6 +162,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
         const network = new Network(container, { nodes, edges }, options);
         network.selectNodes([networkElement.dataset.entityId], false);
+        window.network = network;
 
         function changeCursor(cursor) {
             const canvas = container.querySelector("canvas");
@@ -223,14 +225,17 @@ document.addEventListener("DOMContentLoaded", function () {
             }
         });
 
-        document.getElementById("rels").addEventListener("shown.bs.tab", function () {
-            network.fit();
-        });
+        const rels = document.getElementById("rels");
 
-        if (window.location.href.split("#")[1] === "rels") {
-            setTimeout(() => {
-                new Tab(document.getElementById("rels")).show();
-            }, 0);
+        if (rels) {
+            rels.addEventListener("shown.bs.tab", function () {
+                network.fit();
+            });
+            if (window.location.href.split("#")[1] === "rels") {
+                setTimeout(() => {
+                    new Tab(rels).show();
+                }, 0);
+            }
         }
     }
 });

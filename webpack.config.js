@@ -31,11 +31,19 @@ module.exports = (env, argv) => ({
     module: {
         rules: [
             {
-                test: /\.js$/,
+                test: /\.m?js$/,
                 use: {
                     loader: "babel-loader",
                     options: {
-                        presets: ["@babel/preset-env"],
+                        presets: [
+                            [
+                                "@babel/preset-env",
+                                {
+                                    targets: "supports es5",
+                                    modules: false,
+                                },
+                            ],
+                        ],
                     },
                 },
             },
