@@ -70,6 +70,7 @@ app:
     mediumOfPerformance,
     professionOrOccupation,
     professionOrOccupationAsLiteral,
+    playedInstrument,
     affiliation,
     affiliationAsLiteral,
     functionOrRole,
@@ -104,7 +105,10 @@ app:
     dateOfEstablishment,
     dateOfTermination,
     dateOfProduction,
-    dateOfPublication
+    dateOfPublication,
+    usingInstructions,
+    oldAuthorityNumber,
+    variantName
   skipDisplay: type,
     preferredName,
     depiction
