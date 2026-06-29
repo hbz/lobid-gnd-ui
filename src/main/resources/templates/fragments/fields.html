@@ -20,7 +20,8 @@
     th:each="field : ${entity}"
     th:with="
         fieldLabel=${entity.labels.get(field.key)},
-        skipDisplay=${@details.skipDisplay(field.key)},
+        skipDisplay=${@details.skipDisplay(field.key) ||
+            (#strings.equals(field.key,'biographicalOrHistoricalInformation') && field.value.size() < 2)},
         skipSearchLink=${@details.skipSearchLink(field.key)}">
     <tr
         th:unless="${skipDisplay}"
