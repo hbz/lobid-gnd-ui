@@ -196,7 +196,7 @@ public class RelationsGraph {
     }
 
     private String wrap(String s) {
-        return s.replaceAll("\\([^)]+\\)", "").replace(" ", "\n");
+        return s.replaceAll("\\([^)]+\\)", "").replaceAll(" (?=\\S{4,})", "\n");
     }
 
     private <T> Stream<T> asStream(Iterator<T> iterator) {
