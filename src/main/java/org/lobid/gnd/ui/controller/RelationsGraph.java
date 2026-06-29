@@ -3,6 +3,7 @@ package org.lobid.gnd.ui.controller;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -52,7 +53,7 @@ public class RelationsGraph {
         List<Map<String, Object>> result = new ArrayList<>();
         addGndEntityNodes(json, result);
         addGroupingNodes(json, result);
-        return new ObjectMapper().valueToTree(result).toString();
+        return new ObjectMapper().valueToTree(new HashSet<>(result)).toString();
     }
 
     public String gndRelationEdges(Map<String, Object> entity) {
@@ -60,7 +61,7 @@ public class RelationsGraph {
         List<Map<String, Object>> result = new ArrayList<>();
         addDirectConnections(json, result);
         addGroupedConnections(json, result);
-        return new ObjectMapper().valueToTree(result).toString();
+        return new ObjectMapper().valueToTree(new HashSet<>(result)).toString();
     }
 
     private void addGndEntityNodes(JsonNode json, List<Map<String, Object>> result) {
