@@ -47,6 +47,12 @@ public class DetailsHandler {
 
     @Component("details")
     public static class DetailsHelper {
+        @Value("${app.skipDisplay}")
+        private String[] skipDisplay;
+
+        @Value("${app.skipSearchLink}")
+        private String[] skipSearchLink;
+
         public String label(Map<String, String> labels, Object value) {
             return switch (value) {
                 case List<?> list ->
@@ -106,6 +112,14 @@ public class DetailsHandler {
                 e.printStackTrace();
                 return null;
             }
+        }
+
+        public boolean skipDisplay(String id) {
+            return Arrays.asList(skipDisplay).contains(id);
+        }
+
+        public boolean skipSearchLink(String id) {
+            return Arrays.asList(skipSearchLink).contains(id);
         }
     }
 

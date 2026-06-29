@@ -105,3 +105,11 @@ app:
     dateOfTermination,
     dateOfProduction,
     dateOfPublication
+  skipDisplay: type,
+    preferredName,
+    depiction
+  skipSearchLink: variantName,
+    usingInstructions,
+    biographicalOrHistoricalInformation,
+    oldAuthorityNumber,
+    homepage

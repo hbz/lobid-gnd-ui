@@ -16,8 +16,14 @@
         </a>
     </td>
 </tr>
-<div th:each="field : ${entity}" th:with="fieldLabel=${entity.labels.get(field.key)}">
+<div
+    th:each="field : ${entity}"
+    th:with="
+        fieldLabel=${entity.labels.get(field.key)},
+        skipDisplay=${@details.skipDisplay(field.key)},
+        skipSearchLink=${@details.skipSearchLink(field.key)}">
     <tr
+        th:unless="${skipDisplay}"
         th:if="${fieldLabel != null && not #strings.startsWith(fieldLabel, 'No property label for')}">
         <td th:text="${fieldLabel}">Field label...</td>
         <td th:switch="true">
@@ -57,6 +63,7 @@
                             Link label...
                         </a>
                         <a
+                            th:unless="${skipSearchLink}"
                             th:title='|Weitere Einträge mit ${fieldLabel} "${valueLabel}" suchen|'
                             th:href='@{/gnd/search(q=|${field.key}.id:"${value.id}"|)}'>
                             <span class="bi bi-search" />
@@ -66,11 +73,12 @@
                         th:case="${value instanceof T(java.lang.String)}"
                         th:unless="${skipValue}"
                         th:with="label=${@details.label(entity.labels, value)}">
+                        <span th:text="${label}">Text value...</span>
                         <a
+                            th:unless="${skipSearchLink}"
                             th:title='|Weitere Einträge mit ${fieldLabel} "${value}" suchen|'
-                            th:href='@{/gnd/search(q=|${field.key}:"${value}"|)}'
-                            th:text="${label}">
-                            String value...
+                            th:href='@{/gnd/search(q=|${field.key}:"${value}"|)}'>
+                            <span class="bi bi-search" />
                         </a>
                     </span>
                     <span th:case="*" th:text="${value}">Other value...</span>
