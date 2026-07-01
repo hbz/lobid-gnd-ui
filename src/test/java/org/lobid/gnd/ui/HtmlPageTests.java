@@ -58,8 +58,14 @@ public abstract class HtmlPageTests {
 
     protected String fetchHttpResponse(String baseUrl, String path)
             throws IOException, InterruptedException {
+        return fetchHttpResponse(baseUrl, path, "");
+    }
+
+    protected String fetchHttpResponse(String baseUrl, String path, String accept)
+            throws IOException, InterruptedException {
         String url = urlWithPort(baseUrl, path);
-        HttpRequest request = HttpRequest.newBuilder().uri(URI.create(url)).build();
+        HttpRequest request =
+                HttpRequest.newBuilder().uri(URI.create(url)).header("Accept", accept).build();
         HttpResponse<String> response =
                 HttpClient.newHttpClient().send(request, HttpResponse.BodyHandlers.ofString());
         assertThat(response.statusCode()).as("HTTP response for " + url).isEqualTo(200);

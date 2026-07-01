@@ -48,7 +48,7 @@ document.addEventListener("DOMContentLoaded", function () {
     $("#gnd-query").categoryAutocomplete({
         source: function (request, response) {
             $.ajax({
-                url: API_BASE_URL + "/search",
+                url: "/gnd/search",
                 dataType: "jsonp",
                 data: {
                     q: request.term,

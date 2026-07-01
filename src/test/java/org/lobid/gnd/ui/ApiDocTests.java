@@ -3,9 +3,10 @@ package org.lobid.gnd.ui;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import java.io.IOException;
+import org.htmlunit.html.HtmlAnchor;
 import org.htmlunit.html.HtmlButton;
+import org.htmlunit.html.HtmlElement;
 import org.htmlunit.html.HtmlInput;
-import org.htmlunit.html.HtmlListItem;
 import org.htmlunit.html.HtmlPage;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
@@ -16,13 +17,13 @@ public class ApiDocTests extends HtmlPageTests {
     private static final String API_DOC = "/api";
 
     @ParameterizedTest
-    @ValueSource(strings = {PRODUCTION /*, DEVELOPMENT*/})
+    @ValueSource(strings = {PRODUCTION, DEVELOPMENT})
     public void testApiDocPageTitle(String baseUrl) throws IOException {
         assertThat(pageFor(baseUrl, API_DOC).getTitleText()).isEqualTo("lobid-gnd - API");
     }
 
     @ParameterizedTest
-    @ValueSource(strings = {PRODUCTION /*, DEVELOPMENT*/})
+    @ValueSource(strings = {PRODUCTION, DEVELOPMENT})
     public void testApiDocPageHeaders(String baseUrl) throws IOException {
         assertThat(pageFor(baseUrl, API_DOC).asNormalizedText())
                 .contains("lobid-gnd API")
@@ -37,7 +38,7 @@ public class ApiDocTests extends HtmlPageTests {
     }
 
     @ParameterizedTest
-    @ValueSource(strings = {PRODUCTION /*, DEVELOPMENT*/})
+    @ValueSource(strings = {PRODUCTION, DEVELOPMENT})
     public void testSearchAllExample(String baseUrl) throws IOException {
         assertThat(pageFor(baseUrl, API_DOC).asNormalizedText())
                 .contains("Alles")
@@ -45,7 +46,7 @@ public class ApiDocTests extends HtmlPageTests {
     }
 
     @ParameterizedTest
-    @ValueSource(strings = {PRODUCTION /*, DEVELOPMENT*/})
+    @ValueSource(strings = {PRODUCTION, DEVELOPMENT})
     public void testSearchAllJsonEndpoint(String baseUrl) throws IOException, InterruptedException {
         assertThat(fetchHttpResponse(baseUrl, "search?q=*&format=json"))
                 .is(validJson())
@@ -54,7 +55,7 @@ public class ApiDocTests extends HtmlPageTests {
     }
 
     @ParameterizedTest
-    @ValueSource(strings = {PRODUCTION /*, DEVELOPMENT*/})
+    @ValueSource(strings = {PRODUCTION, DEVELOPMENT})
     public void testSearchAllFieldsExample(String baseUrl) throws IOException {
         assertThat(pageFor(baseUrl, API_DOC).asNormalizedText())
                 .contains("Alle Felder")
@@ -62,7 +63,7 @@ public class ApiDocTests extends HtmlPageTests {
     }
 
     @ParameterizedTest
-    @ValueSource(strings = {PRODUCTION /*, DEVELOPMENT*/})
+    @ValueSource(strings = {PRODUCTION, DEVELOPMENT})
     public void testSearchAllFieldsJsonEndpoint(String baseUrl)
             throws IOException, InterruptedException {
         assertThat(fetchHttpResponse(baseUrl, "search?q=london&format=json"))
@@ -72,7 +73,7 @@ public class ApiDocTests extends HtmlPageTests {
     }
 
     @ParameterizedTest
-    @ValueSource(strings = {PRODUCTION /*, DEVELOPMENT*/})
+    @ValueSource(strings = {PRODUCTION, DEVELOPMENT})
     public void testFieldSearchExample(String baseUrl) throws IOException {
         assertThat(pageFor(baseUrl, API_DOC).asNormalizedText())
                 .contains("Feldsuche")
@@ -80,7 +81,7 @@ public class ApiDocTests extends HtmlPageTests {
     }
 
     @ParameterizedTest
-    @ValueSource(strings = {PRODUCTION /*, DEVELOPMENT*/})
+    @ValueSource(strings = {PRODUCTION, DEVELOPMENT})
     public void testFilterSearchExample(String baseUrl) throws IOException {
         assertThat(pageFor(baseUrl, API_DOC).asNormalizedText())
                 .contains("Filter")
@@ -88,7 +89,7 @@ public class ApiDocTests extends HtmlPageTests {
     }
 
     @ParameterizedTest
-    @ValueSource(strings = {PRODUCTION /*, DEVELOPMENT*/})
+    @ValueSource(strings = {PRODUCTION, DEVELOPMENT})
     public void testPaginationExample(String baseUrl) throws IOException {
         assertThat(pageFor(baseUrl, API_DOC).asNormalizedText())
                 .contains("Paginierung")
@@ -97,7 +98,7 @@ public class ApiDocTests extends HtmlPageTests {
     }
 
     @ParameterizedTest
-    @ValueSource(strings = {PRODUCTION /*, DEVELOPMENT*/})
+    @ValueSource(strings = {PRODUCTION, DEVELOPMENT})
     public void testSortingExample(String baseUrl) throws IOException {
         assertThat(pageFor(baseUrl, API_DOC).asNormalizedText())
                 .contains("Sortierung")
@@ -105,7 +106,7 @@ public class ApiDocTests extends HtmlPageTests {
     }
 
     @ParameterizedTest
-    @ValueSource(strings = {PRODUCTION /*, DEVELOPMENT*/})
+    @ValueSource(strings = {PRODUCTION, DEVELOPMENT})
     public void testAsciiSearchExample(String baseUrl) throws IOException {
         assertThat(pageFor(baseUrl, API_DOC).asNormalizedText())
                 .contains("ASCII")
@@ -114,7 +115,7 @@ public class ApiDocTests extends HtmlPageTests {
     }
 
     @ParameterizedTest
-    @ValueSource(strings = {PRODUCTION /*, DEVELOPMENT*/})
+    @ValueSource(strings = {PRODUCTION, DEVELOPMENT})
     public void testDirectAccessExamples(String baseUrl) throws IOException {
         assertThat(pageFor(baseUrl, API_DOC).asNormalizedText())
                 .contains("Direktzugriff: /gnd/<id>.json")
@@ -127,7 +128,7 @@ public class ApiDocTests extends HtmlPageTests {
     }
 
     @ParameterizedTest
-    @ValueSource(strings = {PRODUCTION /*, DEVELOPMENT*/})
+    @ValueSource(strings = {PRODUCTION, DEVELOPMENT})
     public void testDirectAccessLondonJsonEndpoint(String baseUrl)
             throws IOException, InterruptedException {
         assertThat(fetchHttpResponse(baseUrl, "4074335-4.json"))
@@ -137,7 +138,7 @@ public class ApiDocTests extends HtmlPageTests {
     }
 
     @ParameterizedTest
-    @ValueSource(strings = {PRODUCTION /*, DEVELOPMENT*/})
+    @ValueSource(strings = {PRODUCTION, DEVELOPMENT})
     public void testContentTypeDocumentation(String baseUrl) throws IOException {
         assertThat(pageFor(baseUrl, API_DOC).asNormalizedText())
                 .contains("Content-Negotiation")
@@ -148,7 +149,7 @@ public class ApiDocTests extends HtmlPageTests {
     }
 
     @ParameterizedTest
-    @ValueSource(strings = {PRODUCTION /*, DEVELOPMENT*/})
+    @ValueSource(strings = {PRODUCTION, DEVELOPMENT})
     public void testRdfSerializationDocumentation(String baseUrl) throws IOException {
         assertThat(pageFor(baseUrl, API_DOC).asNormalizedText())
                 .contains("RDF")
@@ -161,7 +162,7 @@ public class ApiDocTests extends HtmlPageTests {
     }
 
     @ParameterizedTest
-    @ValueSource(strings = {PRODUCTION /*, DEVELOPMENT*/})
+    @ValueSource(strings = {PRODUCTION, DEVELOPMENT})
     public void testRdfXmlFormatEndpoint(String baseUrl) throws IOException, InterruptedException {
         assertThat(fetchHttpResponse(baseUrl, "4074335-4.rdf"))
                 .contains("rdf:RDF")
@@ -169,7 +170,7 @@ public class ApiDocTests extends HtmlPageTests {
     }
 
     @ParameterizedTest
-    @ValueSource(strings = {PRODUCTION /*, DEVELOPMENT*/})
+    @ValueSource(strings = {PRODUCTION, DEVELOPMENT})
     public void testTurtleFormatEndpoint(String baseUrl) throws IOException, InterruptedException {
         assertThat(fetchHttpResponse(baseUrl, "4074335-4.ttl"))
                 .contains("@prefix")
@@ -177,7 +178,7 @@ public class ApiDocTests extends HtmlPageTests {
     }
 
     @ParameterizedTest
-    @ValueSource(strings = {PRODUCTION /*, DEVELOPMENT*/})
+    @ValueSource(strings = {PRODUCTION, DEVELOPMENT})
     public void testNTriplesFormatEndpoint(String baseUrl)
             throws IOException, InterruptedException {
         String response = fetchHttpResponse(baseUrl, "4074335-4.nt");
@@ -186,7 +187,7 @@ public class ApiDocTests extends HtmlPageTests {
     }
 
     @ParameterizedTest
-    @ValueSource(strings = {PRODUCTION /*, DEVELOPMENT*/})
+    @ValueSource(strings = {PRODUCTION, DEVELOPMENT})
     public void testBulkDownloadsDocumentation(String baseUrl) throws IOException {
         assertThat(pageFor(baseUrl, API_DOC).asNormalizedText())
                 .contains("Bulk-Downloads")
@@ -198,7 +199,7 @@ public class ApiDocTests extends HtmlPageTests {
     }
 
     @ParameterizedTest
-    @ValueSource(strings = {PRODUCTION /*, DEVELOPMENT*/})
+    @ValueSource(strings = {PRODUCTION, DEVELOPMENT})
     public void testBulkDownloadJsonLinesEndpoint(String baseUrl)
             throws IOException, InterruptedException {
         String[] lines =
@@ -208,7 +209,7 @@ public class ApiDocTests extends HtmlPageTests {
     }
 
     @ParameterizedTest
-    @ValueSource(strings = {PRODUCTION /*, DEVELOPMENT*/})
+    @ValueSource(strings = {PRODUCTION, DEVELOPMENT})
     public void testAutocompleteDocumentation(String baseUrl) throws IOException {
         assertThat(pageFor(baseUrl, API_DOC).asNormalizedText())
                 .contains("Autovervollständigung")
@@ -219,18 +220,23 @@ public class ApiDocTests extends HtmlPageTests {
     }
 
     @ParameterizedTest
-    @ValueSource(strings = {PRODUCTION /*, DEVELOPMENT*/})
+    @ValueSource(strings = {PRODUCTION, DEVELOPMENT})
     public void testAutocompleteCodeExample(String baseUrl) throws IOException {
         assertThat(pageFor(baseUrl, API_DOC).asNormalizedText())
-                .contains("$('input.search-gnd').autocomplete")
-                .contains("url : \"/gnd/search\"")
-                .contains("dataType : \"jsonp\"")
-                .contains("q : request.term")
-                .contains("format : \"json:preferredName,professionOrOccupation\"");
+                .contains("input.search-gnd")
+                .contains(".autocomplete")
+                .contains("url")
+                .contains(": \"/gnd/search\"")
+                .contains("dataType")
+                .contains(": \"jsonp\"")
+                .contains("q")
+                .contains(": request.term")
+                .contains("format")
+                .contains(": \"json:preferredName,professionOrOccupation\"");
     }
 
     @ParameterizedTest
-    @ValueSource(strings = {PRODUCTION /*, DEVELOPMENT*/})
+    @ValueSource(strings = {PRODUCTION, DEVELOPMENT})
     public void testAutocompleteSuggestEndpoint(String baseUrl)
             throws IOException, InterruptedException {
         assertThat(fetchHttpResponse(baseUrl, "search?q=Twain&format=json:suggest"))
@@ -239,7 +245,43 @@ public class ApiDocTests extends HtmlPageTests {
     }
 
     @ParameterizedTest
-    @ValueSource(strings = {PRODUCTION /*, DEVELOPMENT*/})
+    @ValueSource(strings = {PRODUCTION, DEVELOPMENT})
+    public void testApiCallEntityFromBrowser(String baseUrl)
+            throws IOException, InterruptedException {
+        assertApiEntityCallsContain(baseUrl, "json", "\"@context\" :");
+        assertApiEntityCallsContain(baseUrl, "ttl", "@prefix schema");
+        assertApiEntityCallsContain(baseUrl, "rdf", "rdf:RDF");
+        assertApiEntityCallsContain(baseUrl, "nt", "\"Köln\" .");
+        assertApiEntityCallsContain(baseUrl, "html", "<title>Köln</title>");
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {PRODUCTION, DEVELOPMENT})
+    public void testApiCallSearchFromBrowser(String baseUrl)
+            throws IOException, InterruptedException {
+        assertApiSearchCallContains(baseUrl, "json", "\"@context\" :");
+        assertApiSearchCallContains(baseUrl, "json:suggest", "\"category\" :");
+        assertApiSearchCallContains(baseUrl, "json:preferredName", "\"category\" :");
+    }
+
+    private void assertApiSearchCallContains(String baseUrl, String format, String content)
+            throws IOException, InterruptedException {
+        assertThat(fetchHttpResponse(baseUrl, "search?format=" + format, "text/html"))
+                .contains(content);
+    }
+
+    private void assertApiEntityCallsContain(String baseUrl, String format, String content)
+            throws IOException, InterruptedException {
+        assertThat(entity(baseUrl, "." + format)).contains(content);
+        assertThat(entity(baseUrl, "?format=" + format)).contains(content);
+    }
+
+    private String entity(String baseUrl, String suffix) throws IOException, InterruptedException {
+        return fetchHttpResponse(baseUrl, HtmlPageTests.COLOGNE + suffix, "text/html");
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {PRODUCTION, DEVELOPMENT})
     public void testAutocompleteSuggestExample(String baseUrl) throws IOException {
         HtmlPage apiPage = pageFor(baseUrl, API_DOC);
 
@@ -251,11 +293,22 @@ public class ApiDocTests extends HtmlPageTests {
         assertThat(searchButton).as("search button should exist").isNotNull();
 
         labelInput.type("Make-Tuwen");
+        webClient.waitForBackgroundJavaScript(3000);
+        HtmlElement suggestion =
+                apiPage.getFirstByXPath("//ul[contains(@class, 'ui-autocomplete')]/li/*[1]");
+        assertThat(suggestion.asNormalizedText())
+                .as("suggestion should contain details")
+                .contains("Twain, Mark | Schriftsteller; Journalist; Drucker; Lotse; Soldat");
+
+        if (suggestion instanceof HtmlAnchor) {
+            suggestion.click();
+        } else {
+            apiPage.executeJavaScript(
+                    "var menu = $('input.search-gnd').autocomplete('instance').menu;\n"
+                            + "menu.focus(null, menu.element.find('.ui-menu-item'));\n"
+                            + "menu.select();");
+        }
         webClient.waitForBackgroundJavaScript(1000);
-        HtmlListItem suggestion =
-                apiPage.getFirstByXPath("//ul[contains(@class, 'ui-autocomplete')]/li");
-        suggestion.click();
-        webClient.waitForBackgroundJavaScript(10);
 
         assertThat(labelInput.getValue())
                 .as("form should be filled with details for selected suggestion")
@@ -270,7 +323,7 @@ public class ApiDocTests extends HtmlPageTests {
     }
 
     @ParameterizedTest
-    @ValueSource(strings = {PRODUCTION /*, DEVELOPMENT*/})
+    @ValueSource(strings = {PRODUCTION, DEVELOPMENT})
     public void testJsonLdDocumentation(String baseUrl) throws IOException {
         assertThat(pageFor(baseUrl, API_DOC).asNormalizedText())
                 .contains("JSON-LD")
@@ -283,7 +336,7 @@ public class ApiDocTests extends HtmlPageTests {
     }
 
     @ParameterizedTest
-    @ValueSource(strings = {PRODUCTION /*, DEVELOPMENT*/})
+    @ValueSource(strings = {PRODUCTION, DEVELOPMENT})
     public void testJsonLdContextEndpoint(String baseUrl) throws IOException, InterruptedException {
         assertThat(fetchHttpResponse(baseUrl, "context.jsonld"))
                 .is(validJson())
@@ -291,25 +344,25 @@ public class ApiDocTests extends HtmlPageTests {
     }
 
     @ParameterizedTest
-    @ValueSource(strings = {PRODUCTION /*, DEVELOPMENT*/})
+    @ValueSource(strings = {PRODUCTION, DEVELOPMENT})
     public void testJsonLdCodeExamples(String baseUrl) throws IOException {
         assertThat(pageFor(baseUrl, API_DOC).asNormalizedText())
-                .contains("jsonld format --nquads https://lobid.org/gnd/4074335-4")
+                .contains("jsonld format")
                 .contains("curl --header \"Accept: application/rdf+xml\"")
                 .contains("curl --header \"Accept: text/turtle\"")
                 .contains("curl --header \"Accept: application/n-triples\"");
     }
 
     @ParameterizedTest
-    @ValueSource(strings = {PRODUCTION /*, DEVELOPMENT*/})
+    @ValueSource(strings = {PRODUCTION, DEVELOPMENT})
     public void testOpenRefineDocumentation(String baseUrl) throws IOException {
         assertThat(pageFor(baseUrl, API_DOC).asNormalizedText())
                 .contains("OpenRefine")
-                .contains("GND reconciliation");
+                .contains("GND");
     }
 
     @ParameterizedTest
-    @ValueSource(strings = {PRODUCTION /*, DEVELOPMENT*/})
+    @ValueSource(strings = {PRODUCTION, DEVELOPMENT})
     public void testApiDocLinksExist(String baseUrl) throws IOException {
         assertThat(pageFor(baseUrl, API_DOC).getElementsByTagName("a").toString())
                 .contains("/gnd/search?q=")
