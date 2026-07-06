@@ -52,7 +52,8 @@ public class ApiCallHandler {
                     request.path().endsWith("bundle.js")
                             || acceptTypes.contains(MediaType.TEXT_HTML)
                             || acceptTypes.toString().contains("text/css")
-                            || acceptTypes.toString().contains("image/");
+                            || acceptTypes.toString().contains("image/")
+                            || acceptTypes.toString().contains("application/font");
             return browserRequest && !apiCallRequest ? next.handle(request) : proxy(request);
         };
     }
