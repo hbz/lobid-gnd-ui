@@ -348,9 +348,10 @@ public class ApiDocTests extends HtmlPageTests {
     public void testJsonLdCodeExamples(String baseUrl) throws IOException {
         assertThat(pageFor(baseUrl, API_DOC).asNormalizedText())
                 .contains("jsonld format")
-                .contains("curl --header \"Accept: application/rdf+xml\"")
-                .contains("curl --header \"Accept: text/turtle\"")
-                .contains("curl --header \"Accept: application/n-triples\"");
+                .contains("curl")
+                .contains("--header \"Accept: application/rdf+xml\"")
+                .contains("--header \"Accept: text/turtle\"")
+                .contains("--header \"Accept: application/n-triples\"");
     }
 
     @ParameterizedTest

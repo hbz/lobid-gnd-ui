@@ -136,7 +136,7 @@
 
             <p>Standardmäßig liefert dieser Dienst strukturierte API-Antworten (als JSON):</p>
 
-            <p><code>curl [[${baseUrl}]]/gnd/4074335-4</code></p>
+            <p><code>curl -L [[${baseUrl}]]/gnd/4074335-4</code></p>
 
             <p>
                 Er unterstützt Content-Negotiation über den Accept-Header für JSON
@@ -145,7 +145,7 @@
 
             <p>
                 <code
-                    >curl --header "Accept: application/json"
+                    >curl -L --header "Accept: application/json"
                     [[${baseUrl}]]/gnd/search?q=london</code
                 >
             </p>
@@ -191,7 +191,7 @@
 
             <p>
                 <code
-                    >curl --header "Accept: application/x-jsonlines"
+                    >curl -L --header "Accept: application/x-jsonlines"
                     "[[${baseUrl}]]/gnd/search?q=type:Country" &gt; countries.jsonl</code
                 >
             </p>
@@ -200,7 +200,7 @@
 
             <p>
                 <code
-                    >curl --header "Accept-Encoding: gzip"
+                    >curl -L --header "Accept-Encoding: gzip"
                     "[[${baseUrl}]]/gnd/search?q=type:Company&amp;format=jsonl" &gt;
                     companies.gz</code
                 >
@@ -339,16 +339,16 @@
                 </dd>
                 <dd>
                     <code
-                        >curl --header "Accept: application/rdf+xml"
+                        >curl -L --header "Accept: application/rdf+xml"
                         [[${baseUrl}]]/gnd/4074335-4</code
                     >
                 </dd>
                 <dd>
-                    <code>curl --header "Accept: text/turtle" [[${baseUrl}]]/gnd/4074335-4</code>
+                    <code>curl -L --header "Accept: text/turtle" [[${baseUrl}]]/gnd/4074335-4</code>
                 </dd>
                 <dd>
                     <code
-                        >curl --header "Accept: application/n-triples"
+                        >curl -L --header "Accept: application/n-triples"
                         [[${baseUrl}]]/gnd/4074335-4</code
                     >
                 </dd>
