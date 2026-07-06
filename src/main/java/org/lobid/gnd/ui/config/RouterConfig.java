@@ -7,7 +7,9 @@ import org.lobid.gnd.ui.controller.SearchHandler;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.ClassPathResource;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.reactive.function.server.HandlerFilterFunction;
+import org.springframework.web.reactive.function.server.HandlerFunction;
 import org.springframework.web.reactive.function.server.RouterFunction;
 import org.springframework.web.reactive.function.server.RouterFunctions;
 import org.springframework.web.reactive.function.server.ServerRequest;
@@ -20,6 +22,7 @@ public class RouterConfig {
     public RouterFunction<ServerResponse> detailsRoutes(
             IndexHandler index, DetailsHandler details, SearchHandler search, ErrorHandler error) {
         return RouterFunctions.route()
+                .route(request -> request.uri().getRawPath().endsWith("/"), handleTrailingSlash())
                 .GET("/gnd", index::page)
                 .GET("/gnd/search", search::byQ)
                 .GET("/gnd/api", error::notImplemented)
@@ -30,6 +33,16 @@ public class RouterConfig {
                 .resources("/gnd/assets/**", new ClassPathResource("static/"))
                 .filter(addIsDevserver())
                 .build();
+    }
+
+    private HandlerFunction<ServerResponse> handleTrailingSlash() {
+        return request -> {
+            String oldPath = request.uri().getRawPath();
+            String newPath = oldPath.substring(0, oldPath.length() - 1);
+            return ServerResponse.status(HttpStatus.PERMANENT_REDIRECT)
+                    .location(request.uriBuilder().replacePath(newPath).build())
+                    .build();
+        };
     }
 
     public static HandlerFilterFunction<ServerResponse, ServerResponse> addIsDevserver() {
