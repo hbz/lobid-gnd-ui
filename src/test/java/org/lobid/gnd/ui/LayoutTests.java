@@ -46,7 +46,7 @@ public class LayoutTests extends HtmlPageTests {
                 .contains("/gnd/api")
                 .contains("/gnd/dataset")
                 .contains("/gnd/reconcile")
-                .contains("https://www.hbz-nrw.de/produkte/linked-open-data")
+                .contains("https://www.hbz-nrw.de")
                 .contains("http://lobid.org/warranty")
                 .contains("http://www.hbz-nrw.de/impressum")
                 .contains("https://github.com/hbz/lobid/blob/master/conf/Datenschutzerklaerung")

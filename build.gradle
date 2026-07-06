@@ -30,7 +30,7 @@ dependencies {
     implementation('nz.net.ultraq.thymeleaf:thymeleaf-layout-dialect')
     developmentOnly("org.springframework.boot:spring-boot-devtools")
     testImplementation('org.springframework.boot:spring-boot-starter-test')
-    testImplementation('org.htmlunit:htmlunit')
+    testImplementation('org.htmlunit:htmlunit:5.1.0')
 }
 
 node {
@@ -66,6 +66,13 @@ tasks.withType(JavaCompile) {
 }
 
 spotless {
+
+    if (project.gradle.startParameter.taskNames.any { it.startsWith('spotless') }) {
+        def currentVersion = "node -v".execute().text.trim().replace("v", "").split("\\.")[0].toInteger()
+        if (currentVersion < 16) {
+            throw new GradleException("Incompatible Node version: $currentVersion. Prettier requires >= 16.")
+        }
+    }
 
     java {
         target 'src/*/java/**/*.java'

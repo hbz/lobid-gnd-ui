@@ -32,9 +32,11 @@ public class DetailsTests extends HtmlPageTests {
     }
 
     @ParameterizedTest
-    @ValueSource(strings = {PRODUCTION /*, DEVELOPMENT*/})
+    @ValueSource(strings = {PRODUCTION, DEVELOPMENT})
     public void testDetailsViewHeader(String baseUrl) throws IOException {
-        assertThat(pageFor(baseUrl, COLOGNE).getElementsByTagName("h1").getFirst().getTextContent())
+        HtmlPage detailsPage = pageFor(baseUrl, COLOGNE);
+        assertThat(detailsPage.getElementsByTagName("h1").getFirst().getTextContent())
+                .as("Main header of full page as XML: \n%s", detailsPage.asXml())
                 .contains("Köln")
                 .contains("Gebietskörperschaft oder Verwaltungseinheit")
                 .contains("Geografikum")
@@ -42,7 +44,7 @@ public class DetailsTests extends HtmlPageTests {
     }
 
     @ParameterizedTest
-    @ValueSource(strings = {PRODUCTION /*, DEVELOPMENT*/})
+    @ValueSource(strings = {PRODUCTION, DEVELOPMENT})
     public void testDetailsViewLinks(String baseUrl) throws IOException {
         assertThat(pageFor(baseUrl, COLOGNE).getElementsByTagName("a").toString())
                 .contains("TerritorialCorporateBodyOrAdministrativeUnit")
@@ -60,17 +62,17 @@ public class DetailsTests extends HtmlPageTests {
     }
 
     @ParameterizedTest
-    @ValueSource(strings = {PRODUCTION /*, DEVELOPMENT*/})
+    @ValueSource(strings = {PRODUCTION, DEVELOPMENT})
     public void testDetailsViewMap(String baseUrl) throws IOException {
         List<DomElement> mapElements = pageFor(baseUrl, COLOGNE).getElementsById("authority-map");
         assertThat(mapElements).isNotEmpty();
         assertThat(mapElements.getFirst().getElementsByTagName("a").toString())
-                .contains("http://leafletjs.com")
+                .containsPattern("https?://leafletjs.com")
                 .contains("http://osm.org/copyright");
     }
 
     @ParameterizedTest
-    @ValueSource(strings = {PRODUCTION /*, DEVELOPMENT*/})
+    @ValueSource(strings = {PRODUCTION, DEVELOPMENT})
     public void testDetailsViewImage(String baseUrl) throws IOException {
         HtmlPage detailsPage = pageFor(baseUrl, COLOGNE);
         assertThat(detailsPage.getByXPath("//img[@alt='Köln']")).isNotEmpty();
@@ -84,7 +86,7 @@ public class DetailsTests extends HtmlPageTests {
     }
 
     @ParameterizedTest
-    @ValueSource(strings = {PRODUCTION /*, DEVELOPMENT*/})
+    @ValueSource(strings = {PRODUCTION, DEVELOPMENT})
     public void testDetailsViewPersonHistorical(String baseUrl) throws IOException {
         HtmlPage detailsPage = pageFor(baseUrl, PERSON_HISTORICAL);
         assertThat(detailsPage.asNormalizedText())
@@ -100,12 +102,13 @@ public class DetailsTests extends HtmlPageTests {
     }
 
     @ParameterizedTest
-    @ValueSource(strings = {PRODUCTION /*, DEVELOPMENT*/})
+    @ValueSource(strings = {PRODUCTION, DEVELOPMENT})
     public void testDetailsViewPersonAlive(String baseUrl) throws IOException {
         HtmlPage detailsPage = pageFor(baseUrl, PERSON_ALIVE);
         HtmlDivision personBox = detailsPage.getHtmlElementById("meta-person");
         assertThat(personBox).isNotNull();
-        HtmlAnchor link = (HtmlAnchor) personBox.getByXPath("//a[@data-toggle='collapse']").get(0);
+        String linkPath = "//a[@data-toggle='collapse' or @data-bs-toggle='collapse']";
+        HtmlAnchor link = (HtmlAnchor) personBox.getByXPath(linkPath).get(0);
         assertThat(link).isNotNull();
         assertThat(link.getTextContent()).contains("Sind Sie").contains("Klicken Sie hier");
         String text = "Diese Seite zeigt einen Datensatz aus der Gemeinsamen Normdatei";
@@ -114,7 +117,7 @@ public class DetailsTests extends HtmlPageTests {
     }
 
     @ParameterizedTest
-    @ValueSource(strings = {PRODUCTION /*, DEVELOPMENT*/})
+    @ValueSource(strings = {PRODUCTION, DEVELOPMENT})
     public void testDetailsViewRelationshipsGraphExists(String baseUrl) throws IOException {
         HtmlPage detailsPage = pageFor(baseUrl, PERSON_WITH_RELATIONSHIPS);
         HtmlDivision networkDiv = detailsPage.getHtmlElementById("gnd-network");
@@ -122,7 +125,7 @@ public class DetailsTests extends HtmlPageTests {
     }
 
     @ParameterizedTest
-    @ValueSource(strings = {PRODUCTION /*, DEVELOPMENT*/})
+    @ValueSource(strings = {PRODUCTION, DEVELOPMENT})
     public void testDetailsViewRelationshipsGraphData(String baseUrl) throws IOException {
         HtmlPage detailsPage = pageFor(baseUrl, PERSON_WITH_RELATIONSHIPS);
         var nodesResult = detailsPage.executeJavaScript("window.network.body.data.nodes.length");
@@ -132,7 +135,7 @@ public class DetailsTests extends HtmlPageTests {
     }
 
     @ParameterizedTest
-    @ValueSource(strings = {PRODUCTION /*, DEVELOPMENT*/})
+    @ValueSource(strings = {PRODUCTION, DEVELOPMENT})
     public void testDetailsViewRelationshipsNodeLabels(String baseUrl) throws IOException {
         HtmlPage detailsPage = pageFor(baseUrl, PERSON_WITH_RELATIONSHIPS);
         assertThat(getString(detailsPage, "nodes", PERSON_WITH_RELATIONSHIPS, "label"))
@@ -140,7 +143,7 @@ public class DetailsTests extends HtmlPageTests {
     }
 
     @ParameterizedTest
-    @ValueSource(strings = {PRODUCTION /*, DEVELOPMENT*/})
+    @ValueSource(strings = {PRODUCTION, DEVELOPMENT})
     public void testDetailsViewRelationshipsEdgeLabels(String baseUrl) throws IOException {
         HtmlPage detailsPage = pageFor(baseUrl, PERSON_WITH_RELATIONSHIPS);
         assertThat(getString(detailsPage, "edges", "pseudonym_1287690238", "label"))
@@ -148,7 +151,7 @@ public class DetailsTests extends HtmlPageTests {
     }
 
     @ParameterizedTest
-    @ValueSource(strings = {PRODUCTION /*, DEVELOPMENT*/})
+    @ValueSource(strings = {PRODUCTION, DEVELOPMENT})
     public void testDetailsViewRelationshipsEdgeTitles(String baseUrl) throws IOException {
         HtmlPage detailsPage = pageFor(baseUrl, PERSON_WITH_RELATIONSHIPS);
         assertThat(getString(detailsPage, "edges", "pseudonym_1287690238", "title"))
@@ -156,7 +159,7 @@ public class DetailsTests extends HtmlPageTests {
     }
 
     private String getString(HtmlPage detailsPage, String kind, String id, String field) {
-        var script = String.format("window.network.body.data.%s._data['%s'].%s", kind, id, field);
+        var script = String.format("window.network.body.data.%s.get('%s').%s", kind, id, field);
         return (String) detailsPage.executeJavaScript(script).getJavaScriptResult();
     }
 }

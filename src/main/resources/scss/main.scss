@@ -32,7 +32,7 @@ dd {
     padding: 5px;
 }
 
-#header #butterfly {
+#header img {
     height: 25px;
 }
 
@@ -254,11 +254,7 @@ h5 {
     font-size: larger;
 }
 
-.json-ld-icon {
-    height: 1.5em;
-}
-
-.authority-map {
+#authority-map {
     width: 100%;
     height: 200px;
     margin-bottom: 20px;
@@ -275,7 +271,6 @@ h5 {
 figure {
     display: table;
     float: right;
-    margin-top: 10px;
 }
 
 figcaption {
@@ -284,26 +279,23 @@ figcaption {
     text-align: right;
 }
 
-#index-image {
+#entity-image {
     max-width: 100%;
     max-height: 300px;
     float: right;
 }
 
 .json-ld-icon {
-    margin-left: 1px;
-    float: right;
-    height: 1.4em;
-}
-
-.tooltip.right .tooltip-arrow {
-    border-right-color: #fff;
+    height: 1em;
 }
 
 .tooltip-inner {
-    color: #000;
-    background: #fff;
     border: solid 1px #cccccc;
+}
+
+.custom-tooltip {
+    --bs-tooltip-bg: #fff;
+    --bs-tooltip-color: #000;
 }
 
 .invisible-link {
@@ -329,7 +321,7 @@ figcaption {
     padding: 0px;
 }
 
-#infotext .glyphicon-info-sign {
+#infotext .bi {
     font-size: 1.5em;
     float: left;
     margin: 5px 10px 0px 0px;
@@ -377,4 +369,9 @@ h1 .badge {
 
 #id-column {
     min-width: 10%;
+}
+
+#gnd-network {
+    width: 100%;
+    height: 500px;
 }

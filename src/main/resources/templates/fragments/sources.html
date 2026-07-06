@@ -1,0 +1,25 @@
+<div
+    class="mb-3 mt-4 text-center small"
+    th:with="hasEntityFacts=${
+        entity.containsKey('sameAs') && 
+        entity.sameAs.size > 3 && 
+        entity.containsKey('depiction')}">
+    Datenquellen: DNB
+    <a href="https://www.dnb.de/lds">Linked-Data-Service</a> (<a
+        title="RDF/XML aus GND anzeigen"
+        th:href="@{|https://d-nb.info/gnd/${entity.gndIdentifier}/about/lds.rdf|}"
+        >RDF/XML</a
+    >,
+    <a
+        title="Turtle aus GND anzeigen"
+        th:href="|https://d-nb.info/gnd/${entity.gndIdentifier}/about/lds.ttl|"
+        >Turtle</a
+    >)<span th:if="${hasEntityFacts}">
+        und <a href="https://www.dnb.de/entityfacts">Entity Facts</a> (<a
+            title="JSON-LD in Entity Facts anzeigen"
+            th:href="|http://hub.culturegraph.org/entityfacts/${entity.gndIdentifier}|"
+            >JSON-LD</a
+        >)</span
+    >
+    | <a href="https://creativecommons.org/publicdomain/zero/1.0/">CC0</a>
+</div>

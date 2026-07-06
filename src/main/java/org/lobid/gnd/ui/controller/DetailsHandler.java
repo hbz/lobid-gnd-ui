@@ -2,18 +2,22 @@ package org.lobid.gnd.ui.controller;
 
 import static org.lobid.gnd.ui.controller.ErrorHandler.errorResponse;
 
-import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import java.util.Collections;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Scanner;
+import java.util.SortedMap;
+import java.util.TreeMap;
 import java.util.function.Function;
+import java.util.stream.Collectors;
+import org.lobid.gnd.ui.LobidGndApiService;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
-import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.reactive.function.server.ServerRequest;
 import org.springframework.web.reactive.function.server.ServerResponse;
 import reactor.core.publisher.Mono;
@@ -24,78 +28,128 @@ public class DetailsHandler {
     @Value("${app.api}")
     private String apiBaseUrl;
 
+    @Value("${app.fieldOrder}")
+    private String[] fieldOrder;
+
+    private final LobidGndApiService gnd;
+
+    public DetailsHandler(LobidGndApiService gnd) {
+        this.gnd = gnd;
+    }
+
     public Mono<ServerResponse> byId(ServerRequest request) {
         try {
-            return gndEntity(request.pathVariable("id")).flatMap(toResponse("details", request));
+            return gnd.entity(request.pathVariable("id")).flatMap(toResponse("details", request));
         } catch (Exception e) {
             return errorResponse(request, 500, "Failed to load details page: " + e.getMessage());
         }
     }
 
-    private Mono<Map<String, Object>> gndEntity(String gndId) {
-        // Get JSON data from lobid-gnd, convert JSON data to Java Map (to be passed to template):
-        return WebClient.create()
-                .get()
-                .uri(apiBaseUrl + "/" + gndId)
-                .accept(MediaType.APPLICATION_JSON)
-                .retrieve()
-                .bodyToMono(JsonNode.class)
-                .map(json -> new ObjectMapper().convertValue(json, new TypeReference<>() {}));
+    @Component("details")
+    public static class DetailsHelper {
+        @Value("${app.skipDisplay}")
+        private String[] skipDisplay;
+
+        @Value("${app.skipSearchLink}")
+        private String[] skipSearchLink;
+
+        public String label(Map<String, String> labels, Object value) {
+            return switch (value) {
+                case List<?> list ->
+                        list.stream().map(v -> label(labels, v)).collect(Collectors.joining(", "));
+                case String s -> labels.getOrDefault(s, value.toString());
+                default -> value.toString();
+            };
+        }
+
+        public String getFirstAndLastName(Map<String, Object> entity) {
+            String preferred = entity.get("preferredName").toString();
+            String[] lastAndFirst = preferred.split(", ");
+            return lastAndFirst.length == 2 ? lastAndFirst[1] + " " + lastAndFirst[0] : preferred;
+        }
+
+        public String getLatLon(Map<String, Object> entity) {
+            JsonNode json = new ObjectMapper().convertValue(entity, JsonNode.class);
+            return Optional.ofNullable(json.findValue("asWKT"))
+                    .map(optional -> optional.elements().next().textValue())
+                    .map(this::scanLatLon)
+                    .orElse(null);
+        }
+
+        private String scanLatLon(String geoString) {
+            List<Double> lonLat = new ArrayList<Double>();
+            try (Scanner s = new Scanner(geoString).useLocale(Locale.US)) {
+                while (s.hasNext()) {
+                    if (s.hasNextDouble()) {
+                        lonLat.add(s.nextDouble());
+                    } else {
+                        s.next();
+                    }
+                }
+            }
+            return String.format("%s,%s", lonLat.get(1), lonLat.get(0));
+        }
+
+        public boolean isLivingPerson(Map<String, Object> entity) {
+            JsonNode json = new ObjectMapper().convertValue(entity, JsonNode.class);
+            JsonNode dateOfBirth = json.get("dateOfBirth");
+            JsonNode dateOfDeath = json.get("dateOfDeath");
+            return json.get("type").toString().contains("DifferentiatedPerson")
+                    && (dateOfBirth == null || getYear(dateOfBirth) > 1940)
+                    && dateOfDeath == null;
+        }
+
+        private Integer getYear(JsonNode node) {
+            String date = node.elements().next().textValue();
+            String year = date.matches("\\d{4}-\\d{2}-\\d{2}") ? date.split("-")[0] : date;
+            return asInt(year);
+        }
+
+        private Integer asInt(String year) {
+            try {
+                return Integer.parseInt(year);
+            } catch (NumberFormatException e) {
+                e.printStackTrace();
+                return null;
+            }
+        }
+
+        public boolean skipDisplay(String id) {
+            return Arrays.asList(skipDisplay).contains(id);
+        }
+
+        public boolean skipSearchLink(String id) {
+            return Arrays.asList(skipSearchLink).contains(id);
+        }
     }
 
     private Function<Map<String, Object>, Mono<ServerResponse>> toResponse(
             String template, ServerRequest request) {
         return gndEntity -> {
-            Map<String, Object> entity = withImageUrlAndAttribution(gndEntity);
             Map<String, Map<String, Object>> model =
-                    Map.of("entity", entity, "request", request.attributes());
+                    Map.of("entity", sorted(gndEntity), "request", request.attributes());
             // Render Thymeleaf template (in src/main/resources/templates) with model:
             return ServerResponse.ok().render(template, model);
         };
     }
 
-    static Map<String, Object> withImageUrlAndAttribution(Map<String, Object> javaMap) {
-        if (javaMap.containsKey("depiction")) {
-            @SuppressWarnings("unchecked")
-            var depictions = (List<Map<String, Object>>) javaMap.get("depiction");
-            String imageAttribution = createAttribution(depictions.getFirst());
-            String proxyPrefix = "https://lobid.org/imagesproxy?url=";
-            javaMap.put("imageUrl", proxyPrefix + depictions.getFirst().get("thumbnail"));
-            javaMap.put("imageAttribution", String.format("Bildquelle: %s", imageAttribution));
-        }
-        return javaMap;
-    }
-
-    private static String createAttribution(Map<String, Object> depiction) {
-        @SuppressWarnings("unchecked")
-        Map<String, Object> license =
-                Optional.ofNullable(((List<Map<String, Object>>) depiction.get("license")))
-                        .map(list -> list.get(0))
-                        .orElse(Collections.emptyMap());
-        String artist = findText(depiction, "creatorName").replaceAll("(Unknown.*){2}", "$1");
-        String licenseText = findText(license, "abbr");
-        String licenseUrl = findText(license, "id");
-        String fileSourceUrl = findText(depiction, "url");
-        String urlForLicense = licenseUrl.isEmpty() ? fileSourceUrl : licenseUrl;
-        return attributionHtml(artist, licenseText, fileSourceUrl, urlForLicense);
-    }
-
-    private static String findText(Map<String, Object> map, String field) {
-        Object value = map.get(field);
-        value = value instanceof List ? ((List<?>) value).get(0) : value;
-        return value != null ? value.toString().replace("\n", " ").trim() : "";
-    }
-
-    private static String attributionHtml(
-            String artist, String license, String fileSourceUrl, String licenseUrl) {
-        return String.format(
-                "%s%s%s",
-                no(artist).orElse(String.format("%s | ", artist)),
-                String.format("<a href='%s'>Wikimedia Commons</a>", fileSourceUrl),
-                no(license).orElse(String.format(" | <a href='%s'>%s</a>", licenseUrl, license)));
-    }
-
-    private static Optional<String> no(String string) {
-        return string.isEmpty() ? Optional.of("") : Optional.empty();
+    private SortedMap<String, Object> sorted(Map<String, Object> gndEntity) {
+        List<String> order = Arrays.asList(fieldOrder);
+        SortedMap<String, Object> sortedMap =
+                new TreeMap<>(
+                        (field1, field2) -> {
+                            int indexOf1 = order.indexOf(field1);
+                            int indexOf2 = order.indexOf(field2);
+                            // both unspecified, sort by field name:
+                            if (indexOf1 == -1 && indexOf2 == -1) {
+                                return field1.compareTo(field2);
+                            }
+                            // sort by order, unspecified after specified fields:
+                            int end = Integer.MAX_VALUE;
+                            return Integer.valueOf(indexOf1 == -1 ? end : indexOf1)
+                                    .compareTo(Integer.valueOf(indexOf2 == -1 ? end : indexOf2));
+                        });
+        sortedMap.putAll(gndEntity);
+        return sortedMap;
     }
 }

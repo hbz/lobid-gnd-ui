@@ -22,6 +22,13 @@ public class SearchTests extends HtmlPageTests {
 
     @ParameterizedTest
     @ValueSource(strings = {PRODUCTION, DEVELOPMENT})
+    public void testTrailingSlashSearch(String baseUrl) throws IOException {
+        String searchPageText = pageFor(baseUrl, SEARCH + "/").asNormalizedText();
+        assertThat(searchPageText).contains("Treffer, zeige 1 bis 10");
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {PRODUCTION, DEVELOPMENT})
     public void testSearchForm(String baseUrl) throws IOException {
         HtmlPage searchPage = pageFor(baseUrl, SEARCH);
         HtmlInput searchBox = searchPage.getFirstByXPath("//input[@id='gnd-query']");

@@ -1,8 +1,11 @@
-import "bootstrap";
 import "scss/app.scss";
 import "scss/main.scss";
 import $ from "jquery";
+import { Tooltip, Tab } from "bootstrap";
+import { DataSet } from "vis-data/peer/esm/vis-data.js";
+import { Network } from "vis-network/peer/esm/vis-network.js";
 import "jquery-ui/ui/widgets/autocomplete";
+import L from "leaflet";
 
 document.addEventListener("DOMContentLoaded", function () {
     const searchBox = document.getElementById("gnd-query");
@@ -81,4 +84,208 @@ document.addEventListener("DOMContentLoaded", function () {
             $("#" + facetKey + "-less-link").addClass(hidden);
         }
     });
+
+    const info = document.getElementById("infotext");
+    const icon = document.querySelector(".collapse-icon");
+
+    if (info && icon) {
+        info.addEventListener("show.bs.collapse", function () {
+            icon.classList.remove("bi-chevron-right");
+            icon.classList.add("bi-chevron-down");
+        });
+
+        info.addEventListener("hide.bs.collapse", function () {
+            icon.classList.remove("bi-chevron-down");
+            icon.classList.add("bi-chevron-right");
+        });
+    }
+
+    const mapElement = document.getElementById("authority-map");
+
+    if (mapElement) {
+        let zoom = 10; // default
+        const type = mapElement.dataset.type;
+        if (type.includes("Country")) {
+            zoom = 3;
+        } else if (type.includes("MemberState")) {
+            zoom = 5;
+        }
+
+        const layer = L.tileLayer("https://lobid.org/tiles/{z}/{x}/{y}.png", {
+            attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors',
+        });
+
+        let [lat, lon] = mapElement.dataset.geo.split(",");
+        const center = L.latLng(lat, lon);
+        const map = L.map("authority-map", {
+            center: center,
+            zoom: zoom,
+            maxZoom: 17,
+            scrollWheelZoom: true,
+            attributionControl: true,
+            zoomControl: true,
+        });
+
+        L.Icon.Default.imagePath = "/gnd/assets/images/leaflet/";
+        const marker = L.marker(center, { title: mapElement.dataset.title });
+
+        marker.addTo(map);
+        map.addLayer(layer);
+    }
+
+    const networkElement = document.getElementById("gnd-network");
+
+    if (networkElement) {
+        const nodes = new DataSet(JSON.parse(networkElement.dataset.nodes));
+        const edges = new DataSet(JSON.parse(networkElement.dataset.edges));
+
+        const container = document.getElementById("gnd-network");
+
+        const options = {
+            interaction: {
+                hover: true,
+                navigationButtons: false,
+                keyboard: false,
+            },
+            edges: { chosen: false },
+            layout: { randomSeed: 2 },
+            physics: {
+                forceAtlas2Based: {
+                    springLength: 175,
+                    centralGravity: Math.min(0.0015 * edges.length, 0.015),
+                    avoidOverlap: 1,
+                },
+                solver: "forceAtlas2Based",
+                stabilization: { enabled: true },
+            },
+        };
+
+        const network = new Network(container, { nodes, edges }, options);
+        network.selectNodes([networkElement.dataset.entityId], false);
+        window.network = network;
+
+        function changeCursor(cursor) {
+            const canvas = container.querySelector("canvas");
+            if (canvas) canvas.style.cursor = cursor;
+        }
+
+        function valid(t, regex) {
+            if (!t) return false;
+            var match = t.match(regex);
+            return match && match[0].length == t.length;
+        }
+
+        function validTarget(target) {
+            return valid(target, /^\d.*/);
+        }
+
+        function validEdge(edge) {
+            return valid(edge, /[a-zA-Z]+/);
+        }
+
+        network.on("stabilizationIterationsDone", function () {
+            network.setOptions({ physics: false });
+            changeCursor("grab");
+        });
+
+        network.on("hoverNode", function (params) {
+            var target = this.getNodeAt(params.pointer.DOM);
+            if (validTarget(target)) {
+                changeCursor("pointer");
+            }
+        });
+
+        network.on("blurNode", function () {
+            changeCursor("grab");
+        });
+
+        network.on("hoverEdge", function (params) {
+            var edge = this.getEdgeAt(params.pointer.DOM).split("_")[0];
+            if (validEdge(edge)) {
+                changeCursor("pointer");
+            }
+        });
+
+        network.on("blurEdge", function () {
+            changeCursor("grab");
+        });
+
+        network.on("click", function (params) {
+            const target = this.getNodeAt(params.pointer.DOM);
+            if (target && /^\d/.test(target)) {
+                window.location.href = target + "#rels";
+            } else {
+                const edgeId = params.edges[0];
+                if (edgeId) {
+                    const [rel, to] = edgeId.split("_");
+                    if (rel && /^[a-zA-Z]+$/.test(rel)) {
+                        window.location.href = `/gnd/search?q=${rel}.id:"https://d-nb.info/gnd/${to}"`;
+                    }
+                }
+            }
+        });
+
+        const rels = document.getElementById("rels");
+
+        if (rels) {
+            rels.addEventListener("shown.bs.tab", function () {
+                network.fit();
+            });
+            if (window.location.href.split("#")[1] === "rels") {
+                setTimeout(() => {
+                    new Tab(rels).show();
+                }, 0);
+            }
+        }
+    }
 });
+
+$(function () {
+    document.querySelectorAll('[data-bs-toggle="tooltip"]').forEach((trigger) => {
+        new Tooltip(trigger);
+    });
+});
+
+function result(string, link, res) {
+    if (res) {
+        link.trigger("copied", ["Kopiert: " + string]);
+    }
+    return res;
+}
+
+function copyToClipboard(link) {
+    const text = link.data("copy-text");
+    const info = link.data("copy-info");
+    link.bind("copied", function (event, message) {
+        const tooltip = Tooltip.getOrCreateInstance(this);
+        tooltip.setContent({ ".tooltip-inner": message });
+        tooltip.show();
+    });
+    link.on("mouseleave", function () {
+        const tooltip = Tooltip.getInstance(this);
+        if (tooltip) {
+            tooltip.hide();
+            tooltip.setContent({ ".tooltip-inner": info });
+        }
+    });
+    if (window.clipboardData && window.clipboardData.setData) {
+        return result(text, link, clipboardData.setData("Text", text));
+    } else if (document.queryCommandSupported && document.queryCommandSupported("copy")) {
+        var temp = document.createElement("textarea");
+        temp.textContent = text;
+        temp.style.position = "fixed";
+        document.body.appendChild(temp);
+        temp.select();
+        try {
+            return result(text, link, document.execCommand("copy"));
+        } catch (ex) {
+            console.warn("Copy to clipboard failed.", ex);
+            window.prompt("Kopieren: Strg+C, Enter", text);
+        } finally {
+            document.body.removeChild(temp);
+        }
+    }
+}
+
+window.copyToClipboard = copyToClipboard;
+window.$ = $;
