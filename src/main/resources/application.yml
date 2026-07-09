@@ -2,6 +2,13 @@ spring:
   web:
     resources:
       static-locations: [] # use custom RouterConfig only
+logging:
+  level:
+    reactor:
+      netty:
+        http:
+          client:
+            HttpClient: INFO
 app:
   api: https://test.lobid.org/gnd
   dontShowOnMainPage: 1012979-0, 118551655
