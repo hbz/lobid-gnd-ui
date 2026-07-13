@@ -2,6 +2,7 @@ package org.lobid.gnd.ui.config;
 
 import org.lobid.gnd.ui.controller.ApiCallHandler;
 import org.lobid.gnd.ui.controller.ApiDocHandler;
+import org.lobid.gnd.ui.controller.DatasetHandler;
 import org.lobid.gnd.ui.controller.DetailsHandler;
 import org.lobid.gnd.ui.controller.ErrorHandler;
 import org.lobid.gnd.ui.controller.IndexHandler;
@@ -29,6 +30,7 @@ public class RouterConfig {
             ErrorHandler error,
             ApiDocHandler apiDoc,
             ReconcileHandler reconcile,
+            DatasetHandler dataset,
             ApiCallHandler apiCall) {
         return RouterFunctions.route()
                 .filter(apiCall.proxy())
@@ -37,7 +39,7 @@ public class RouterConfig {
                 .GET("/gnd", index::page)
                 .GET("/gnd/search", search::byQ)
                 .GET("/gnd/api", apiDoc::apiDoc)
-                .GET("/gnd/dataset", error::notImplemented)
+                .GET("/gnd/dataset", dataset::dataset)
                 .GET("/gnd/reconcile", reconcile::reconcile)
                 // Define URL route for GND entry with ID, e.g. `/gnd/4031483-2`:
                 .GET("/gnd/{id}", details::byId)
