@@ -7,7 +7,7 @@
         <title layout:title-pattern="$CONTENT_TITLE">[[#{app.title}]]</title>
         <meta charset="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <link rel="icon" type="image/x-icon" href="/gnd/assets/favicon.ico" />
+        <link rel="icon" type="image/x-icon" href="/gnd/assets/images/logo.png" />
         <link
             th:if="${!request.isDevserver}"
             th:href="@{/gnd/assets/css/bundle.css}"
@@ -40,9 +40,6 @@
                                 th:alt="#{app.title}"
                                 class="d-inline-block align-top" />
                             <span class="ps-1 text-secondary"><strong>lobid</strong></span>
-                            <sup>
-                                <span class="badge text-bg-primary">prototype</span>
-                            </sup>
                         </a>
                         <button
                             type="button"

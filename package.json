@@ -1,6 +1,6 @@
 {
-    "name": "gnd-ui-lobid-frontend",
-    "author": "Bootify.io",
+    "name": "lobid-gnd-ui",
+    "author": "https://lobid.org/team",
     "scripts": {
         "devserver": "webpack serve --open /gnd --mode development",
         "build": "webpack --mode production"
