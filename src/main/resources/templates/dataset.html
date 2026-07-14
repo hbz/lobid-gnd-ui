@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html
+    xmlns:th="http://www.thymeleaf.org"
+    xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+    layout:decorate="~{layout}">
+    <head>
+        <title>Dataset: [[#{app.title}]]</title>
+    </head>
+    <body>
+        <div layout:fragment="content">
+            <h2 class="mt-2">
+                Daten
+                <a
+                    class="float-end"
+                    title="Beschreibung als JSON-LD anzeigen"
+                    th:href="@{/gnd/dataset.jsonld}">
+                    <img
+                        class="json-ld-icon"
+                        th:src="@{/gnd/assets/images/json-ld.png}"
+                        alt="JSON" />
+                </a>
+            </h2>
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th width="20%"></th>
+                        <th width="80%"></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:if="${dataset.name}">
+                        <td>Titel</td>
+                        <td th:text="${dataset.name['de']}">lobid-gnd...</td>
+                    </tr>
+                    <tr th:if="${dataset.alternateName}">
+                        <td>Alternativer Titel</td>
+                        <td th:text="${dataset.alternateName['de']}">LOD-API...</td>
+                    </tr>
+                    <tr th:if="${dataset.description}">
+                        <td>Beschreibung</td>
+                        <td th:utext="${dataset.description['de']}">Die Gemeinsame Normdatei...</td>
+                    </tr>
+                    <tr th:if="${dataset.keywords}">
+                        <td>Schlagwörter</td>
+                        <td th:text="${#strings.listJoin(dataset.keywords, ', ')}">
+                            authority data,...
+                        </td>
+                    </tr>
+                    <tr th:if="${dataset.datePublished}">
+                        <td>Veröffentlicht am</td>
+                        <td th:text="${dataset.datePublished}">2018...</td>
+                    </tr>
+                    <tr th:if="${dataset.inLanguage}">
+                        <td>Sprache</td>
+                        <td th:text="${#strings.listJoin(dataset.inLanguage, ', ')}">de...</td>
+                    </tr>
+                    <tr th:if="${dataset.publisher}">
+                        <td>Veröffentlicht von</td>
+                        <td>
+                            <a th:href="${dataset.publisher.id}">
+                                <th:block th:text="${dataset.publisher.name['de']}">
+                                    hbz...
+                                </th:block>
+                                <th:block th:if="${dataset.publisher.alternateName}">
+                                    (<th:block
+                                        th:text="${#strings.listJoin(dataset.publisher.alternateName, ', ')}">
+                                    </th:block
+                                    >)
+                                </th:block>
+                            </a>
+                        </td>
+                    </tr>
+                    <tr th:if="${dataset.isBasedOn}">
+                        <td>Basiert auf</td>
+                        <td>
+                            <a
+                                th:href="${dataset.isBasedOn.url}"
+                                th:text="${dataset.isBasedOn.name['de']}">
+                                Gemeinsame Normdatei...
+                            </a>
+                        </td>
+                    </tr>
+                    <tr th:if="${dataset.accrualPeriodicity}">
+                        <td>Ergänzungsfrequenz</td>
+                        <td th:text="${dataset.accrualPeriodicity.name['de']}">Stündlich...</td>
+                    </tr>
+                    <tr th:if="${dataset.contactPoint}">
+                        <td>Kontakt</td>
+                        <td>
+                            <a th:href="${dataset.contactPoint}" th:text="${dataset.contactPoint}">
+                                https://lobid.org/team...
+                            </a>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+            <h2 class="mt-4">API</h2>
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th width="20%"></th>
+                        <th width="80%"></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:each="dist : ${dataset.distribution}">
+                        <td>Titel</td>
+                        <td th:text="${dist.name['de']}">lobid-gnd-API...</td>
+                    </tr>
+                    <tr th:each="dist : ${dataset.distribution}">
+                        <td>Beschreibung</td>
+                        <td th:utext="${dist.description['de']}">Die API...</td>
+                    </tr>
+                    <tr th:each="dist : ${dataset.distribution}">
+                        <td>Dokumentation</td>
+                        <td>
+                            <a th:href="${dist.documentation}" th:text="${dist.documentation}">
+                                https://lobid.org/gnd/api...
+                            </a>
+                        </td>
+                    </tr>
+                    <tr th:each="dist : ${dataset.distribution}">
+                        <td>URL</td>
+                        <td>
+                            <a th:href="${dist.url}" th:text="${dist.url}">
+                                https://lobid.org/gnd/search...
+                            </a>
+                        </td>
+                    </tr>
+                    <tr th:each="dist : ${dataset.distribution}">
+                        <td>Lizenz</td>
+                        <td>
+                            <a th:href="${dist.license}" th:text="${dist.license}">
+                                https://creativecommons.org/...
+                            </a>
+                        </td>
+                    </tr>
+                    <tr th:each="dist : ${dataset.distribution}">
+                        <td>Medientypen</td>
+                        <td th:text="${#strings.listJoin(dist.encodingFormat, ', ')}">
+                            application/json...
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </body>
+</html>
