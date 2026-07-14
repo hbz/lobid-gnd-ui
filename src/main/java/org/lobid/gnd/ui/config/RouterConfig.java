@@ -5,6 +5,7 @@ import org.lobid.gnd.ui.controller.ApiDocHandler;
 import org.lobid.gnd.ui.controller.DetailsHandler;
 import org.lobid.gnd.ui.controller.ErrorHandler;
 import org.lobid.gnd.ui.controller.IndexHandler;
+import org.lobid.gnd.ui.controller.ReconcileHandler;
 import org.lobid.gnd.ui.controller.SearchHandler;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -27,19 +28,21 @@ public class RouterConfig {
             SearchHandler search,
             ErrorHandler error,
             ApiDocHandler apiDoc,
+            ReconcileHandler reconcile,
             ApiCallHandler apiCall) {
         return RouterFunctions.route()
+                .filter(apiCall.proxy())
+                .route(request -> request.path().startsWith("/gnd/reconcile/"), apiCall::proxy)
                 .route(request -> request.uri().getRawPath().endsWith("/"), handleTrailingSlash())
                 .GET("/gnd", index::page)
                 .GET("/gnd/search", search::byQ)
                 .GET("/gnd/api", apiDoc::apiDoc)
                 .GET("/gnd/dataset", error::notImplemented)
-                .GET("/gnd/reconcile", error::notImplemented)
+                .GET("/gnd/reconcile", reconcile::reconcile)
                 // Define URL route for GND entry with ID, e.g. `/gnd/4031483-2`:
                 .GET("/gnd/{id}", details::byId)
                 .resources("/gnd/assets/**", new ClassPathResource("static/"))
                 .filter(addIsDevserver())
-                .filter(apiCall.proxy())
                 .build();
     }
 

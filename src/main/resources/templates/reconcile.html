@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+<html
+    lang="de"
+    xmlns:th="http://www.thymeleaf.org"
+    xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+    <head>
+        <title>GND Reconciliation</title>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <link rel="icon" type="image/x-icon" href="/gnd/assets/images/gnd.png" />
+        <link
+            rel="stylesheet"
+            th:if="${!request.isDevserver}"
+            th:href="@{/gnd/assets/css/bundle.css}" />
+        <script th:src="@{/gnd/assets/js/bundle.js}" defer></script>
+    </head>
+    <body>
+        <div class="container">
+            <nav class="navbar navbar-expand-md">
+                <div class="container-fluid" id="header-gnd">
+                    <div class="navbar-header">
+                        <a href="/gnd">
+                            <img
+                                id="small-logo"
+                                th:src="@{/gnd/assets/images/logo.png}"
+                                alt="lobid-gnd" />
+                        </a>
+                        <a href="https://gnd.network">
+                            <img
+                                id="small-logo"
+                                th:src="@{/gnd/assets/images/gnd.png}"
+                                alt="gnd.network" />
+                        </a>
+                        <button
+                            type="button"
+                            class="navbar-toggler"
+                            data-bs-toggle="collapse"
+                            data-bs-target="#navbarToggle"
+                            th:aria-label="#{navigation.toggle}"
+                            aria-controls="navbarToggle"
+                            aria-expanded="false">
+                            <span class="navbar-toggler-icon"></span>
+                        </button>
+                    </div>
+                    <div class="dropdown ms-auto" id="resources-nav">
+                        <ul class="nav navbar-nav">
+                            <div class="dropdown ms-auto">
+                                <a
+                                    href="#"
+                                    class="btn dropdown-toggle"
+                                    data-bs-toggle="dropdown"
+                                    title="Info">
+                                    <span class="bi bi-info-circle"></span><b class="caret"></b>
+                                </a>
+                                <ul class="dropdown-menu dropdown-menu-end">
+                                    <li class="dropdown-header">Dokumentation</li>
+                                    <li class="dropdown-item">
+                                        <a href="http://lobid.org/usage-policy" target="_blank">
+                                            Richtlinien zur API-Nutzung
+                                        </a>
+                                    </li>
+                                    <li class="divider"></li>
+                                    <li class="dropdown-header">Kontakt</li>
+                                    <li class="dropdown-item">
+                                        <a
+                                            href="mailto:lobid-admin@hbz-nrw.de?subject=Feedback%20zum%20GND-Reconciliation-Service">
+                                            Feedback zum Reconciliation-Service
+                                        </a>
+                                    </li>
+                                </ul>
+                            </div>
+                        </ul>
+                    </div>
+                </div>
+            </nav>
+
+            <div class="float-end">
+                <img th:src="@{/gnd/assets/images/gnd.png}" alt="GND Logo" height="85px" />
+                <img
+                    th:src="@{/gnd/assets/images/refine.png}"
+                    alt="OpenRefine Logo"
+                    height="100px" />
+            </div>
+
+            <h1>GND Reconciliation</h1>
+
+            <p class="lead">Abgleich eigener Daten mit der Gemeinsamen Normdatei</p>
+
+            <p>
+                Dieser Dienst ermöglicht den Abgleich eigener Daten mit der Gemeinsamen Normdatei,
+                insbesondere mit OpenRefine, einem nicht nur im Bibliotheksbereich weitverbreiteten
+                Werkzeug. OpenRefine bietet zahlreiche Funktionalitäten zur Bereinigung und
+                Transformation von Daten, sowie zum Abgleich (Reconciliation) mit externen
+                Datenquellen und zur Anreicherung auf Basis der abgeglichenen Daten. Dieser Dienst
+                stellt die GND als eine solche Datenquelle in OpenRefine bereit. Der Dienst kann
+                zugleich auch in anderen Anwendungen verwendet werden, z.&nbsp;B. im
+                Bibliotheksmanagementsystem Alma über Alma Refine (s.
+                <a href="https://reconciliation-api.github.io/census/clients/">weitere Clients</a>).
+            </p>
+
+            <p>
+                Service-URL:
+                <code th:text="${baseUrl}">http...</code>
+            </p>
+            <h2>Daten und Werkzeuge</h2>
+            <ul>
+                <li>
+                    <a
+                        href="https://www.dnb.de/DE/Professionell/Standardisierung/GND/gnd_node.html">
+                        Gemeinsamen Normdatei GND
+                    </a>
+                    <span class="badge text-bg-primary">de</span>
+                </li>
+                <li>
+                    <a href="http://openrefine.org/">OpenRefine</a>,
+                    <a href="https://docs.openrefine.org/manual/reconciling/">Reconciliation</a>
+                </li>
+                <li>
+                    <a href="https://reconciliation-api.github.io/census/clients/">Known clients</a>
+                </li>
+            </ul>
+            <h2>Tutorials</h2>
+            <ul>
+                <li>
+                    <a href="http://blog.lobid.org/2018/08/27/openrefine.html">
+                        GND reconciliation for OpenRefine
+                    </a>
+                </li>
+                <li>
+                    <a href="http://blog.lobid.org/2019/08/19/openrefine.html">
+                        Using the suggest APIs for searching types, properties, and entities
+                    </a>
+                </li>
+                <li>
+                    <a href="http://blog.lobid.org/2019/09/30/openrefine-examples.html">
+                        Using additional properties to improve matches
+                    </a>
+                </li>
+            </ul>
+            <h2>Community</h2>
+            <ul>
+                <li>
+                    <a href="https://www.w3.org/community/reconciliation/">
+                        W3C entity reconciliation community group
+                    </a>
+                </li>
+                <li>
+                    <a href="https://reconciliation-api.github.io/testbench/">
+                        Reconciliation service test bench
+                    </a>
+                </li>
+                <li>
+                    <a href="https://metadaten.community">metadaten.community Forum</a>
+                    <span class="badge text-bg-primary">de</span>
+                </li>
+            </ul>
+
+            <h2>API</h2>
+
+            <p>
+                Dieser Dienst implementiert die OpenRefine
+                <a href="https://docs.openrefine.org/manual/reconciling/">Reconciliation</a>
+                <a href="https://openrefine.org/docs/technical-reference/reconciliation-api">API</a
+                >.
+            </p>
+
+            <h3 id="general-api">
+                Allgemeine API
+                <small>
+                    <a
+                        href="https://www.w3.org/community/reports/reconciliation/CG-FINAL-specs-0.2-20230410">
+                        (spec)
+                    </a>
+                </small>
+            </h3>
+
+            <dl>
+                <dt>Service</dt>
+                <dd>
+                    <code>curl -L <span th:text="${baseUrl}">http...</span></code>
+                </dd>
+                <dt>JSONP-callback</dt>
+                <dd>
+                    <code>curl -L <span th:text="${baseUrl}">http...</span>?callback=jsonp</code>
+                </dd>
+                <dt>CORS-header</dt>
+                <dd>
+                    <code>
+                        curl -L --head
+                        <span th:text="${baseUrl}">http...</span> | grep access-control-allow-origin
+                    </code>
+                </dd>
+            </dl>
+
+            <h3 id="view-api">View-API</h3>
+
+            <dl>
+                <dt>
+                    Entities: preview
+                    <small>
+                        <a
+                            href="https://www.w3.org/community/reports/reconciliation/CG-FINAL-specs-0.2-20230410/#preview-service">
+                            (spec)
+                        </a>
+                    </small>
+                </dt>
+                <dd>
+                    <a th:href="@{/gnd/118624822(format='preview')}">/gnd/118624822.preview</a>
+                </dd>
+                <dt>
+                    Entities: view
+                    <small>
+                        <a
+                            href="https://www.w3.org/community/reports/reconciliation/CG-FINAL-specs-0.2-20230410/#dfn-view-template">
+                            (spec)
+                        </a>
+                    </small>
+                </dt>
+                <dd>
+                    <a th:href="@{/gnd/118624822}">/gnd/118624822</a>
+                </dd>
+            </dl>
+
+            <h3 id="query-api">
+                Query-API
+                <small>
+                    <a
+                        href="https://www.w3.org/community/reports/reconciliation/CG-FINAL-specs-0.2-20230410/#reconciliation-queries">
+                        (spec)
+                    </a>
+                </small>
+            </h3>
+
+            <dl>
+                <dt>Query: GET</dt>
+                <dd>
+                    <a
+                        th:with='sample=${&apos;{"q1":{"query":"Twain, Mark"}}&apos;}'
+                        th:href="@{/gnd/reconcile/(queries=${sample})}"
+                        th:text="|/gnd/reconcile/?queries=${sample}|">
+                        /gnd/reconcile/?queries={...}
+                    </a>
+                </dd>
+                <dt>Query: POST</dt>
+                <dd>
+                    <code>
+                        curl -L --data 'queries={"q1":{"query":"Twain, Mark"}}'
+                        <span th:text="${baseUrl}">http...</span>
+                    </code>
+                </dd>
+            </dl>
+
+            <h3 id="suggest-api">
+                Suggest-API
+                <small>
+                    <a
+                        href="https://www.w3.org/community/reports/reconciliation/CG-FINAL-specs-0.2-20230410/#suggest-services">
+                        (spec)
+                    </a>
+                </small>
+            </h3>
+
+            <dl>
+                <dt>Suggest: entity</dt>
+                <dd>
+                    <a th:href="@{/gnd/reconcile/suggest/entity(prefix='hbz')}">
+                        /gnd/reconcile/suggest/entity?prefix=hbz
+                    </a>
+                </dd>
+                <dt>Suggest: type</dt>
+                <dd>
+                    <a th:href="@{/gnd/reconcile/suggest/type(prefix='werk')}">
+                        /gnd/reconcile/suggest/type?prefix=werk
+                    </a>
+                </dd>
+                <dt>Suggest: property</dt>
+                <dd>
+                    <a th:href="@{/gnd/reconcile/suggest/property(prefix='beruf')}">
+                        /gnd/reconcile/suggest/property?prefix=beruf
+                    </a>
+                </dd>
+                <dt>Flyout: entity</dt>
+                <dd>
+                    <a th:href="@{/gnd/reconcile/flyout/entity(id='2047974-8')}">
+                        /gnd/reconcile/flyout/entity?id=2047974-8
+                    </a>
+                </dd>
+                <dt>Flyout: type</dt>
+                <dd>
+                    <a th:href="@{/gnd/reconcile/flyout/type(id='Work')}">
+                        /gnd/reconcile/flyout/type?id=Work
+                    </a>
+                </dd>
+                <dt>Flyout: property</dt>
+                <dd>
+                    <a th:href="@{/gnd/reconcile/flyout/property(id='professionOrOccupation')}">
+                        /gnd/reconcile/flyout/property?id=professionOrOccupation
+                    </a>
+                </dd>
+            </dl>
+
+            <h3 id="data-extension-api">Data-extension-API</h3>
+
+            <dl>
+                <dt>
+                    Property-proposals
+                    <small>
+                        <a
+                            href="https://www.w3.org/community/reports/reconciliation/CG-FINAL-specs-0.2-20230410/#data-extension-property-proposals">
+                            (spec)
+                        </a>
+                    </small>
+                </dt>
+                <dd>
+                    <a th:href="@{/gnd/reconcile/properties(type='Work')}">
+                        /gnd/reconcile/properties?type=Work
+                    </a>
+                </dd>
+                <dt>
+                    Extend: GET
+                    <small>
+                        <a
+                            href="https://www.w3.org/community/reports/reconciliation/CG-FINAL-specs-0.2-20230410/#data-extension-service">
+                            (spec)
+                        </a>
+                    </small>
+                </dt>
+                <dd>
+                    <a
+                        th:with='sample=${&apos;{"ids":["1081942517","4791358-7"],"properties":[{"id":"preferredName"},{"id":"firstAuthor"}]}&apos;}'
+                        th:href="@{/gnd/reconcile/(extend=${sample})}"
+                        th:text="|/gnd/reconcile/?extend=${sample}|">
+                        /gnd/reconcile/?extend={...}
+                    </a>
+                </dd>
+                <dt>Extend: POST</dt>
+                <dd>
+                    <code>
+                        curl -L --data
+                        'extend={"ids":["1081942517","4791358-7"],"properties":[{"id":"preferredName"},{"id":"firstAuthor"}]}'
+                        <span th:text="${baseUrl}">http...</span>
+                    </code>
+                </dd>
+            </dl>
+
+            <div class="card my-3 footer-card" id="footer-gnd">
+                <div class="card-body footer">
+                    <span class="float-start">
+                        <a href="https://gnd.network">
+                            <img
+                                th:src="@{/gnd/assets/images/gnd.png}"
+                                alt="GND-Logo"
+                                id="small-logo" />
+                        </a>
+                        <a href="https://www.hbz-nrw.de">
+                            <img
+                                th:src="@{/gnd/assets/images/hbz.svg}"
+                                alt="hbz-Logo"
+                                id="small-logo" />
+                        </a>
+                        &nbsp;GND Reconciliation | ein
+                        <a href="https://lobid.org">lobid</a>-Dienst im
+                        <a href="https://gnd.network">gnd.network</a>
+                    </span>
+                    <span class="float-end">
+                        <a href="https://lobid.org/warranty">Gewährleistung</a> |
+                        <a href="https://www.hbz-nrw.de/impressum">Impressum</a> |
+                        <a
+                            href="https://github.com/hbz/lobid/blob/master/conf/Datenschutzerklaerung_lobid.textile">
+                            Datenschutz
+                        </a>
+                        |
+                        <a href="https://github.com/hbz/lobid-gnd-ui">
+                            <i class="bi bi-github"></i> GitHub
+                        </a>
+                        &nbsp;
+                        <a href="https://blog.lobid.org">
+                            <i class="bi bi-pencil" aria-hidden="true"></i> Blog
+                        </a>
+                    </span>
+                </div>
+            </div>
+        </div>
+    </body>
+</html>

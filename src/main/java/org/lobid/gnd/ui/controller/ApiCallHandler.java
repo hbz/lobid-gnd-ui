@@ -1,5 +1,6 @@
 package org.lobid.gnd.ui.controller;
 
+import io.netty.handler.logging.LogLevel;
 import java.net.URI;
 import java.time.Duration;
 import java.util.List;
@@ -16,11 +17,12 @@ import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.reactive.function.server.HandlerFilterFunction;
 import org.springframework.web.reactive.function.server.ServerRequest;
 import org.springframework.web.reactive.function.server.ServerResponse;
-import org.springframework.web.util.UriBuilder;
+import org.springframework.web.util.UriComponentsBuilder;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import reactor.netty.http.client.HttpClient;
 import reactor.netty.resources.ConnectionProvider;
+import reactor.netty.transport.logging.AdvancedByteBufFormat;
 
 /** Proxy non-browser API requests directly to the lobid-gnd API. */
 @Component
@@ -28,21 +30,28 @@ public class ApiCallHandler {
 
     private final WebClient webClient;
 
-    public ApiCallHandler(@Value("${app.api}") String apiBaseUrl) {
+    @Value("${app.api}")
+    private String apiBaseUrl;
+
+    public ApiCallHandler() {
         ConnectionProvider provider =
                 ConnectionProvider.builder("").maxIdleTime(Duration.ofSeconds(1)).build();
+        HttpClient client =
+                HttpClient.create(provider)
+                        .wiretap(
+                                "reactor.netty.http.client.HttpClient",
+                                LogLevel.INFO,
+                                AdvancedByteBufFormat.TEXTUAL);
         this.webClient =
                 WebClient.builder()
-                        .clientConnector(
-                                new ReactorClientHttpConnector(HttpClient.create(provider)))
+                        .clientConnector(new ReactorClientHttpConnector(client))
                         .codecs(conf -> conf.defaultCodecs().maxInMemorySize(2 * 1024 * 1024))
-                        .baseUrl(apiBaseUrl)
                         .build();
     }
 
     public HandlerFilterFunction<ServerResponse, ServerResponse> proxy() {
         return (request, next) -> {
-            String apiFormats = "(json(l|ld|:.*)?|ttl|rdf|nt)";
+            String apiFormats = "(json(l|ld|:.*)?|ttl|rdf|nt|preview)";
             boolean apiCallRequest =
                     request.path().matches(".*\\." + apiFormats)
                             || request.queryParam("format").orElse("").matches(apiFormats);
@@ -58,33 +67,38 @@ public class ApiCallHandler {
         };
     }
 
-    private Mono<ServerResponse> proxy(ServerRequest request) {
+    public Mono<ServerResponse> proxy(ServerRequest request) {
         return webClient
-                .get()
+                .method(request.method())
                 .uri(uriFrom(request))
-                .headers(acceptFrom(request))
+                .headers(headersFrom(request))
+                .body(request.bodyToFlux(DataBuffer.class), DataBuffer.class)
                 .retrieve()
                 .toEntityFlux(DataBuffer.class)
                 .flatMap(toResponse());
     }
 
-    private Function<UriBuilder, URI> uriFrom(ServerRequest request) {
-        return uri ->
-                uri.path(request.path().replace("/gnd", ""))
-                        .queryParams(request.queryParams())
-                        .build();
+    private URI uriFrom(ServerRequest request) {
+        String[] schemeAndRest = apiBaseUrl.split("://");
+        return UriComponentsBuilder.fromUri(request.uri())
+                .scheme(schemeAndRest[0])
+                .host(schemeAndRest[1].split("/")[0])
+                .port(-1)
+                .build(true)
+                .toUri();
     }
 
-    private Consumer<HttpHeaders> acceptFrom(ServerRequest request) {
+    private Consumer<HttpHeaders> headersFrom(ServerRequest request) {
         return headers -> {
             headers.setAccept(request.headers().asHttpHeaders().getAccept());
+            headers.setContentType(request.headers().asHttpHeaders().getContentType());
         };
     }
 
     private Function<ResponseEntity<Flux<DataBuffer>>, Mono<ServerResponse>> toResponse() {
         return entity ->
                 ServerResponse.status(entity.getStatusCode())
-                        .contentType(entity.getHeaders().getContentType())
+                        .headers(headers -> headers.addAll(entity.getHeaders()))
                         .body(entity.getBody(), DataBuffer.class);
     }
 }
