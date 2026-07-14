@@ -39,7 +39,8 @@ public class DetailsHandler {
 
     public Mono<ServerResponse> byId(ServerRequest request) {
         try {
-            return gnd.entity(request.pathVariable("id")).flatMap(toResponse("details", request));
+            return gnd.entity(request.pathVariable("id").replace(".html", ""))
+                    .flatMap(toResponse("details", request));
         } catch (Exception e) {
             return errorResponse(request, 500, "Failed to load details page: " + e.getMessage());
         }

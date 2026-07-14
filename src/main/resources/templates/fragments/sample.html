@@ -1,0 +1,27 @@
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        $("input.search-gnd").autocomplete({
+            source: function (request, response) {
+                $.ajax({
+                    url: "/gnd/search",
+                    dataType: "jsonp",
+                    data: {
+                        q: request.term,
+                        format: "json:preferredName,professionOrOccupation",
+                    },
+                    success: function (data) {
+                        console.log("Autocomplete response data:", data);
+                        response(data);
+                    },
+                    error: function (xhr, status, error) {
+                        console.error("Autocomplete request failed:", error, xhr);
+                        response([]);
+                    },
+                });
+            },
+            select: function (event, ui) {
+                $("#id").val('id:"' + ui.item.id + '"');
+            },
+        });
+    });
+</script>

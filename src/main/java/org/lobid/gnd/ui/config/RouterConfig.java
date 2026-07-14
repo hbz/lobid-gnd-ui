@@ -1,5 +1,7 @@
 package org.lobid.gnd.ui.config;
 
+import org.lobid.gnd.ui.controller.ApiCallHandler;
+import org.lobid.gnd.ui.controller.ApiDocHandler;
 import org.lobid.gnd.ui.controller.DetailsHandler;
 import org.lobid.gnd.ui.controller.ErrorHandler;
 import org.lobid.gnd.ui.controller.IndexHandler;
@@ -20,18 +22,24 @@ public class RouterConfig {
 
     @Bean
     public RouterFunction<ServerResponse> detailsRoutes(
-            IndexHandler index, DetailsHandler details, SearchHandler search, ErrorHandler error) {
+            IndexHandler index,
+            DetailsHandler details,
+            SearchHandler search,
+            ErrorHandler error,
+            ApiDocHandler apiDoc,
+            ApiCallHandler apiCall) {
         return RouterFunctions.route()
                 .route(request -> request.uri().getRawPath().endsWith("/"), handleTrailingSlash())
                 .GET("/gnd", index::page)
                 .GET("/gnd/search", search::byQ)
-                .GET("/gnd/api", error::notImplemented)
+                .GET("/gnd/api", apiDoc::apiDoc)
                 .GET("/gnd/dataset", error::notImplemented)
                 .GET("/gnd/reconcile", error::notImplemented)
                 // Define URL route for GND entry with ID, e.g. `/gnd/4031483-2`:
                 .GET("/gnd/{id}", details::byId)
                 .resources("/gnd/assets/**", new ClassPathResource("static/"))
                 .filter(addIsDevserver())
+                .filter(apiCall.proxy())
                 .build();
     }
 

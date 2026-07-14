@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+<html
+    xmlns:th="http://www.thymeleaf.org"
+    xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+    layout:decorate="~{layout}">
+    <head>
+        <title>[[#{app.title}]] - API</title>
+    </head>
+
+    <body>
+        <div layout:fragment="content">
+            <h1>lobid-gnd API</h1>
+            <div class="alert alert-info mt-3" role="alert">
+                <span class="bi bi-info-circle" aria-hidden="true"></span>
+                Technische und sonstige Hinweise zur lobid-Nutzung finden sich in den
+                <a class="alert-link" href="https://lobid.org/usage-policy/"
+                    >Richtlinien zur API-Nutzung</a
+                >.
+            </div>
+
+            <div class="alert alert-info mb-3" role="alert">
+                <span class="bi bi-info-circle" aria-hidden="true"></span> Für Datenabgleich /
+                Matching empfehlen wir die eigens dafür entwickelte
+                <a class="alert-link" href="https://reconcile.gnd.network/"
+                    >GND-Reconciliation-Schnittstelle</a
+                >.
+            </div>
+
+            <h2 id="search">
+                Suche: <code>/gnd/search?q=text</code>
+                <small
+                    ><a href="#search"><span class="glyphicon glyphicon-link"></span></a
+                ></small>
+            </h2>
+
+            <dl>
+                <dt>Alles</dt>
+                <dd>
+                    <a
+                        th:with="url=@{/gnd/search(q='*', format='json')}"
+                        th:href="${url}"
+                        th:text="${url}"
+                        >/gnd/search?...</a
+                    >
+                </dd>
+                <dt>Alle Felder</dt>
+                <dd>
+                    <a
+                        th:with="url=@{/gnd/search(q='london', format='json')}"
+                        th:href="${url}"
+                        th:text="${url}"
+                        >/gnd/search?...</a
+                    >
+                </dd>
+                <dt>Feldsuche</dt>
+                <dd>
+                    <a
+                        th:with="url=@{/gnd/search(q='preferredName:Twain', format='json')}"
+                        th:href="${url}"
+                        th:text="${url}"
+                        >/gnd/search?...</a
+                    >
+                </dd>
+                <dt>Filter</dt>
+                <dd>
+                    <a
+                        th:with="url=@{/gnd/search(q='preferredName:Twain', filter='type:Person', format='json')}"
+                        th:href="${url}"
+                        th:text="${url}"
+                        >/gnd/search?...</a
+                    >
+                </dd>
+                <dt>Paginierung</dt>
+                <dd>
+                    <a
+                        th:with="url=@{/gnd/search(q='london', from='50', size='100', format='json')}"
+                        th:href="${url}"
+                        th:text="${url}"
+                        >/gnd/search?...</a
+                    >
+                </dd>
+                <dt>Sortierung</dt>
+                <dd>
+                    <a
+                        th:with="url=@{/gnd/search(q='scholl', sort='preferredName.keyword:asc', format='json')}"
+                        th:href="${url}"
+                        th:text="${url}"
+                        >/gnd/search?...</a
+                    >
+                </dd>
+                <dt>ASCII</dt>
+                <dd>
+                    <a
+                        th:with="url=@{/gnd/search(q='preferredName.ascii:Chor OR variantName.ascii:Chor', format='json')}"
+                        th:href="${url}"
+                        th:text="${url}"
+                        >/gnd/search?...</a
+                    >
+                </dd>
+            </dl>
+
+            <h2 id="direct-access">
+                Direktzugriff: <code>/gnd/&lt;id&gt;.json</code>
+                <small
+                    ><a href="#direct-access"><span class="glyphicon glyphicon-link"></span></a
+                ></small>
+            </h2>
+
+            <dl>
+                <dt>London</dt>
+                <dd>
+                    <a th:with="url=@{/gnd/4074335-4.json}" th:href="${url}" th:text="${url}"
+                        >/gnd/...</a
+                    >
+                </dd>
+                <dt>hbz</dt>
+                <dd>
+                    <a th:with="url=@{/gnd/2047974-8.json}" th:href="${url}" th:text="${url}"
+                        >/gnd/...</a
+                    >
+                </dd>
+                <dt>Goethe</dt>
+                <dd>
+                    <a th:with="url=@{/gnd/118540238.json}" th:href="${url}" th:text="${url}"
+                        >/gnd/...</a
+                    >
+                </dd>
+            </dl>
+
+            <h2 id="content_types">
+                Inhaltstypen
+                <small
+                    ><a href="#content_types"><span class="glyphicon glyphicon-link"></span></a
+                ></small>
+            </h2>
+
+            <p>Standardmäßig liefert dieser Dienst strukturierte API-Antworten (als JSON):</p>
+
+            <p><code>curl -L [[${baseUrl}]]/gnd/4074335-4</code></p>
+
+            <p>
+                Er unterstützt Content-Negotiation über den Accept-Header für JSON
+                (application/json) und HTML (text/html):
+            </p>
+
+            <p>
+                <code
+                    >curl -L --header "Accept: application/json"
+                    [[${baseUrl}]]/gnd/search?q=london</code
+                >
+            </p>
+
+            <p>
+                Der Query-Parameter "format" (Werte: html,json,jsonl) kann verwendet werden, um den
+                Accept-Header aufzuheben, z.B. zur Anzeige von JSON im Browser:
+            </p>
+
+            <p>
+                <a th:with="url=@{/gnd/4074335-4(format='json')}" th:href="${url}" th:text="${url}"
+                    >/gnd/...</a
+                >
+            </p>
+
+            <p>
+                Der Wert des Format-Parameters kann für Einzeltreffer auch in URLs als Dateiendung
+                verwendet werden:
+            </p>
+
+            <p>
+                <a th:with="url=@{/gnd/4074335-4.json}" th:href="${url}" th:text="${url}"
+                    >/gnd/...</a
+                >
+            </p>
+
+            <p>
+                Einzeltreffer unterstützen zudem verschiedene RDF-Serialisierungen (siehe Abschnitt
+                zu JSON-LD).
+            </p>
+
+            <h2 id="bulk_downloads">
+                Bulk-Downloads
+                <small
+                    ><a href="#bulk_downloads"><span class="glyphicon glyphicon-link"></span></a
+                ></small>
+            </h2>
+
+            <p>
+                Bulk-Downloads können im Format JSON lines (Accept: application/x-jsonlines oder
+                format=jsonl) bezogen werden:
+            </p>
+
+            <p>
+                <code
+                    >curl -L --header "Accept: application/x-jsonlines"
+                    "[[${baseUrl}]]/gnd/search?q=type:Country" &gt; countries.jsonl</code
+                >
+            </p>
+
+            <p>Für größere Anfragen kann die Antwort als gzip komprimiert werden:</p>
+
+            <p>
+                <code
+                    >curl -L --header "Accept-Encoding: gzip"
+                    "[[${baseUrl}]]/gnd/search?q=type:Company&amp;format=jsonl" &gt;
+                    companies.gz</code
+                >
+            </p>
+
+            <p>
+                Siehe auch
+                <a href="http://blog.lobid.org/2018/07/02/lobid-update.html#bulk-downloads">
+                    diesen Abschnitt
+                </a>
+                zu Bulk-Downloads in unserem Blog.
+            </p>
+
+            <h2 id="auto-complete">
+                Autovervollständigung
+                <small
+                    ><a href="#auto-complete"><span class="glyphicon glyphicon-link"></span></a
+                ></small>
+            </h2>
+
+            <p>
+                Die API unterstützt ein spezielles Antwortformat mit Vorschlägen zur
+                Autovervollständigung.
+            </p>
+
+            <dl>
+                <dt>Standardformat für Vorschläge verwenden: "format=json:suggest"</dt>
+                <dd>
+                    <a
+                        th:with="url=@{/gnd/search(q='Twain', format='json:suggest')}"
+                        th:href="${url}"
+                        th:text="${url}"
+                        >/gnd/search?...</a
+                    >
+                </dd>
+                <dt>Bestimmtes Feld für Vorschläge verwenden: "format=json:preferredName"</dt>
+                <dd>
+                    <a
+                        th:with="url=@{/gnd/search(q='Twain', format='json:preferredName')}"
+                        th:href="${url}"
+                        th:text="${url}"
+                        >/gnd/search?...</a
+                    >
+                </dd>
+                <dt>
+                    Vorschläge aus mehreren Feldern zusammenbauen:
+                    "format=json:preferredName,professionOrOccupation"
+                </dt>
+                <dd>
+                    <a
+                        th:with="url=@{/gnd/search(q='Twain', format='json:preferredName,professionOrOccupation')}"
+                        th:href="${url}"
+                        th:text="${url}"
+                        >/gnd/search?...</a
+                    >
+                </dd>
+                <dt>
+                    Feld-Templates zur Anpassung und Gruppierung:
+                    "format=json:preferredName,*_dateOfBirth in_placeOfBirth,†_dateOfDeath
+                    in_placeOfDeath"
+                </dt>
+                <dd>
+                    <a
+                        th:with="url=@{/gnd/search(q=Twain, format='json:preferredName,*_dateOfBirth in_placeOfBirth,†_dateOfDeath in_placeOfDeath'
+                        )}"
+                        th:href="${url}"
+                        th:text="${url}"
+                        >/gnd/search?...</a
+                    >
+                </dd>
+                <p>
+                    Siehe auch
+                    <a href="https://blog.lobid.org/2024/06/24/custom-gnd-suggests.html">
+                        diesen Blogbeitrag
+                    </a>
+                    zu Custom-Auto-Suggests.
+                </p>
+            </dl>
+
+            <p>
+                Damit kann z.B. eine Autovervollständigung umgesetzt werden, bei der zur Suche an
+                Stelle des gewählten Labels die entsprechende ID verwendet werden kann:
+            </p>
+
+            <form method="GET" class="form-inline mb-2" action="/gnd/search">
+                <input
+                    type="text"
+                    class="search-gnd"
+                    id="label"
+                    style="width: 350px"
+                    placeholder="Suchbegriff für Vorschläge eingeben" />
+                <input
+                    type="text"
+                    class="search-gnd"
+                    name="q"
+                    id="id"
+                    style="width: 350px"
+                    readonly
+                    placeholder="ID zu ausgewähltem Eintrag wird eingesetzt" />
+                <button type="submit" class="btn btn-outline-primary">Suchen</button>
+            </form>
+
+            <div th:replace="~{fragments/sample}" />
+
+            <p>Dieses Beispiel ist folgendermaßen mit JavaScript und jQuery UI implementiert:</p>
+
+            <pre><code class="grow-wrap"><textarea disabled>
+<th:block th:insert="~{fragments/sample}"></th:block>
+            </textarea></code></pre>
+
+            <h2 id="jsonld">
+                JSON-LD
+                <small
+                    ><a href="#jsonld"><span class="glyphicon glyphicon-link"></span></a
+                ></small>
+            </h2>
+
+            <p>
+                JSON-API-Anfragen liefern
+                <a href="http://json-ld.org/">JSON-LD</a>. Um damit zu experimentieren können sie
+                das JSON-LD oder URLs im
+                <a href="http://json-ld.org/playground/">JSON-LD Playground</a> einfügen.
+            </p>
+
+            <dl>
+                <dt>JSON-LD Context</dt>
+                <dd>
+                    <a th:with="url=@{/gnd/context.jsonld}" th:href="${url}" th:text="${url}"
+                        >/gnd/...</a
+                    >
+                </dd>
+                <dt>RDF-Konvertierung</dt>
+                <dd>
+                    Mit einem JSON-LD-Prozessor können sie API-Antworten in andere
+                    RDF-Serialisierungen umwandeln, z.B. in N-Quads mit
+                    <a href="https://github.com/digitalbazaar/jsonld-cli">jsonld-cli</a>:
+                </dd>
+                <dd>
+                    <code>jsonld format --n-quads [[${baseUrl}]]/gnd/4074335-4</code>
+                </dd>
+                <dd>
+                    Einzeltreffer können per <code>Accept</code> Header auch direkt als RDF/XML,
+                    Turtle oder N-Triples angefordert werden:
+                </dd>
+                <dd>
+                    <code
+                        >curl -L --header "Accept: application/rdf+xml"
+                        [[${baseUrl}]]/gnd/4074335-4</code
+                    >
+                </dd>
+                <dd>
+                    <code>curl -L --header "Accept: text/turtle" [[${baseUrl}]]/gnd/4074335-4</code>
+                </dd>
+                <dd>
+                    <code
+                        >curl -L --header "Accept: application/n-triples"
+                        [[${baseUrl}]]/gnd/4074335-4</code
+                    >
+                </dd>
+                <dd>
+                    Dabei werden wie im Abschnitt zu Inhaltstypen beschrieben neben dem
+                    Format-Parameter auch URLs mit Formatendungen unterstützt:
+                </dd>
+                <dd>
+                    <a th:with="url=@{/gnd/4074335-4.rdf}" th:href="${url}" th:text="${url}"
+                        >/gnd/...</a
+                    >
+                </dd>
+                <dd>
+                    <a th:with="url=@{/gnd/4074335-4.ttl}" th:href="${url}" th:text="${url}"
+                        >/gnd/...</a
+                    >
+                </dd>
+                <dd>
+                    <a th:with="url=@{/gnd/4074335-4.nt}" th:href="${url}" th:text="${url}"
+                        >/gnd/...</a
+                    >
+                </dd>
+            </dl>
+
+            <h2 id="openrefine">
+                OpenRefine
+                <small
+                    ><a href="#openrefine"><span class="glyphicon glyphicon-link"></span></a
+                ></small>
+            </h2>
+
+            <p>
+                Siehe
+                <a href="https://reconcile.gnd.network/">
+                    GND Reconciliation: Abgleich eigener Daten mit der Gemeinsamen Normdatei</a
+                >
+            </p>
+        </div>
+    </body>
+</html>
