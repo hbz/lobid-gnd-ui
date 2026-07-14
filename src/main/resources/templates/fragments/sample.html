@@ -10,7 +10,12 @@
                         format: "json:preferredName,professionOrOccupation",
                     },
                     success: function (data) {
+                        console.log("Autocomplete response data:", data);
                         response(data);
+                    },
+                    error: function (xhr, status, error) {
+                        console.error("Autocomplete request failed:", error, xhr);
+                        response([]);
                     },
                 });
             },
