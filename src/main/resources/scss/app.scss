@@ -4,3 +4,6 @@
 @import "~jquery-ui/themes/base/all.css";
 @import "~leaflet/dist/leaflet.css";
 @import "~vis-network/styles/vis-network.min.css";
+[data-bs-theme="dark"] {
+    @import "dark";
+}

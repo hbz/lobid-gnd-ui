@@ -111,7 +111,7 @@ public class DetailsHandler {
                 return Integer.parseInt(year);
             } catch (NumberFormatException e) {
                 e.printStackTrace();
-                return null;
+                return Integer.MIN_VALUE;
             }
         }
 
