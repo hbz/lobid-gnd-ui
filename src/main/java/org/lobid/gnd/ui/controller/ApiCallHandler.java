@@ -53,18 +53,23 @@ public class ApiCallHandler {
         return (request, next) -> {
             String apiFormats = "(json(l|ld|:.*)?|ttl|rdf|nt|preview)";
             boolean apiCallRequest =
-                    request.path().matches(".*\\." + apiFormats)
+                    pathSuffixMatchesFormat(request, apiFormats)
                             || request.queryParam("format").orElse("").matches(apiFormats);
             List<MediaType> acceptTypes =
                     MediaType.parseMediaTypes(request.headers().header(HttpHeaders.ACCEPT));
+            String browserFormats = "(html|js|css|png|jpg|woff2?)";
             boolean browserRequest =
-                    request.path().endsWith("bundle.js")
+                    pathSuffixMatchesFormat(request, browserFormats)
                             || acceptTypes.contains(MediaType.TEXT_HTML)
                             || acceptTypes.toString().contains("text/css")
                             || acceptTypes.toString().contains("image/")
                             || acceptTypes.toString().contains("application/font");
             return browserRequest && !apiCallRequest ? next.handle(request) : proxy(request);
         };
+    }
+
+    private boolean pathSuffixMatchesFormat(ServerRequest request, String format) {
+        return request.path().matches(".*\\." + format);
     }
 
     public Mono<ServerResponse> proxy(ServerRequest request) {
