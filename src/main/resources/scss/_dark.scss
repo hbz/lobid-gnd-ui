@@ -11,16 +11,20 @@
     $dark-border: var(--bs-border-color);
     $dark-bg-primary: var(--bs-body-bg);
     $dark-bg-secondary: #343434;
+    $dark-bg-highlight: #1b1b1b;
     $dark-text-primary: #e5e7eb;
     $dark-text-secondary: #d4d4d8;
     $dark-text-link: #8ab4f8;
 
     .page-header {
-        border-bottom-color: darken($dark-bg-secondary, 10%);
+        border-bottom-color: $dark-bg-secondary;
     }
     #header {
         background-blend-mode: overlay;
         background-color: $dark-bg-secondary;
+    }
+    .card-header {
+        background-color: $dark-bg-highlight;
     }
     .nav-link {
         color: $dark-text-primary !important;
