@@ -80,9 +80,11 @@
     textarea {
         color: $dark-text-primary;
     }
-    .json-ld-icon,
     .navbar-brand > img {
-        border: 1px solid $dark-bg-secondary;
+        border: 1px solid darken($dark-text-secondary, 20%);
+    }
+    .json-ld-icon {
+        filter: invert(0.35);
     }
     #gnd-query,
     .footer-card {
