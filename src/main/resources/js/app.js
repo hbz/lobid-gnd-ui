@@ -13,8 +13,6 @@ import L from "leaflet";
     const PREFERS_DARK = "(prefers-color-scheme: dark)";
     const TOGGLE_ELEMENT = "theme-toggle";
 
-    applyTheme(getInitialTheme());
-
     window.matchMedia?.(PREFERS_DARK).addEventListener("change", function (e) {
         applyTheme(e.matches ? "dark" : "light");
     });
@@ -23,11 +21,6 @@ import L from "leaflet";
         htmlElement.setAttribute("data-bs-theme", theme);
         localStorage.setItem(STORAGE_KEY, theme);
         updateToggleIcon(theme);
-    }
-
-    function getInitialTheme() {
-        if (localStorage.getItem(STORAGE_KEY)) return localStorage.getItem(STORAGE_KEY);
-        return window.matchMedia?.(PREFERS_DARK).matches ? "dark" : "light";
     }
 
     function updateToggleIcon(theme) {

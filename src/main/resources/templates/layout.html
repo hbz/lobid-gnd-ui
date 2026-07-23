@@ -4,6 +4,7 @@
     xmlns:th="http://www.thymeleaf.org"
     xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
     <head>
+        <th:block th:insert="~{fragments/theme}"></th:block>
         <title layout:title-pattern="$CONTENT_TITLE">[[#{app.title}]]</title>
         <meta charset="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
