@@ -1,79 +1,94 @@
-$dark-bg-primary: #343434;
-$dark-bg-secondary: #6d6d74;
-$dark-text-primary: #e5e7eb;
-$dark-text-secondary: #d4d4d8;
-$dark-text-link: #8ab4f8;
+[data-bs-theme="dark"] {
+    // Override some Bootstrap CSS variables (`--bs...`)
+    --bs-body-bg: #000;
+    --bs-border-color: #6d6d74;
+    --bs-border-color-translucent: rgba(255, 255, 255, 0.3);
+    .table-striped > tbody > tr:nth-of-type(2n + 1) > * {
+        --bs-table-bg-type: #1b1b1b;
+    }
 
-.page-header {
-    border-bottom-color: darken($dark-bg-secondary, 10%);
-}
-#header {
-    background-blend-mode: overlay;
-    background-color: $dark-bg-primary;
-}
-.nav-link {
-    color: $dark-text-primary !important;
-}
-a.active {
-    background-color: $dark-bg-secondary !important;
-    color: $dark-text-secondary !important;
-}
-.ui-autocomplete {
-    background-color: $dark-bg-primary;
-    border-color: $dark-bg-secondary;
-}
-.ui-autocomplete .ui-menu-item a {
-    color: $dark-text-primary;
-}
-.ui-autocomplete .ui-menu-item.hover,
-.ui-autocomplete .ui-menu-item.ui-state-focus,
-.ui-autocomplete .ui-menu-item-wrapper.ui-state-focus,
-.ui-autocomplete .ui-menu-item-wrapper.ui-state-active {
-    background-color: $dark-bg-secondary;
-    border-color: $dark-bg-primary;
-    color: $dark-text-primary;
-}
-.ui-autocomplete .ui-menu-item:hover .ui-menu-item-wrapper {
-    background-color: $dark-bg-secondary;
-    border-color: $dark-bg-primary;
-    color: $dark-text-primary;
-}
-.btn-default {
-    background-color: $dark-bg-primary;
-    border-color: $dark-bg-secondary;
-    color: $dark-text-primary;
-}
-.btn-default:hover,
-.btn-default:focus {
-    background-color: $dark-bg-secondary;
-    border-color: $dark-bg-secondary;
-    color: $dark-text-primary;
-}
-h1 a {
-    color: $dark-text-primary !important;
-}
-h1 a:hover {
-    color: $dark-text-secondary !important;
-}
-a,
-button {
-    color: $dark-text-link !important;
-}
-.alert {
-    background-color: $primary;
-    color: $dark-text-primary;
-}
-pre {
-    border-color: $dark-bg-secondary;
-}
-textarea {
-    color: $dark-text-primary;
-}
-.json-ld-icon,
-.navbar-brand > img {
-    border: 1px solid $dark-bg-secondary;
-}
-#gnd-query,
-.footer-card {
-    border-color: $dark-bg-secondary;
+    // Define and use our own SCSS variables (`$...`)
+    $dark-border: var(--bs-border-color);
+    $dark-bg-primary: var(--bs-body-bg);
+    $dark-bg-secondary: #343434;
+    $dark-text-primary: #e5e7eb;
+    $dark-text-secondary: #d4d4d8;
+    $dark-text-link: #8ab4f8;
+
+    .page-header {
+        border-bottom-color: darken($dark-bg-secondary, 10%);
+    }
+    #header {
+        background-blend-mode: overlay;
+        background-color: $dark-bg-secondary;
+    }
+    .nav-link {
+        color: $dark-text-primary !important;
+    }
+    a.active {
+        background-color: $dark-bg-secondary !important;
+        color: $dark-text-secondary !important;
+    }
+    .ui-autocomplete {
+        background-color: $dark-bg-primary;
+        border-color: $dark-border;
+    }
+    .ui-autocomplete .ui-menu-item a {
+        color: $dark-text-primary;
+    }
+    .ui-autocomplete .ui-menu-item.hover,
+    .ui-autocomplete .ui-menu-item.ui-state-focus,
+    .ui-autocomplete .ui-menu-item-wrapper.ui-state-focus,
+    .ui-autocomplete .ui-menu-item-wrapper.ui-state-active {
+        background-color: $dark-bg-secondary;
+        border-color: $dark-bg-primary;
+        color: $dark-text-primary;
+    }
+    .ui-autocomplete .ui-menu-item:hover .ui-menu-item-wrapper {
+        background-color: $dark-bg-secondary;
+        border-color: $dark-bg-primary;
+        color: $dark-text-primary;
+    }
+    .btn-default {
+        background-color: $dark-bg-primary;
+        border-color: $dark-border;
+        color: $dark-text-primary;
+    }
+    .btn-default:hover,
+    .btn-default:focus {
+        background-color: $dark-bg-secondary;
+        border-color: $dark-border;
+        color: $dark-text-primary;
+    }
+    h1 a {
+        color: $dark-text-primary !important;
+    }
+    h1 a:hover {
+        color: $dark-text-secondary !important;
+    }
+    a,
+    button {
+        color: $dark-text-link !important;
+    }
+    .alert {
+        background-color: $primary;
+        color: $dark-text-primary;
+    }
+    pre {
+        border-color: $dark-border;
+    }
+    textarea {
+        color: $dark-text-primary;
+    }
+    .json-ld-icon,
+    .navbar-brand > img {
+        border: 1px solid $dark-bg-secondary;
+    }
+    #gnd-query,
+    .footer-card {
+        border-color: $dark-border;
+    }
+    #footer-gnd a {
+        color: $dark-text-secondary !important;
+    }
 }
