@@ -3,8 +3,8 @@
         $("input.search-gnd").autocomplete({
             source: function (request, response) {
                 $.ajax({
-                    url: "/gnd/search",
-                    dataType: "jsonp",
+                    url: "https://lobid.org/gnd/search",
+                    dataType: "json",
                     data: {
                         q: request.term,
                         format: "json:preferredName,professionOrOccupation",

@@ -225,14 +225,11 @@ public class ApiDocTests extends HtmlPageTests {
         assertThat(pageFor(baseUrl, API_DOC).asNormalizedText())
                 .contains("input.search-gnd")
                 .contains(".autocomplete")
-                .contains("url")
-                .contains(": \"/gnd/search\"")
-                .contains("dataType")
-                .contains(": \"jsonp\"")
-                .contains("q")
-                .contains(": request.term")
-                .contains("format")
-                .contains(": \"json:preferredName,professionOrOccupation\"");
+                .contains("https://lobid.org/gnd/search")
+                .containsPattern("url ?: .*/gnd/search")
+                .containsPattern("dataType ?: \"jsonp?\"")
+                .containsPattern("q ?: request.term")
+                .containsPattern("format ?: \"json:preferredName,professionOrOccupation\"");
     }
 
     @ParameterizedTest
