@@ -49,7 +49,7 @@ document.addEventListener("DOMContentLoaded", function () {
         source: function (request, response) {
             $.ajax({
                 url: "/gnd/search",
-                dataType: "jsonp",
+                dataType: "json",
                 data: {
                     q: request.term,
                     size: 50,
@@ -57,6 +57,9 @@ document.addEventListener("DOMContentLoaded", function () {
                 },
                 success: function (data) {
                     response(data);
+                },
+                error: function (xhr, status, error) {
+                    response([]);
                 },
             });
         },
