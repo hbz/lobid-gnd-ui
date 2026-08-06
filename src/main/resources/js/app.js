@@ -7,6 +7,40 @@ import { Network } from "vis-network/peer/esm/vis-network.js";
 import "jquery-ui/ui/widgets/autocomplete";
 import L from "leaflet";
 
+(function () {
+    const htmlElement = document.documentElement;
+    const STORAGE_KEY = "theme-preference";
+    const PREFERS_DARK = "(prefers-color-scheme: dark)";
+    const TOGGLE_ELEMENT = "theme-toggle";
+
+    window.matchMedia?.(PREFERS_DARK).addEventListener("change", function (e) {
+        applyTheme(e.matches ? "dark" : "light");
+    });
+
+    function applyTheme(theme) {
+        htmlElement.setAttribute("data-bs-theme", theme);
+        localStorage.setItem(STORAGE_KEY, theme);
+        updateToggleIcon(theme);
+    }
+
+    function updateToggleIcon(theme) {
+        const icon = document.getElementById(TOGGLE_ELEMENT).querySelector("i");
+        const light = "bi-brightness-high-fill";
+        const dark = "bi-moon-stars-fill";
+        const isDark = theme === "dark";
+        icon.classList.add(isDark ? dark : light);
+        icon.classList.remove(isDark ? light : dark);
+    }
+
+    document.addEventListener("DOMContentLoaded", function () {
+        document.getElementById(TOGGLE_ELEMENT).addEventListener("click", function () {
+            const currentTheme = htmlElement.getAttribute("data-bs-theme");
+            const newTheme = currentTheme === "light" ? "dark" : "light";
+            applyTheme(newTheme);
+        });
+    });
+})();
+
 document.addEventListener("DOMContentLoaded", function () {
     const searchBox = document.getElementById("gnd-query");
     const clearButton = document.querySelector(".ui-autocomplete-clear");
@@ -150,7 +184,13 @@ document.addEventListener("DOMContentLoaded", function () {
                 navigationButtons: false,
                 keyboard: false,
             },
-            edges: { chosen: false },
+            edges: {
+                chosen: false,
+                font: { background: "white" },
+            },
+            nodes: {
+                font: { background: "white" },
+            },
             layout: { randomSeed: 2 },
             physics: {
                 forceAtlas2Based: {

@@ -4,6 +4,7 @@
     xmlns:th="http://www.thymeleaf.org"
     xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
     <head>
+        <th:block th:insert="~{fragments/theme}"></th:block>
         <title>GND Reconciliation</title>
         <meta charset="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -42,34 +43,40 @@
                             <span class="navbar-toggler-icon"></span>
                         </button>
                     </div>
-                    <div class="dropdown ms-auto" id="resources-nav">
-                        <ul class="nav navbar-nav">
-                            <div class="dropdown ms-auto">
-                                <a
-                                    href="#"
-                                    class="btn dropdown-toggle"
-                                    data-bs-toggle="dropdown"
-                                    title="Info">
-                                    <span class="bi bi-info-circle"></span><b class="caret"></b>
-                                </a>
-                                <ul class="dropdown-menu dropdown-menu-end">
-                                    <li class="dropdown-header">Dokumentation</li>
-                                    <li class="dropdown-item">
-                                        <a href="http://lobid.org/usage-policy" target="_blank">
-                                            Richtlinien zur API-Nutzung
-                                        </a>
-                                    </li>
-                                    <li class="divider"></li>
-                                    <li class="dropdown-header">Kontakt</li>
-                                    <li class="dropdown-item">
-                                        <a
-                                            href="mailto:lobid-admin@hbz-nrw.de?subject=Feedback%20zum%20GND-Reconciliation-Service">
-                                            Feedback zum Reconciliation-Service
-                                        </a>
-                                    </li>
-                                </ul>
-                            </div>
-                        </ul>
+                    <div class="d-flex ms-auto align-items-center">
+                        <button
+                            type="button"
+                            class="btn btn-link nav-link me-3"
+                            id="theme-toggle"
+                            th:title="#{theme.toggle}"
+                            th:aria-label="#{theme.toggle}">
+                            <i class="gnd-bi bi bi-brightness-high-fill"></i>
+                        </button>
+                        <div class="dropdown">
+                            <a
+                                href="#"
+                                class="btn dropdown-toggle nav-link me-2"
+                                data-bs-toggle="dropdown"
+                                title="Info">
+                                <i class="gnd-bi bi bi-info-circle"></i><b class="caret"></b>
+                            </a>
+                            <ul class="dropdown-menu dropdown-menu-end">
+                                <li class="dropdown-header">Dokumentation</li>
+                                <li class="dropdown-item">
+                                    <a href="http://lobid.org/usage-policy" target="_blank">
+                                        Richtlinien zur API-Nutzung
+                                    </a>
+                                </li>
+                                <li class="divider"></li>
+                                <li class="dropdown-header">Kontakt</li>
+                                <li class="dropdown-item">
+                                    <a
+                                        href="mailto:lobid-admin@hbz-nrw.de?subject=Feedback%20zum%20GND-Reconciliation-Service">
+                                        Feedback zum Reconciliation-Service
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
                     </div>
                 </div>
             </nav>
