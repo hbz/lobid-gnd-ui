@@ -1,0 +1,9 @@
+<script>
+    (function () {
+        document.documentElement.setAttribute(
+            "data-bs-theme",
+            localStorage.getItem("theme-preference") ||
+                (window.matchMedia?.("(prefers-color-scheme: dark)").matches ? "dark" : "light")
+        );
+    })();
+</script>
