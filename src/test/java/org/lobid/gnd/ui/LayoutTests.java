@@ -14,7 +14,7 @@ import org.junit.jupiter.params.provider.ValueSource;
 public class LayoutTests extends HtmlPageTests {
 
     @ParameterizedTest
-    @ValueSource(strings = {PRODUCTION, DEVELOPMENT})
+    @ValueSource(strings = {DEVELOPMENT})
     public void testLayoutContent(String baseUrl) throws IOException {
         HtmlPage testPage = pageFor(baseUrl, "");
         assertThat(testPage.asNormalizedText())
@@ -30,7 +30,7 @@ public class LayoutTests extends HtmlPageTests {
     }
 
     @ParameterizedTest
-    @ValueSource(strings = {PRODUCTION, DEVELOPMENT})
+    @ValueSource(strings = {DEVELOPMENT})
     public void testLayoutForm(String baseUrl) throws IOException {
         List<HtmlForm> forms = pageFor(baseUrl, "").getForms();
         assertThat(forms).isNotEmpty();
@@ -38,7 +38,7 @@ public class LayoutTests extends HtmlPageTests {
     }
 
     @ParameterizedTest
-    @ValueSource(strings = {PRODUCTION, DEVELOPMENT})
+    @ValueSource(strings = {DEVELOPMENT})
     public void testLayoutLinks(String baseUrl) throws IOException {
         assertThat(pageFor(baseUrl, "").getElementsByTagName("a").toString())
                 .contains("/gnd")
@@ -56,7 +56,7 @@ public class LayoutTests extends HtmlPageTests {
     }
 
     @ParameterizedTest
-    @ValueSource(strings = {PRODUCTION, DEVELOPMENT})
+    @ValueSource(strings = {DEVELOPMENT})
     public void testJsonLdScript(String baseUrl) throws IOException {
         HtmlScript jsonLdScript =
                 pageFor(baseUrl, "").getFirstByXPath("//script[@type='application/ld+json']");

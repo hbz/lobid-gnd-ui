@@ -84,11 +84,11 @@ public class ApiCallHandler {
     }
 
     private URI uriFrom(ServerRequest request) {
-        String[] schemeAndRest = apiBaseUrl.split("://");
+        URI baseUri = URI.create(apiBaseUrl);
         return UriComponentsBuilder.fromUri(request.uri())
-                .scheme(schemeAndRest[0])
-                .host(schemeAndRest[1].split("/")[0])
-                .port(-1)
+                .scheme(baseUri.getScheme())
+                .host(baseUri.getHost())
+                .port(baseUri.getPort())
                 .build(true)
                 .toUri();
     }

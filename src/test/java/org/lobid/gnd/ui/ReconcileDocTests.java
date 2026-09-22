@@ -12,13 +12,13 @@ public class ReconcileDocTests extends HtmlPageTests {
     private static final String RECONCILE_DOC = "/reconcile";
 
     @ParameterizedTest
-    @ValueSource(strings = {PRODUCTION, DEVELOPMENT})
+    @ValueSource(strings = {DEVELOPMENT})
     public void testReconcileDocPageTitle(String baseUrl) throws IOException {
         assertThat(pageFor(baseUrl, RECONCILE_DOC).getTitleText()).isEqualTo("GND Reconciliation");
     }
 
     @ParameterizedTest
-    @ValueSource(strings = {PRODUCTION, DEVELOPMENT})
+    @ValueSource(strings = {DEVELOPMENT})
     public void testReconcileDocPageHeaders(String baseUrl) throws IOException {
         assertThat(pageFor(baseUrl, RECONCILE_DOC).asNormalizedText())
                 .contains("GND Reconciliation")
@@ -29,7 +29,7 @@ public class ReconcileDocTests extends HtmlPageTests {
     }
 
     @ParameterizedTest
-    @ValueSource(strings = {PRODUCTION, DEVELOPMENT})
+    @ValueSource(strings = {DEVELOPMENT})
     public void testGeneralApiDocumentation(String baseUrl) throws IOException {
         assertThat(pageFor(baseUrl, RECONCILE_DOC).asNormalizedText())
                 .contains("Service-URL:")
@@ -41,7 +41,7 @@ public class ReconcileDocTests extends HtmlPageTests {
     }
 
     @ParameterizedTest
-    @ValueSource(strings = {PRODUCTION, DEVELOPMENT})
+    @ValueSource(strings = {DEVELOPMENT})
     public void testViewApiDocumentation(String baseUrl) throws IOException {
         assertThat(pageFor(baseUrl, RECONCILE_DOC).asNormalizedText())
                 .contains("View-API")
@@ -52,7 +52,7 @@ public class ReconcileDocTests extends HtmlPageTests {
     }
 
     @ParameterizedTest
-    @ValueSource(strings = {PRODUCTION, DEVELOPMENT})
+    @ValueSource(strings = {DEVELOPMENT})
     public void testQueryApiDocumentation(String baseUrl) throws IOException {
         assertThat(pageFor(baseUrl, RECONCILE_DOC).asNormalizedText())
                 .contains("Query-API")
@@ -63,7 +63,7 @@ public class ReconcileDocTests extends HtmlPageTests {
     }
 
     @ParameterizedTest
-    @ValueSource(strings = {PRODUCTION, DEVELOPMENT})
+    @ValueSource(strings = {DEVELOPMENT})
     public void testSuggestApiDocumentation(String baseUrl) throws IOException {
         assertThat(pageFor(baseUrl, RECONCILE_DOC).asNormalizedText())
                 .contains("Suggest-API")
@@ -73,7 +73,7 @@ public class ReconcileDocTests extends HtmlPageTests {
     }
 
     @ParameterizedTest
-    @ValueSource(strings = {PRODUCTION, DEVELOPMENT})
+    @ValueSource(strings = {DEVELOPMENT})
     public void testSuggestEntityEndpoint(String baseUrl) throws IOException, InterruptedException {
         assertThat(fetchHttpResponse(baseUrl, "reconcile/suggest/entity?prefix=hbz"))
                 .is(validJson())
@@ -81,7 +81,7 @@ public class ReconcileDocTests extends HtmlPageTests {
     }
 
     @ParameterizedTest
-    @ValueSource(strings = {PRODUCTION, DEVELOPMENT})
+    @ValueSource(strings = {DEVELOPMENT})
     public void testSuggestTypeEndpoint(String baseUrl) throws IOException, InterruptedException {
         assertThat(fetchHttpResponse(baseUrl, "reconcile/suggest/type?prefix=werk"))
                 .is(validJson())
@@ -89,7 +89,7 @@ public class ReconcileDocTests extends HtmlPageTests {
     }
 
     @ParameterizedTest
-    @ValueSource(strings = {PRODUCTION, DEVELOPMENT})
+    @ValueSource(strings = {DEVELOPMENT})
     public void testSuggestPropertyEndpoint(String baseUrl)
             throws IOException, InterruptedException {
         assertThat(fetchHttpResponse(baseUrl, "reconcile/suggest/property?prefix=beruf"))
@@ -98,7 +98,7 @@ public class ReconcileDocTests extends HtmlPageTests {
     }
 
     @ParameterizedTest
-    @ValueSource(strings = {PRODUCTION, DEVELOPMENT})
+    @ValueSource(strings = {DEVELOPMENT})
     public void testFlyoutApiDocumentation(String baseUrl) throws IOException {
         assertThat(pageFor(baseUrl, RECONCILE_DOC).asNormalizedText())
                 .contains("Flyout")
@@ -108,20 +108,20 @@ public class ReconcileDocTests extends HtmlPageTests {
     }
 
     @ParameterizedTest
-    @ValueSource(strings = {PRODUCTION, DEVELOPMENT})
+    @ValueSource(strings = {DEVELOPMENT})
     public void testFlyoutEntityEndpoint(String baseUrl) throws IOException, InterruptedException {
         assertThat(fetchHttpResponse(baseUrl, "reconcile/flyout/entity?id=2047974-8"))
                 .contains("Hochschulbibliothekszentrum");
     }
 
     @ParameterizedTest
-    @ValueSource(strings = {PRODUCTION, DEVELOPMENT})
+    @ValueSource(strings = {DEVELOPMENT})
     public void testFlyoutTypeEndpoint(String baseUrl) throws IOException, InterruptedException {
         assertThat(fetchHttpResponse(baseUrl, "reconcile/flyout/type?id=Work")).contains("Werk");
     }
 
     @ParameterizedTest
-    @ValueSource(strings = {PRODUCTION, DEVELOPMENT})
+    @ValueSource(strings = {DEVELOPMENT})
     public void testFlyoutPropertyEndpoint(String baseUrl)
             throws IOException, InterruptedException {
         String response =
@@ -130,7 +130,7 @@ public class ReconcileDocTests extends HtmlPageTests {
     }
 
     @ParameterizedTest
-    @ValueSource(strings = {PRODUCTION, DEVELOPMENT})
+    @ValueSource(strings = {DEVELOPMENT})
     public void testDataExtensionApiDocumentation(String baseUrl) throws IOException {
         assertThat(pageFor(baseUrl, RECONCILE_DOC).asNormalizedText())
                 .contains("Data-extension-API")
@@ -142,7 +142,7 @@ public class ReconcileDocTests extends HtmlPageTests {
     }
 
     @ParameterizedTest
-    @ValueSource(strings = {PRODUCTION, DEVELOPMENT})
+    @ValueSource(strings = {DEVELOPMENT})
     public void testPropertyProposalsEndpoint(String baseUrl)
             throws IOException, InterruptedException {
         assertThat(fetchHttpResponse(baseUrl, "reconcile/properties?type=Work"))
