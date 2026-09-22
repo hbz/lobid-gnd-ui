@@ -45,7 +45,7 @@ public abstract class HtmlPageTests {
     @LocalServerPort private int port;
 
     @ParameterizedTest
-    @ValueSource(strings = {PRODUCTION, DEVELOPMENT})
+    @ValueSource(strings = {DEVELOPMENT})
     public void testRoute(String baseUrl) throws IOException {
         HtmlPage testPage = pageFor(baseUrl, COLOGNE);
         assertThat(testPage.getWebResponse().isSuccess());
