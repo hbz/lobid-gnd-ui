@@ -97,6 +97,7 @@ public class ApiCallHandler {
         return headers -> {
             headers.setAccept(request.headers().asHttpHeaders().getAccept());
             headers.setContentType(request.headers().asHttpHeaders().getContentType());
+            headers.setOrigin(request.headers().asHttpHeaders().getOrigin());
         };
     }
 
