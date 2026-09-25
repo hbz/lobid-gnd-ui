@@ -54,7 +54,9 @@ public class ApiCallHandler {
             String apiFormats = "(json(l|ld|:.*)?|ttl|rdf|nt|preview)";
             boolean apiCallRequest =
                     pathSuffixMatchesFormat(request, apiFormats)
-                            || request.queryParam("format").orElse("").matches(apiFormats);
+                            || request.queryParam("format").orElse("").matches(apiFormats)
+                            || request.queryParam("queries").isPresent()
+                            || request.queryParam("extend").isPresent();
             List<MediaType> acceptTypes =
                     MediaType.parseMediaTypes(request.headers().header(HttpHeaders.ACCEPT));
             String browserFormats = "(html|js|css|png|jpg|woff2?)";
@@ -89,6 +91,8 @@ public class ApiCallHandler {
                 .scheme(baseUri.getScheme())
                 .host(baseUri.getHost())
                 .port(baseUri.getPort())
+                // reconciliation backend API expects a trailing slash:
+                .replacePath(request.uri().getRawPath().replaceAll("reconcile$", "reconcile/"))
                 .build(true)
                 .toUri();
     }

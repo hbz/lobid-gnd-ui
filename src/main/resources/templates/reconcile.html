@@ -184,16 +184,16 @@
             <dl>
                 <dt>Service</dt>
                 <dd>
-                    <code>curl -L <span th:text="${baseUrl}">http...</span></code>
+                    <code>curl <span th:text="${baseUrl}">http...</span></code>
                 </dd>
                 <dt>JSONP-callback</dt>
                 <dd>
-                    <code>curl -L <span th:text="${baseUrl}">http...</span>?callback=jsonp</code>
+                    <code>curl <span th:text="${baseUrl}">http...</span>?callback=jsonp</code>
                 </dd>
                 <dt>CORS-header</dt>
                 <dd>
                     <code>
-                        curl -L --head
+                        curl --head
                         <span th:text="${baseUrl}">http...</span> | grep access-control-allow-origin
                     </code>
                 </dd>
@@ -243,15 +243,15 @@
                 <dd>
                     <a
                         th:with='sample=${&apos;{"q1":{"query":"Twain, Mark"}}&apos;}'
-                        th:href="@{/gnd/reconcile/(queries=${sample})}"
-                        th:text="|/gnd/reconcile/?queries=${sample}|">
-                        /gnd/reconcile/?queries={...}
+                        th:href="@{/gnd/reconcile(queries=${sample})}"
+                        th:text="|/gnd/reconcile?queries=${sample}|">
+                        /gnd/reconcile?queries={...}
                     </a>
                 </dd>
                 <dt>Query: POST</dt>
                 <dd>
                     <code>
-                        curl -L --data 'queries={"q1":{"query":"Twain, Mark"}}'
+                        curl --data 'queries={"q1":{"query":"Twain, Mark"}}'
                         <span th:text="${baseUrl}">http...</span>
                     </code>
                 </dd>
@@ -335,15 +335,15 @@
                 <dd>
                     <a
                         th:with='sample=${&apos;{"ids":["1081942517","4791358-7"],"properties":[{"id":"preferredName"},{"id":"firstAuthor"}]}&apos;}'
-                        th:href="@{/gnd/reconcile/(extend=${sample})}"
-                        th:text="|/gnd/reconcile/?extend=${sample}|">
-                        /gnd/reconcile/?extend={...}
+                        th:href="@{/gnd/reconcile(extend=${sample})}"
+                        th:text="|/gnd/reconcile?extend=${sample}|">
+                        /gnd/reconcile?extend={...}
                     </a>
                 </dd>
                 <dt>Extend: POST</dt>
                 <dd>
                     <code>
-                        curl -L --data
+                        curl --data
                         'extend={"ids":["1081942517","4791358-7"],"properties":[{"id":"preferredName"},{"id":"firstAuthor"}]}'
                         <span th:text="${baseUrl}">http...</span>
                     </code>

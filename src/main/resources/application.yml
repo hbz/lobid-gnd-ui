@@ -12,7 +12,7 @@ logging:
 app:
   api: https://test.lobid.org/gnd
   dontShowOnMainPage: 1012979-0, 118551655
-  reconcile: https://test.lobid.org/gnd/reconcile/
+  reconcile: https://test.lobid.org/gnd/reconcile
   icons:
     CorporateBody: "bi bi-house-gear-fill"
     ConferenceOrEvent: "bi bi-chat-dots-fill"
