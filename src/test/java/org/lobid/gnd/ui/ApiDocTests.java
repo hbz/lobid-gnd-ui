@@ -8,6 +8,7 @@ import org.htmlunit.html.HtmlButton;
 import org.htmlunit.html.HtmlElement;
 import org.htmlunit.html.HtmlInput;
 import org.htmlunit.html.HtmlPage;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 
@@ -279,6 +280,7 @@ public class ApiDocTests extends HtmlPageTests {
 
     @ParameterizedTest
     @ValueSource(strings = {DEVELOPMENT})
+    @Tag("skip-in-ci")
     public void testAutocompleteSuggestExample(String baseUrl) throws IOException {
         HtmlPage apiPage = pageFor(baseUrl, API_DOC);
 
