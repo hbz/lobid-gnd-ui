@@ -10,7 +10,7 @@ import reactor.core.publisher.Mono;
 @Component
 public class ReconcileHandler {
 
-    @Value("${app.reconcile}")
+    @Value("${app.host.reconcile}")
     private String reconcileUrl;
 
     public Mono<ServerResponse> reconcile(ServerRequest request) {
