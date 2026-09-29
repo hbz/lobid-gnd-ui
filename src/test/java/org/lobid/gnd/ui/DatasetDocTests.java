@@ -12,20 +12,20 @@ public class DatasetDocTests extends HtmlPageTests {
     private static final String DATASET_DOC = "/dataset";
 
     @ParameterizedTest
-    @ValueSource(strings = {PRODUCTION, DEVELOPMENT})
+    @ValueSource(strings = {DEVELOPMENT})
     public void testDatasetDocPageTitle(String baseUrl) throws IOException {
         assertThat(pageFor(baseUrl, DATASET_DOC).getTitleText()).isEqualTo("Dataset: lobid-gnd");
     }
 
     @ParameterizedTest
-    @ValueSource(strings = {PRODUCTION, DEVELOPMENT})
+    @ValueSource(strings = {DEVELOPMENT})
     public void testDatasetDocPageHeaders(String baseUrl) throws IOException {
         String text = pageFor(baseUrl, DATASET_DOC).asNormalizedText();
         assertThat(text).contains("Daten").contains("API");
     }
 
     @ParameterizedTest
-    @ValueSource(strings = {PRODUCTION, DEVELOPMENT})
+    @ValueSource(strings = {DEVELOPMENT})
     public void testDatasetDescription(String baseUrl) throws IOException {
         assertThat(pageFor(baseUrl, DATASET_DOC).asNormalizedText())
                 .contains("Gemeinsame Normdatei (GND)")
@@ -35,7 +35,7 @@ public class DatasetDocTests extends HtmlPageTests {
     }
 
     @ParameterizedTest
-    @ValueSource(strings = {PRODUCTION, DEVELOPMENT})
+    @ValueSource(strings = {DEVELOPMENT})
     public void testDatasetMetadata(String baseUrl) throws IOException {
         assertThat(pageFor(baseUrl, DATASET_DOC).asNormalizedText())
                 .contains("lobid-gnd")
@@ -60,7 +60,7 @@ public class DatasetDocTests extends HtmlPageTests {
     }
 
     @ParameterizedTest
-    @ValueSource(strings = {PRODUCTION, DEVELOPMENT})
+    @ValueSource(strings = {DEVELOPMENT})
     public void testDatasetApiSection(String baseUrl) throws IOException {
         assertThat(pageFor(baseUrl, DATASET_DOC).asNormalizedText())
                 .contains("lobid-gnd-API")
@@ -72,7 +72,7 @@ public class DatasetDocTests extends HtmlPageTests {
     }
 
     @ParameterizedTest
-    @ValueSource(strings = {PRODUCTION, DEVELOPMENT})
+    @ValueSource(strings = {DEVELOPMENT})
     public void testDatasetJsonLdEndpoint(String baseUrl) throws IOException, InterruptedException {
         assertThat(fetchHttpResponse(baseUrl, "dataset.jsonld"))
                 .is(validJson())

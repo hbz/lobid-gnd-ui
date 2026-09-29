@@ -54,7 +54,9 @@ public class ApiCallHandler {
             String apiFormats = "(json(l|ld|:.*)?|ttl|rdf|nt|preview)";
             boolean apiCallRequest =
                     pathSuffixMatchesFormat(request, apiFormats)
-                            || request.queryParam("format").orElse("").matches(apiFormats);
+                            || request.queryParam("format").orElse("").matches(apiFormats)
+                            || request.queryParam("queries").isPresent()
+                            || request.queryParam("extend").isPresent();
             List<MediaType> acceptTypes =
                     MediaType.parseMediaTypes(request.headers().header(HttpHeaders.ACCEPT));
             String browserFormats = "(html|js|css|png|jpg|woff2?)";
@@ -84,11 +86,13 @@ public class ApiCallHandler {
     }
 
     private URI uriFrom(ServerRequest request) {
-        String[] schemeAndRest = apiBaseUrl.split("://");
+        URI baseUri = URI.create(apiBaseUrl);
         return UriComponentsBuilder.fromUri(request.uri())
-                .scheme(schemeAndRest[0])
-                .host(schemeAndRest[1].split("/")[0])
-                .port(-1)
+                .scheme(baseUri.getScheme())
+                .host(baseUri.getHost())
+                .port(baseUri.getPort())
+                // reconciliation backend API expects a trailing slash:
+                .replacePath(request.uri().getRawPath().replaceAll("reconcile$", "reconcile/"))
                 .build(true)
                 .toUri();
     }
@@ -97,6 +101,7 @@ public class ApiCallHandler {
         return headers -> {
             headers.setAccept(request.headers().asHttpHeaders().getAccept());
             headers.setContentType(request.headers().asHttpHeaders().getContentType());
+            headers.setOrigin(request.headers().asHttpHeaders().getOrigin());
         };
     }
 

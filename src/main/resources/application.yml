@@ -10,8 +10,11 @@ logging:
           client:
             HttpClient: INFO
 app:
-  api: https://test.lobid.org/gnd
+  api: https://lobid.org/gnd
   dontShowOnMainPage: 1012979-0, 118551655
+  host:
+    main: https://lobid.org
+    reconcile: https://reconcile.gnd.network
   icons:
     CorporateBody: "bi bi-house-gear-fill"
     ConferenceOrEvent: "bi bi-chat-dots-fill"

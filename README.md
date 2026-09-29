@@ -1,6 +1,6 @@
 # lobid-gnd-ui
 
-This is a prototype for a lobid-gnd UI implementation based on Spring Boot. It builds with Gradle and uses Thymeleaf, Bootstrap, and Webpack for the frontend. It is based on the reactive Spring WebFlux stack, using the functional/HTTP-oriented WebFlux.fn style. It fetches JSON data from the lobid-gnd API.
+This is a lobid-gnd UI implementation based on Spring Boot. It builds with Gradle and uses Thymeleaf, Bootstrap, and Webpack for the frontend. It is based on the reactive Spring WebFlux stack, using the functional/HTTP-oriented WebFlux.fn style. It fetches JSON data from the lobid-gnd API.
 
 [![Build](https://github.com/hbz/lobid-gnd-ui/workflows/Build/badge.svg)](https://github.com/hbz/lobid-gnd-ui/actions?query=workflow%3ABuild)
 

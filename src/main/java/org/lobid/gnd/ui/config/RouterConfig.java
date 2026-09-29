@@ -34,13 +34,14 @@ public class RouterConfig {
             ApiCallHandler apiCall) {
         return RouterFunctions.route()
                 .filter(apiCall.proxy())
-                .route(request -> request.path().startsWith("/gnd/reconcile/"), apiCall::proxy)
                 .route(request -> request.uri().getRawPath().endsWith("/"), handleTrailingSlash())
                 .GET("/gnd", index::page)
                 .GET("/gnd/search", search::byQ)
                 .GET("/gnd/api", apiDoc::apiDoc)
                 .GET("/gnd/dataset", dataset::dataset)
                 .GET("/gnd/reconcile", reconcile::reconcile)
+                .GET("/gnd/reconcile/**", apiCall::proxy)
+                .POST("/gnd/reconcile", apiCall::proxy)
                 // Define URL route for GND entry with ID, e.g. `/gnd/4031483-2`:
                 .GET("/gnd/{id}", details::byId)
                 .resources("/gnd/assets/**", new ClassPathResource("static/"))

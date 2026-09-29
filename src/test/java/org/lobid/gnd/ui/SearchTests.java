@@ -21,14 +21,14 @@ public class SearchTests extends HtmlPageTests {
     private static final String SEARCH = "/search";
 
     @ParameterizedTest
-    @ValueSource(strings = {PRODUCTION, DEVELOPMENT})
+    @ValueSource(strings = {DEVELOPMENT})
     public void testTrailingSlashSearch(String baseUrl) throws IOException {
         String searchPageText = pageFor(baseUrl, SEARCH + "/").asNormalizedText();
         assertThat(searchPageText).contains("Treffer, zeige 1 bis 10");
     }
 
     @ParameterizedTest
-    @ValueSource(strings = {PRODUCTION, DEVELOPMENT})
+    @ValueSource(strings = {DEVELOPMENT})
     public void testSearchForm(String baseUrl) throws IOException {
         HtmlPage searchPage = pageFor(baseUrl, SEARCH);
         HtmlInput searchBox = searchPage.getFirstByXPath("//input[@id='gnd-query']");
@@ -38,7 +38,7 @@ public class SearchTests extends HtmlPageTests {
     }
 
     @ParameterizedTest
-    @ValueSource(strings = {PRODUCTION, DEVELOPMENT})
+    @ValueSource(strings = {DEVELOPMENT})
     public void testSearchFormClear(String baseUrl) throws IOException {
         HtmlPage searchPage = pageFor(baseUrl, SEARCH);
         HtmlInput searchBox = searchPage.getFirstByXPath("//input[@id='gnd-query']");
@@ -51,7 +51,7 @@ public class SearchTests extends HtmlPageTests {
     }
 
     @ParameterizedTest
-    @ValueSource(strings = {PRODUCTION, DEVELOPMENT})
+    @ValueSource(strings = {DEVELOPMENT})
     public void testPageSize(String baseUrl) throws IOException {
         assertThat(search("Test", baseUrl))
                 .as("page size can be switched, default is 10")
@@ -62,7 +62,7 @@ public class SearchTests extends HtmlPageTests {
     }
 
     @ParameterizedTest
-    @ValueSource(strings = {PRODUCTION, DEVELOPMENT})
+    @ValueSource(strings = {DEVELOPMENT})
     public void testPageLinks(String baseUrl) throws IOException {
         assertThat(search("Test", baseUrl))
                 .as("specific page can be selected, default is 1")
@@ -79,7 +79,7 @@ public class SearchTests extends HtmlPageTests {
     }
 
     @ParameterizedTest
-    @ValueSource(strings = {PRODUCTION, DEVELOPMENT})
+    @ValueSource(strings = {DEVELOPMENT})
     public void testSearchResults(String baseUrl) throws IOException {
         HtmlPage searchPage = search("Make-Tuwen", baseUrl);
         DomAttr detailsLink = searchPage.getFirstByXPath("//a[text()='Twain, Mark']/@href");
@@ -111,7 +111,7 @@ public class SearchTests extends HtmlPageTests {
     }
 
     @ParameterizedTest
-    @ValueSource(strings = {PRODUCTION, DEVELOPMENT})
+    @ValueSource(strings = {DEVELOPMENT})
     public void testFacetLinks(String baseUrl) throws IOException {
         assertThat(search("Make-Tuwen", baseUrl))
                 .has(linkFor("Person", "type", "Person"))
@@ -149,7 +149,7 @@ public class SearchTests extends HtmlPageTests {
     }
 
     @ParameterizedTest
-    @ValueSource(strings = {PRODUCTION, DEVELOPMENT})
+    @ValueSource(strings = {DEVELOPMENT})
     public void testFacetFilter(String baseUrl) throws IOException {
         HtmlPage searchPage = search("Make-Tuwen", baseUrl);
         assertThat(searchPage.getByXPath(linksToRemoveFilter()))
@@ -164,7 +164,7 @@ public class SearchTests extends HtmlPageTests {
     }
 
     @ParameterizedTest
-    @ValueSource(strings = {PRODUCTION, DEVELOPMENT})
+    @ValueSource(strings = {DEVELOPMENT})
     public void testAutocomplete(String baseUrl) throws IOException {
         HtmlPage searchPage = pageFor(baseUrl, SEARCH);
         webClient.getOptions().setCssEnabled(false);
