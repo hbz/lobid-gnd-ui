@@ -40,7 +40,7 @@ public class ApiCallHandler {
                 HttpClient.create(provider)
                         .wiretap(
                                 "reactor.netty.http.client.HttpClient",
-                                LogLevel.INFO,
+                                LogLevel.DEBUG,
                                 AdvancedByteBufFormat.TEXTUAL);
         this.webClient =
                 WebClient.builder()

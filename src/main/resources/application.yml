@@ -8,7 +8,7 @@ logging:
       netty:
         http:
           client:
-            HttpClient: INFO
+            HttpClient: DEBUG
 app:
   api: https://lobid.org/gnd
   dontShowOnMainPage: 1012979-0, 118551655
