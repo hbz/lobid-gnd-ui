@@ -1,14 +1,5 @@
-spring:
-  web:
-    resources:
-      static-locations: [] # use custom RouterConfig only
-logging:
-  level:
-    reactor:
-      netty:
-        http:
-          client:
-            HttpClient: DEBUG
+spring.web.resources.static-locations: [] # use custom RouterConfig only
+logging.level.reactor.netty.http.client.HttpClient: DEBUG
 app:
   api: https://lobid.org/gnd
   dontShowOnMainPage: 1012979-0, 118551655

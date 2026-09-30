@@ -1,7 +1,1 @@
-logging:
-  level:
-    reactor:
-      netty:
-        http:
-          client:
-            HttpClient: INFO
+logging.level.reactor.netty.http.client.HttpClient: INFO
