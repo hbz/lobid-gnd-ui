@@ -85,8 +85,9 @@ public class LobidGndApiService {
     private Mono<JsonNode> gndCall(Function<UriBuilder, URI> uriFunction) {
         ConnectionProvider provider =
                 ConnectionProvider.builder("").maxIdleTime(Duration.ofSeconds(1)).build();
+        HttpClient client = HttpClient.create(provider).followRedirect(true);
         return WebClient.builder()
-                .clientConnector(new ReactorClientHttpConnector(HttpClient.create(provider)))
+                .clientConnector(new ReactorClientHttpConnector(client))
                 .codecs(conf -> conf.defaultCodecs().maxInMemorySize(2 * 1024 * 1024))
                 .baseUrl(apiBaseUrl)
                 .build()
