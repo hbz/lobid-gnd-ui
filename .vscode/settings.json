@@ -14,5 +14,6 @@
       "delegateBuildRun": true
     }
   ],
-  "java.import.gradle.enabled": true
+  "java.import.gradle.enabled": true,
+  "spring-boot.ls.problem.application-yaml.YAML_UNKNOWN_PROPERTY": "HINT"
 }
