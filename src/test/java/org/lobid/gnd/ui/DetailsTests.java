@@ -33,6 +33,16 @@ public class DetailsTests extends HtmlPageTests {
 
     @ParameterizedTest
     @ValueSource(strings = {DEVELOPMENT})
+    public void testDetailsViewRedirect(String baseUrl) throws IOException {
+        HtmlPage detailsPage = pageFor(baseUrl, "1086313011");
+        assertThat(detailsPage.getUrl().getPath()).endsWith("1190852047");
+        assertThat(detailsPage.getTitleText())
+                .isEqualTo("Philharmonischer Verein der Sinti und Roma Frankfurt am Main e.V.");
+        assertThat(detailsPage.asNormalizedText()).contains("https://d-nb.info/gnd/1190852047");
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {DEVELOPMENT})
     public void testDetailsViewHeader(String baseUrl) throws IOException {
         HtmlPage detailsPage = pageFor(baseUrl, COLOGNE);
         assertThat(detailsPage.getElementsByTagName("h1").getFirst().getTextContent())

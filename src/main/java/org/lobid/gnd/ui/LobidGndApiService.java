@@ -16,11 +16,13 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.http.MediaType;
 import org.springframework.http.client.reactive.ReactorClientHttpConnector;
 import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
+import org.springframework.web.reactive.function.client.ClientResponse;
 import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.util.UriBuilder;
 import reactor.core.publisher.Flux;
@@ -30,6 +32,17 @@ import reactor.netty.resources.ConnectionProvider;
 
 @Service
 public class LobidGndApiService {
+
+    public sealed interface GndJsonResult permits GndJsonResult.JsonBody, Redirect {
+        record JsonBody(JsonNode json) implements GndJsonResult {}
+    }
+
+    public sealed interface GndEntityResult permits GndEntityResult.EntityMap, Redirect {
+        record EntityMap(Map<String, Object> data) implements GndEntityResult {}
+    }
+
+    public record Redirect(HttpStatusCode status, URI location)
+            implements GndJsonResult, GndEntityResult {}
 
     @Value("${app.api}")
     private String apiBaseUrl;
@@ -44,18 +57,26 @@ public class LobidGndApiService {
     public Mono<Map<String, Object>> search(MultiValueMap<String, String> params) {
         Function<UriBuilder, URI> uriFunction =
                 builder -> builder.path("/search").queryParams(params).build();
-        return gndCall(uriFunction).map(this::javaMap);
+        return gndCall(uriFunction).map(this::jsonBody).map(this::javaMap);
     }
 
     public Mono<Map<String, Object>> suggest(MultiValueMap<String, String> params) {
         return search(add(params, "format", "json:" + suggest()));
     }
 
-    public Mono<Map<String, Object>> entity(String gndId) {
+    public Mono<GndEntityResult> entity(String gndId) {
         Function<UriBuilder, URI> uriFunction = builder -> builder.path("/{gndId}").build(gndId);
-        return gndCall(uriFunction)
-                .flatMap(this::withPropertyAndTypeLabels)
-                .map(this::withImageUrlAndAttribution);
+        return gndCall(uriFunction).flatMap(result -> entityOrRedirect(result));
+    }
+
+    private Mono<? extends GndEntityResult> entityOrRedirect(GndJsonResult result) {
+        return switch (result) {
+            case GndJsonResult.JsonBody body ->
+                    withPropertyAndTypeLabels(body.json())
+                            .map(this::withImageUrlAndAttribution)
+                            .map(GndEntityResult.EntityMap::new);
+            case Redirect redirect -> Mono.just(redirect);
+        };
     }
 
     public Mono<Map<String, Object>> randomEntity() {
@@ -67,6 +88,7 @@ public class LobidGndApiService {
                                 .queryParam("from", String.valueOf(new Random().nextInt(25000)))
                                 .build();
         return gndCall(uriFunction)
+                .map(this::jsonBody)
                 .map(this::firstMemberAsMap)
                 .map(this::withImageUrlAndAttribution);
     }
@@ -79,22 +101,44 @@ public class LobidGndApiService {
                                 .build(kind);
         return cache.computeIfAbsent(
                 kind + ":" + id,
-                key -> gndCall(uriFunction).flatMap(json -> labelForId(json, kind, id, field)));
+                key ->
+                        gndCall(uriFunction)
+                                .map(this::jsonBody)
+                                .flatMap(json -> labelForId(json, kind, id, field)));
     }
 
-    private Mono<JsonNode> gndCall(Function<UriBuilder, URI> uriFunction) {
+    private JsonNode jsonBody(GndJsonResult result) {
+        return switch (result) {
+            case GndJsonResult.JsonBody body -> body.json();
+            case Redirect redirect ->
+                    throw new IllegalStateException("Unexpected redirect: " + redirect.location());
+        };
+    }
+
+    private Mono<GndJsonResult> gndCall(Function<UriBuilder, URI> uriFunction) {
         ConnectionProvider provider =
                 ConnectionProvider.builder("").maxIdleTime(Duration.ofSeconds(1)).build();
+        HttpClient client = HttpClient.create(provider).followRedirect(false);
         return WebClient.builder()
-                .clientConnector(new ReactorClientHttpConnector(HttpClient.create(provider)))
+                .clientConnector(new ReactorClientHttpConnector(client))
                 .codecs(conf -> conf.defaultCodecs().maxInMemorySize(2 * 1024 * 1024))
                 .baseUrl(apiBaseUrl)
                 .build()
                 .get()
                 .uri(uriFunction)
                 .accept(MediaType.APPLICATION_JSON)
-                .retrieve()
-                .bodyToMono(JsonNode.class);
+                .exchangeToMono(response -> redirectOrJsonBody(response));
+    }
+
+    private Mono<GndJsonResult> redirectOrJsonBody(ClientResponse response) {
+        return response.statusCode().is3xxRedirection()
+                ? response.releaseBody().thenReturn(redirect(response))
+                : response.bodyToMono(JsonNode.class).map(GndJsonResult.JsonBody::new);
+    }
+
+    private Redirect redirect(ClientResponse response) {
+        return new Redirect(
+                response.statusCode(), response.headers().asHttpHeaders().getLocation());
     }
 
     private MultiValueMap<String, String> add(
