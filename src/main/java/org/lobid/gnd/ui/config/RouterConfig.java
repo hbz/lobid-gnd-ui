@@ -11,16 +11,39 @@ import org.lobid.gnd.ui.controller.SearchHandler;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.ClassPathResource;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
+import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.server.HandlerFilterFunction;
 import org.springframework.web.reactive.function.server.HandlerFunction;
 import org.springframework.web.reactive.function.server.RouterFunction;
 import org.springframework.web.reactive.function.server.RouterFunctions;
 import org.springframework.web.reactive.function.server.ServerRequest;
 import org.springframework.web.reactive.function.server.ServerResponse;
+import org.springframework.web.server.ServerWebExchange;
+import org.springframework.web.server.WebFilter;
+import org.springframework.web.server.WebFilterChain;
+import reactor.core.publisher.Mono;
 
 @Configuration
 public class RouterConfig {
+
+    @Component
+    public class HeadToGetFilter implements WebFilter {
+        @Override
+        public Mono<Void> filter(ServerWebExchange exchange, WebFilterChain chain) {
+            return chain.filter(
+                    exchange.getRequest().getMethod() == HttpMethod.HEAD
+                            ? toGet(exchange)
+                            : exchange);
+        }
+
+        private ServerWebExchange toGet(ServerWebExchange exchange) {
+            return exchange.mutate()
+                    .request(exchange.getRequest().mutate().method(HttpMethod.GET).build())
+                    .build();
+        }
+    }
 
     @Bean
     public RouterFunction<ServerResponse> detailsRoutes(
