@@ -22,6 +22,7 @@ import org.springframework.boot.test.autoconfigure.web.reactive.AutoConfigureWeb
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.context.annotation.Import;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
@@ -70,6 +71,18 @@ public abstract class HtmlPageTests {
                 HttpClient.newHttpClient().send(request, HttpResponse.BodyHandlers.ofString());
         assertThat(response.statusCode()).as("HTTP response for " + url).isEqualTo(200);
         return response.body();
+    }
+
+    protected int fetchHeadStatus(String baseUrl, String path)
+            throws IOException, InterruptedException {
+        HttpRequest request =
+                HttpRequest.newBuilder()
+                        .uri(URI.create(urlWithPort(baseUrl, path)))
+                        .method(HttpMethod.HEAD.name(), HttpRequest.BodyPublishers.noBody())
+                        .build();
+        return HttpClient.newHttpClient()
+                .send(request, HttpResponse.BodyHandlers.ofString())
+                .statusCode();
     }
 
     private String urlWithPort(String baseUrl, String path) {

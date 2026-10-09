@@ -13,6 +13,7 @@ import org.htmlunit.html.HtmlDivision;
 import org.htmlunit.html.HtmlPage;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
+import org.springframework.http.HttpStatus;
 
 /* Tests for the `details.html` template */
 public class DetailsTests extends HtmlPageTests {
@@ -39,6 +40,14 @@ public class DetailsTests extends HtmlPageTests {
         assertThat(detailsPage.getTitleText())
                 .isEqualTo("Philharmonischer Verein der Sinti und Roma Frankfurt am Main e.V.");
         assertThat(detailsPage.asNormalizedText()).contains("https://d-nb.info/gnd/1190852047");
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {DEVELOPMENT})
+    public void testDetailsHeadRequest(String baseUrl) throws IOException, InterruptedException {
+        assertThat(fetchHeadStatus(baseUrl, COLOGNE))
+                .as("HEAD request response status")
+                .isEqualTo(HttpStatus.OK.value());
     }
 
     @ParameterizedTest
