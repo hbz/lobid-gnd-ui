@@ -8,11 +8,16 @@ import org.lobid.gnd.ui.controller.ErrorHandler;
 import org.lobid.gnd.ui.controller.IndexHandler;
 import org.lobid.gnd.ui.controller.ReconcileHandler;
 import org.lobid.gnd.ui.controller.SearchHandler;
+import org.springframework.beans.factory.ObjectProvider;
+import org.springframework.boot.web.reactive.error.ErrorAttributes;
+import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Primary;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.codec.ServerCodecConfigurer;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.server.HandlerFilterFunction;
 import org.springframework.web.reactive.function.server.HandlerFunction;
@@ -20,6 +25,7 @@ import org.springframework.web.reactive.function.server.RouterFunction;
 import org.springframework.web.reactive.function.server.RouterFunctions;
 import org.springframework.web.reactive.function.server.ServerRequest;
 import org.springframework.web.reactive.function.server.ServerResponse;
+import org.springframework.web.reactive.result.view.ViewResolver;
 import org.springframework.web.server.ServerWebExchange;
 import org.springframework.web.server.WebFilter;
 import org.springframework.web.server.WebFilterChain;
@@ -27,6 +33,19 @@ import reactor.core.publisher.Mono;
 
 @Configuration
 public class RouterConfig {
+
+    @Bean
+    @Primary
+    public ErrorHandler errorHandler(
+            ErrorAttributes errorAttributes,
+            ApplicationContext applicationContext,
+            ServerCodecConfigurer serverCodecConfigurer,
+            ObjectProvider<ViewResolver> viewResolversProvider) {
+        ErrorHandler handler =
+                new ErrorHandler(errorAttributes, applicationContext, serverCodecConfigurer);
+        handler.setViewResolvers(viewResolversProvider.orderedStream().toList());
+        return handler;
+    }
 
     @Component
     public class HeadToGetFilter implements WebFilter {
@@ -50,7 +69,6 @@ public class RouterConfig {
             IndexHandler index,
             DetailsHandler details,
             SearchHandler search,
-            ErrorHandler error,
             ApiDocHandler apiDoc,
             ReconcileHandler reconcile,
             DatasetHandler dataset,
