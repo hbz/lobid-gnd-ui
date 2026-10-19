@@ -80,7 +80,9 @@ sudo systemctl start|stop|restart|status lobid-gnd-ui
 
 ## Production setup
 
-Initial service setup (required only once):
+First, create a dedicated user for the service in advance and chamge the default user in `lobid-gnd-ui.service` file.
+
+Then, initially set up the service (required only once):
 
 ```
 sudo ln -sr build/libs/lobid-gnd-ui-0.0.1-SNAPSHOT.jar /opt/lobid-gnd-ui.jar
