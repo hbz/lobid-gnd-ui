@@ -18,11 +18,11 @@ import java.util.stream.StreamSupport;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.http.client.reactive.ReactorClientHttpConnector;
 import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
-import org.springframework.web.reactive.function.client.ClientResponse;
 import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.util.UriBuilder;
 import reactor.core.publisher.Flux;
@@ -127,18 +127,15 @@ public class LobidGndApiService {
                 .get()
                 .uri(uriFunction)
                 .accept(MediaType.APPLICATION_JSON)
-                .exchangeToMono(response -> redirectOrJsonBody(response));
+                .retrieve()
+                .toEntity(JsonNode.class)
+                .map(this::redirectOrJsonBody);
     }
 
-    private Mono<GndJsonResult> redirectOrJsonBody(ClientResponse response) {
-        return response.statusCode().is3xxRedirection()
-                ? response.releaseBody().thenReturn(redirect(response))
-                : response.bodyToMono(JsonNode.class).map(GndJsonResult.JsonBody::new);
-    }
-
-    private Redirect redirect(ClientResponse response) {
-        return new Redirect(
-                response.statusCode(), response.headers().asHttpHeaders().getLocation());
+    private GndJsonResult redirectOrJsonBody(ResponseEntity<JsonNode> entity) {
+        return entity.getStatusCode().is3xxRedirection()
+                ? new Redirect(entity.getStatusCode(), entity.getHeaders().getLocation())
+                : new GndJsonResult.JsonBody(entity.getBody());
     }
 
     private MultiValueMap<String, String> add(
