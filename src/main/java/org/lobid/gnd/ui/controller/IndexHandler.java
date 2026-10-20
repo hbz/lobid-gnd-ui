@@ -1,6 +1,6 @@
 package org.lobid.gnd.ui.controller;
 
-import static org.lobid.gnd.ui.controller.ErrorHandler.errorResponse;
+import static org.lobid.gnd.ui.controller.ErrorHandler.apiErrorResponse;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -11,6 +11,7 @@ import java.util.function.Function;
 import org.lobid.gnd.ui.LobidGndApiService;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Component;
+import org.springframework.web.reactive.function.client.WebClientResponseException;
 import org.springframework.web.reactive.function.server.ServerRequest;
 import org.springframework.web.reactive.function.server.ServerResponse;
 import reactor.core.publisher.Mono;
@@ -26,9 +27,13 @@ public class IndexHandler {
 
     public Mono<ServerResponse> page(ServerRequest request) {
         try {
-            return gnd.randomEntity().flatMap(toResponse("index", request, dataset()));
-        } catch (Exception e) {
-            return errorResponse(request, 500, "Failed to load index page: " + e.getMessage());
+            Map<String, Object> dataset = dataset();
+            return gnd.randomEntity()
+                    .flatMap(toResponse("index", request, dataset))
+                    .onErrorResume(
+                            WebClientResponseException.class, e -> apiErrorResponse(request, e));
+        } catch (IOException e) {
+            return Mono.error(e);
         }
     }
 

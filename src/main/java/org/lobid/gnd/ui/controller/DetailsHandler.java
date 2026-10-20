@@ -1,6 +1,6 @@
 package org.lobid.gnd.ui.controller;
 
-import static org.lobid.gnd.ui.controller.ErrorHandler.errorResponse;
+import static org.lobid.gnd.ui.controller.ErrorHandler.apiErrorResponse;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -20,6 +20,7 @@ import org.lobid.gnd.ui.LobidGndApiService.GndEntityResult;
 import org.lobid.gnd.ui.LobidGndApiService.Redirect;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
+import org.springframework.web.reactive.function.client.WebClientResponseException;
 import org.springframework.web.reactive.function.server.ServerRequest;
 import org.springframework.web.reactive.function.server.ServerResponse;
 import reactor.core.publisher.Mono;
@@ -40,12 +41,10 @@ public class DetailsHandler {
     }
 
     public Mono<ServerResponse> byId(ServerRequest request) {
-        try {
-            return gnd.entity(request.pathVariable("id").replace(".html", ""))
-                    .flatMap(result -> entityOrRedirect(request, result));
-        } catch (Exception e) {
-            return errorResponse(request, 500, "Failed to load details page: " + e.getMessage());
-        }
+        String gndId = request.pathVariable("id").replace(".html", "");
+        return gnd.entity(gndId)
+                .<ServerResponse>flatMap(result -> entityOrRedirect(request, result))
+                .onErrorResume(WebClientResponseException.class, e -> apiErrorResponse(request, e));
     }
 
     private Mono<? extends ServerResponse> entityOrRedirect(
