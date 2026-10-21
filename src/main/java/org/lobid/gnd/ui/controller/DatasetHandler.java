@@ -1,7 +1,5 @@
 package org.lobid.gnd.ui.controller;
 
-import static org.lobid.gnd.ui.controller.ErrorHandler.errorResponse;
-
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.IOException;
@@ -21,8 +19,8 @@ public class DatasetHandler {
             Map<String, Object> model =
                     Map.of("request", request.attributes(), "dataset", dataset());
             return ServerResponse.ok().render("dataset", model);
-        } catch (Exception e) {
-            return errorResponse(request, 500, "Failed to load dataset page: " + e.getMessage());
+        } catch (IOException e) {
+            return Mono.error(e);
         }
     }
 
