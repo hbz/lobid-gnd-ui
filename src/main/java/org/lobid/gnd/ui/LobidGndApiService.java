@@ -3,6 +3,7 @@ package org.lobid.gnd.ui;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import io.netty.handler.timeout.TimeoutException;
 import java.net.URI;
 import java.time.Duration;
 import java.util.Iterator;
@@ -12,6 +13,7 @@ import java.util.Optional;
 import java.util.Random;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Function;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
@@ -24,11 +26,14 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.reactive.function.client.WebClient;
+import org.springframework.web.reactive.function.client.WebClientRequestException;
 import org.springframework.web.util.UriBuilder;
+import org.springframework.web.util.UriComponentsBuilder;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import reactor.netty.http.client.HttpClient;
 import reactor.netty.resources.ConnectionProvider;
+import reactor.util.retry.Retry;
 
 @Service
 public class LobidGndApiService {
@@ -52,12 +57,32 @@ public class LobidGndApiService {
 
     private static final ObjectMapper JSON = new ObjectMapper();
 
-    private static final ConcurrentHashMap<String, Mono<String>> cache = new ConcurrentHashMap<>();
+    private static final ConcurrentHashMap<String, Mono<String>> labelCache =
+            new ConcurrentHashMap<>();
+    private static final ConcurrentHashMap<String, Mono<GndEntityResult>> entityCache =
+            new ConcurrentHashMap<>();
+    private static final ConcurrentHashMap<String, Mono<Map<String, Object>>> searchCache =
+            new ConcurrentHashMap<>();
+
+    private HttpClient httpClient =
+            HttpClient.create(
+                            ConnectionProvider.builder("")
+                                    .maxIdleTime(Duration.ofSeconds(1))
+                                    .build())
+                    .followRedirect(false);
 
     public Mono<Map<String, Object>> search(MultiValueMap<String, String> params) {
         Function<UriBuilder, URI> uriFunction =
                 builder -> builder.path("/search").queryParams(params).build();
-        return gndCall(uriFunction).map(this::jsonBody).map(this::javaMap);
+        Function<String, Mono<Map<String, Object>>> callFunction =
+                key ->
+                        gndCall(uriFunction)
+                                .map(this::jsonBody)
+                                .map(this::javaMap)
+                                .cache(Duration.ofHours(1))
+                                .doOnError(e -> searchCache.remove(key));
+        return searchCache.computeIfAbsent(
+                uriFunction.apply(UriComponentsBuilder.newInstance()).toString(), callFunction);
     }
 
     public Mono<Map<String, Object>> suggest(MultiValueMap<String, String> params) {
@@ -66,10 +91,16 @@ public class LobidGndApiService {
 
     public Mono<GndEntityResult> entity(String gndId) {
         Function<UriBuilder, URI> uriFunction = builder -> builder.path("/{gndId}").build(gndId);
-        return gndCall(uriFunction).flatMap(result -> entityOrRedirect(result));
+        Function<String, Mono<GndEntityResult>> callFunction =
+                key ->
+                        gndCall(uriFunction)
+                                .flatMap(result -> entityOrRedirect(result))
+                                .cache(Duration.ofHours(1))
+                                .doOnError(e -> entityCache.remove(key));
+        return entityCache.computeIfAbsent(gndId, callFunction);
     }
 
-    private Mono<? extends GndEntityResult> entityOrRedirect(GndJsonResult result) {
+    private Mono<GndEntityResult> entityOrRedirect(GndJsonResult result) {
         return switch (result) {
             case GndJsonResult.JsonBody body ->
                     withPropertyAndTypeLabels(body.json())
@@ -99,12 +130,15 @@ public class LobidGndApiService {
                         builder.path("/reconcile/suggest/{kind}")
                                 .queryParam("prefix", id)
                                 .build(kind);
-        return cache.computeIfAbsent(
-                kind + ":" + id,
+        Function<String, Mono<String>> callFunction =
                 key ->
                         gndCall(uriFunction)
                                 .map(this::jsonBody)
-                                .flatMap(json -> labelForId(json, kind, id, field)));
+                                .flatMap(json -> labelForId(json, kind, id, field))
+                                .cache(Duration.ofDays(1))
+                                .doOnError(e -> labelCache.remove(key));
+        return labelCache.computeIfAbsent(
+                uriFunction.apply(UriComponentsBuilder.newInstance()).toString(), callFunction);
     }
 
     private JsonNode jsonBody(GndJsonResult result) {
@@ -116,11 +150,10 @@ public class LobidGndApiService {
     }
 
     private Mono<GndJsonResult> gndCall(Function<UriBuilder, URI> uriFunction) {
-        ConnectionProvider provider =
-                ConnectionProvider.builder("").maxIdleTime(Duration.ofSeconds(1)).build();
-        HttpClient client = HttpClient.create(provider).followRedirect(false);
+        Predicate<Throwable> errorFilter =
+                e -> e instanceof TimeoutException || e instanceof WebClientRequestException;
         return WebClient.builder()
-                .clientConnector(new ReactorClientHttpConnector(client))
+                .clientConnector(new ReactorClientHttpConnector(httpClient))
                 .codecs(conf -> conf.defaultCodecs().maxInMemorySize(2 * 1024 * 1024))
                 .baseUrl(apiBaseUrl)
                 .build()
@@ -129,6 +162,7 @@ public class LobidGndApiService {
                 .accept(MediaType.APPLICATION_JSON)
                 .retrieve()
                 .toEntity(JsonNode.class)
+                .retryWhen(Retry.backoff(2, Duration.ofMillis(500)).filter(errorFilter))
                 .map(this::redirectOrJsonBody);
     }
 
