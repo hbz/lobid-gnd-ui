@@ -11,3 +11,25 @@ updates:
       actions:
         patterns:
           - "*"
+  # Maintain Gradle dependencies (Spring Boot, HtmlUnit, build plugins)
+  - package-ecosystem: "gradle"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+    labels:
+      - "gradle"
+    groups:
+      gradle:
+        patterns:
+          - "*"
+  # Maintain npm dependencies (frontend runtime + build tooling)
+  - package-ecosystem: "npm"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+    labels:
+      - "npm"
+    groups:
+      npm:
+        patterns:
+          - "*"
