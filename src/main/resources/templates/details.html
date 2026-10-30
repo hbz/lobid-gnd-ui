@@ -138,8 +138,11 @@
                             aria-labelledby="rels">
                             <div
                                 id="gnd-network"
-                                th:data-nodes="${@relations.gndRelationNodes(entity)}"
-                                th:data-edges="${@relations.gndRelationEdges(entity)}"
+                                th:with="
+                                    graphNodes=${@relations.gndRelationNodes(entity)},
+                                    graphEdges=${@relations.gndRelationEdges(entity)}"
+                                th:data-nodes="${graphNodes}"
+                                th:data-edges="${graphEdges}"
                                 th:data-entity-id="${entity.gndIdentifier}"></div>
                         </div>
                         <div th:replace="~{fragments/sources}" />
@@ -149,7 +152,8 @@
                     <div
                         th:if="${hasGeo}"
                         id="authority-map"
-                        th:data-geo="${@details.getLatLon(entity)}"
+                        th:with="geoData=${@details.getLatLon(entity)}"
+                        th:data-geo="${geoData}"
                         th:data-type="${entity.type}"
                         th:data-title="${entity.preferredName}"></div>
                     <div th:if="${hasImage}"><div th:replace="~{fragments/figure}" /></div>
