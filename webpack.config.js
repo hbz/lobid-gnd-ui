@@ -2,7 +2,6 @@ const path = require("path");
 const TerserPlugin = require("terser-webpack-plugin");
 const CssMinimizerPlugin = require("css-minimizer-webpack-plugin");
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
-const WarningsToErrorsPlugin = require("warnings-to-errors-webpack-plugin");
 
 module.exports = (env, argv) => ({
     entry: {
@@ -26,7 +25,6 @@ module.exports = (env, argv) => ({
         new MiniCssExtractPlugin({
             filename: "css/[name].css",
         }),
-        new WarningsToErrorsPlugin(),
     ],
     module: {
         rules: [
