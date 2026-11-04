@@ -18,6 +18,10 @@ updates:
       interval: "weekly"
     labels:
       - "gradle"
+    ignore:
+      - dependency-name: "*"
+        update-types:
+          - "version-update:semver-major"
     groups:
       gradle:
         patterns:
@@ -29,6 +33,10 @@ updates:
       interval: "weekly"
     labels:
       - "npm"
+    ignore:
+      - dependency-name: "*"
+        update-types:
+          - "version-update:semver-major"
     groups:
       npm:
         patterns:
