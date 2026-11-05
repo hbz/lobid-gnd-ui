@@ -97,5 +97,11 @@ module.exports = (env, argv) => ({
                 },
             },
         ],
+        client: {
+            overlay: {
+                warnings: false,
+                errors: true,
+            },
+        },
     },
 });
