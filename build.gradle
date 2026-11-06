@@ -83,7 +83,7 @@ spotless {
         removeUnusedImports()
         forbidWildcardImports()
         formatAnnotations()
-        googleJavaFormat().aosp().reflowLongStrings()
+        googleJavaFormat('1.36.1').aosp().reflowLongStrings()
     }
 
     yaml {
