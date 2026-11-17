@@ -3,6 +3,8 @@ package org.lobid.gnd.ui;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.github.benmanes.caffeine.cache.Cache;
+import com.github.benmanes.caffeine.cache.Caffeine;
 import io.netty.handler.timeout.TimeoutException;
 import java.net.URI;
 import java.time.Duration;
@@ -11,7 +13,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.Random;
-import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.TimeUnit;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
@@ -57,12 +59,12 @@ public class LobidGndApiService {
 
     private static final ObjectMapper JSON = new ObjectMapper();
 
-    private static final ConcurrentHashMap<String, Mono<String>> labelCache =
-            new ConcurrentHashMap<>();
-    private static final ConcurrentHashMap<String, Mono<GndEntityResult>> entityCache =
-            new ConcurrentHashMap<>();
-    private static final ConcurrentHashMap<String, Mono<Map<String, Object>>> searchCache =
-            new ConcurrentHashMap<>();
+    public static final Cache<String, Mono<String>> labelCache =
+            boundedCache(1_000_000, 1, TimeUnit.DAYS);
+    public static final Cache<String, Mono<GndEntityResult>> entityCache =
+            boundedCache(20_000, 1, TimeUnit.HOURS);
+    public static final Cache<String, Mono<Map<String, Object>>> searchCache =
+            boundedCache(20_000, 1, TimeUnit.HOURS);
 
     private HttpClient httpClient =
             HttpClient.create(
@@ -74,15 +76,14 @@ public class LobidGndApiService {
     public Mono<Map<String, Object>> search(MultiValueMap<String, String> params) {
         Function<UriBuilder, URI> uriFunction =
                 builder -> builder.path("/search").queryParams(params).build();
-        Function<String, Mono<Map<String, Object>>> callFunction =
-                key ->
+        return searchCache.get(
+                uriFunction.apply(UriComponentsBuilder.newInstance()).toString(),
+                k ->
                         gndCall(uriFunction)
                                 .map(this::jsonBody)
                                 .map(this::javaMap)
-                                .cache(Duration.ofHours(1))
-                                .doOnError(e -> searchCache.remove(key));
-        return searchCache.computeIfAbsent(
-                uriFunction.apply(UriComponentsBuilder.newInstance()).toString(), callFunction);
+                                .cache()
+                                .doOnError(e -> searchCache.invalidate(k)));
     }
 
     public Mono<Map<String, Object>> suggest(MultiValueMap<String, String> params) {
@@ -91,13 +92,21 @@ public class LobidGndApiService {
 
     public Mono<GndEntityResult> entity(String gndId) {
         Function<UriBuilder, URI> uriFunction = builder -> builder.path("/{gndId}").build(gndId);
-        Function<String, Mono<GndEntityResult>> callFunction =
+        return entityCache.get(
+                gndId,
                 key ->
                         gndCall(uriFunction)
                                 .flatMap(result -> entityOrRedirect(result))
-                                .cache(Duration.ofHours(1))
-                                .doOnError(e -> entityCache.remove(key));
-        return entityCache.computeIfAbsent(gndId, callFunction);
+                                .cache()
+                                .doOnError(e -> entityCache.invalidate(key)));
+    }
+
+    private static <T> Cache<String, Mono<T>> boundedCache(int size, int time, TimeUnit unit) {
+        return Caffeine.newBuilder()
+                .maximumSize(size)
+                .expireAfterWrite(time, unit)
+                .recordStats()
+                .build();
     }
 
     private Mono<GndEntityResult> entityOrRedirect(GndJsonResult result) {
@@ -130,15 +139,14 @@ public class LobidGndApiService {
                         builder.path("/reconcile/suggest/{kind}")
                                 .queryParam("prefix", id)
                                 .build(kind);
-        Function<String, Mono<String>> callFunction =
-                key ->
+        return labelCache.get(
+                uriFunction.apply(UriComponentsBuilder.newInstance()).toString(),
+                k ->
                         gndCall(uriFunction)
                                 .map(this::jsonBody)
                                 .flatMap(json -> labelForId(json, kind, id, field))
-                                .cache(Duration.ofDays(1))
-                                .doOnError(e -> labelCache.remove(key));
-        return labelCache.computeIfAbsent(
-                uriFunction.apply(UriComponentsBuilder.newInstance()).toString(), callFunction);
+                                .cache()
+                                .doOnError(e -> labelCache.invalidate(k)));
     }
 
     private JsonNode jsonBody(GndJsonResult result) {
